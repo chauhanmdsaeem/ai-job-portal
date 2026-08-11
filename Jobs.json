@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "title": "Python Developer",
+    "company": "XYZ Technologies",
+    "location": "Bengaluru",
+    "skills": ["Python", "SQL", "Git"],
+    "job_type": "Full-time",
+    "description": "Work on backend services and internal tooling using Python and SQL. Good fit for someone comfortable with Git-based workflows.",
+    "apply_link": "#"
+  },
+  {
+    "id": 2,
+    "title": "Software Developer",
+    "company": "ABC Technologies",
+    "location": "Hyderabad",
+    "skills": ["Java", "SQL", "Git"],
+    "job_type": "Full-time",
+    "description": "Build and maintain Java-based enterprise applications with a small, collaborative team.",
+    "apply_link": "#"
+  },
+  {
+    "id": 3,
+    "title": "Frontend Developer",
+    "company": "DEF Solutions",
+    "location": "Chennai",
+    "skills": ["HTML", "CSS", "JavaScript"],
+    "job_type": "Full-time",
+    "description": "Turn design mockups into responsive, accessible web interfaces using HTML, CSS and JavaScript.",
+    "apply_link": "#"
+  },
+  {
+    "id": 4,
+    "title": "Java Developer",
+    "company": "GHI Technologies",
+    "location": "Mumbai",
+    "skills": ["Java", "SQL", "OOP"],
+    "job_type": "Full-time",
+    "description": "Design and implement object-oriented Java services with a focus on clean, testable code.",
+    "apply_link": "#"
+  },
+  {
+    "id": 5,
+    "title": "Junior Data Analyst",
+    "company": "Insight Analytics",
+    "location": "Bengaluru",
+    "skills": ["Python", "SQL", "Excel"],
+    "job_type": "Internship",
+    "description": "Support the analytics team with data cleaning, SQL queries and basic reporting.",
+    "apply_link": "#"
+  },
+  {
+    "id": 6,
+    "title": "Remote React Developer",
+    "company": "Nimbus Labs",
+    "location": "Remote",
+    "skills": ["JavaScript", "React", "CSS"],
+    "job_type": "Part-time",
+    "description": "Help build reusable UI components for a small SaaS product. Fully remote, flexible hours.",
+    "apply_link": "#"
+  }
+]
