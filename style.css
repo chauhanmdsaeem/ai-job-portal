@@ -1,21 +1,355 @@
-.job-card{
-    border: 1px solid black;
-    padding: 20px;
-    margin: 20px;
-    border-radius: 10px;
+/* =========================================================
+   Design tokens
+   Palette: warm paper background, deep forest ink text,
+   amber accent for action, muted sage for secondary tags.
+   Chosen for a "fieldnote / notebook" feel — deliberately
+   not the default cream+terracotta AI look.
+   ========================================================= */
+:root {
+  --paper:      #F6F4EE;
+  --paper-raised: #FFFFFF;
+  --ink:        #1F2A24;
+  --ink-soft:   #4B564F;
+  --line:       #DAD5C8;
+  --amber:      #C9862B;
+  --amber-dark: #A36A1D;
+  --sage:       #5C7A64;
+  --sage-light: #E7EDE7;
+  --danger:     #B4472F;
+
+  --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+  --radius: 4px;
+  --shadow-card: 0 1px 2px rgba(31, 42, 36, 0.06), 0 1px 0 rgba(31, 42, 36, 0.04);
 }
-p{
-    font-size: 16px;
-    line-height: 1.5;
-    font-family: Arial, sans-serif;
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
-h1{
-    background: #333;
-    font-size: 24px;
-    font-family:'Times New Roman', Times, serif;
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
-h3{
-    background:aqua;
-    font-size: 20px;
-    font-family: 'Courier New', Courier, monospace;
+
+a { color: inherit; }
+
+/* =========================================================
+   Header
+   ========================================================= */
+.site-header {
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+
+.logo span { color: var(--amber-dark); }
+
+.main-nav a {
+  text-decoration: none;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  margin-left: 28px;
+}
+
+.main-nav a:hover { color: var(--ink); }
+
+.nav-recruiter {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 8px 14px !important;
+  background: var(--paper-raised);
+}
+
+/* =========================================================
+   Hero
+   ========================================================= */
+.hero {
+  padding: 64px 0 40px;
+  border-bottom: 1px solid var(--line);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin: 0 0 14px;
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  line-height: 1.15;
+  margin: 0 0 16px;
+  max-width: 20ch;
+}
+
+.hero-sub {
+  color: var(--ink-soft);
+  max-width: 52ch;
+  margin: 0 0 32px;
+}
+
+/* Search bar */
+.search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 10px;
+  box-shadow: var(--shadow-card);
+}
+
+.search-bar input,
+.search-bar select {
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.search-bar input {
+  flex: 2 1 240px;
+}
+
+.search-bar select {
+  flex: 1 1 150px;
+}
+
+.search-bar button {
+  flex: 0 0 auto;
+  padding: 10px 22px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.search-bar button:hover { background: var(--amber-dark); }
+
+/* =========================================================
+   Job listings
+   ========================================================= */
+main.container {
+  padding: 48px 24px 80px;
+}
+
+.listings-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.listings-head h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.results-count {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.job-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+/* Job card — index-card motif: a colored spine on the left
+   stands in for the "tab" of a filed notebook entry. */
+.job-card {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--sage);
+  border-radius: var(--radius);
+  padding: 20px 20px 18px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.job-card[data-type="Internship"]  { border-left-color: var(--amber); }
+.job-card[data-type="Part-time"]   { border-left-color: #7C6BA6; }
+
+.job-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.job-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.job-type-tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--sage);
+  background: var(--sage-light);
+  padding: 3px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.job-company {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+.job-location {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.job-location::before {
+  content: "📍 ";
+}
+
+.job-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 6px;
+  padding: 0;
+  list-style: none;
+}
+
+.job-skills li {
+  font-size: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px 10px;
+  color: var(--ink-soft);
+}
+
+.job-desc {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  margin: 0;
+  flex-grow: 1;
+}
+
+.apply-link {
+  align-self: flex-start;
+  margin-top: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--amber-dark);
+  border-bottom: 1px solid var(--amber-dark);
+  padding-bottom: 1px;
+}
+
+.apply-link:hover { color: var(--danger); border-color: var(--danger); }
+
+.empty-state {
+  text-align: center;
+  color: var(--ink-soft);
+  padding: 48px 0;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+/* =========================================================
+   Footer
+   ========================================================= */
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 20px 0;
+}
+
+.site-footer p {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.site-footer code {
+  font-family: var(--font-mono);
+  background: var(--sage-light);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+@media (max-width: 640px) {
+  .header-inner { height: 56px; }
+  .hero { padding: 40px 0 32px; }
+  .search-bar { flex-direction: column; }
+  .search-bar select,
+  .search-bar input,
+  .search-bar button { flex: 1 1 auto; width: 100%; }
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* Visible keyboard focus */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--amber-dark);
+  outline-offset: 2px;
 }
