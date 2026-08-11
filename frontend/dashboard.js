@@ -1,0 +1,263 @@
+/* =========================================================
+   dashboard.js
+   -------------------------------------------------------
+   Powers dashboard.html for recruiters (and admins):
+   1. Guards the page — redirects if not logged in, shows a
+      denial message if logged in as a candidate.
+   2. Posts new jobs via POST /api/jobs.
+   3. Lists the recruiter's own postings (open + closed) via
+      GET /api/my-jobs, with close/reopen buttons.
+   4. Lets each posting expand into its applicant list via
+      GET /api/jobs/<id>/applicants, with a status dropdown
+      per applicant that PUTs /api/applications/<id>.
+   ========================================================= */
+
+const accessDeniedEl = document.getElementById("access-denied");
+const dashboardContentEl = document.getElementById("dashboard-content");
+const postJobForm = document.getElementById("post-job-form");
+const formErrorEl = document.getElementById("form-error");
+const myJobsListEl = document.getElementById("my-jobs-list");
+const myJobsCountEl = document.getElementById("my-jobs-count");
+
+const APPLICATION_STATUSES = [
+  "Applied",
+  "Under Review",
+  "Shortlisted",
+  "Interview",
+  "Rejected",
+  "Selected",
+];
+
+function statusClass(status) {
+  return "status-" + status.toLowerCase().replace(/\s+/g, "-");
+}
+
+/** Build the (initially collapsed) applicants panel for one job. */
+function createApplicantsPanel(job) {
+  const panel = document.createElement("div");
+  panel.className = "applicants-panel";
+  panel.hidden = true;
+
+  const loadAndRender = async () => {
+    panel.textContent = "Loading…";
+    try {
+      const res = await fetch(`/api/jobs/${job.id}/applicants`);
+      if (!res.ok) throw new Error(`API responded with ${res.status}`);
+      const applicants = await res.json();
+
+      panel.textContent = "";
+
+      if (applicants.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "applicants-empty";
+        empty.textContent = "No applicants yet.";
+        panel.appendChild(empty);
+        return;
+      }
+
+      applicants.forEach((app) => {
+        const row = document.createElement("div");
+        row.className = "applicant-row";
+
+        const info = document.createElement("div");
+        info.className = "applicant-info";
+
+        const name = document.createElement("p");
+        name.className = "applicant-name";
+        name.textContent = app.candidate_name;
+
+        const email = document.createElement("p");
+        email.className = "applicant-email";
+        email.textContent = app.candidate_email;
+
+        const applied = document.createElement("p");
+        applied.className = "applicant-date";
+        applied.textContent = `Applied ${app.applied_at}`;
+
+        info.append(name, email, applied);
+
+        const select = document.createElement("select");
+        select.className = "status-select " + statusClass(app.status);
+        APPLICATION_STATUSES.forEach((status) => {
+          const option = document.createElement("option");
+          option.value = status;
+          option.textContent = status;
+          if (status === app.status) option.selected = true;
+          select.appendChild(option);
+        });
+
+        select.addEventListener("change", async () => {
+          const newStatus = select.value;
+          select.disabled = true;
+          try {
+            const res = await fetch(`/api/applications/${app.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ status: newStatus }),
+            });
+            if (!res.ok) throw new Error("update failed");
+            select.className = "status-select " + statusClass(newStatus);
+          } catch (err) {
+            alert("Could not update status — please try again.");
+          } finally {
+            select.disabled = false;
+          }
+        });
+
+        row.append(info, select);
+        panel.appendChild(row);
+      });
+    } catch (err) {
+      panel.textContent = "Could not load applicants right now.";
+    }
+  };
+
+  return { panel, loadAndRender };
+}
+
+function createMyJobCard(job) {
+  const card = document.createElement("article");
+  card.className = "job-card my-job-card";
+  card.dataset.type = job.job_type;
+
+  const top = document.createElement("div");
+  top.className = "job-card-top";
+
+  const title = document.createElement("h3");
+  title.className = "job-title";
+  title.textContent = job.title;
+
+  const statusBadge = document.createElement("span");
+  statusBadge.className = "job-status-badge job-status-" + job.status;
+  statusBadge.textContent = job.status;
+
+  top.append(title, statusBadge);
+
+  const meta = document.createElement("p");
+  meta.className = "job-company";
+  meta.textContent = `${job.company} · ${job.location}`;
+
+  const actions = document.createElement("div");
+  actions.className = "my-job-actions";
+
+  const toggleApplicantsBtn = document.createElement("button");
+  toggleApplicantsBtn.type = "button";
+  toggleApplicantsBtn.className = "ghost-btn";
+  toggleApplicantsBtn.textContent = "View applicants";
+
+  const { panel, loadAndRender } = createApplicantsPanel(job);
+  let loaded = false;
+
+  toggleApplicantsBtn.addEventListener("click", async () => {
+    panel.hidden = !panel.hidden;
+    if (!panel.hidden && !loaded) {
+      loaded = true;
+      await loadAndRender();
+    }
+  });
+
+  const toggleStatusBtn = document.createElement("button");
+  toggleStatusBtn.type = "button";
+  toggleStatusBtn.className = "ghost-btn";
+  toggleStatusBtn.textContent = job.status === "open" ? "Close posting" : "Reopen posting";
+
+  toggleStatusBtn.addEventListener("click", async () => {
+    const action = job.status === "open" ? "close" : "reopen";
+    toggleStatusBtn.disabled = true;
+    try {
+      const res = await fetch(`/api/jobs/${job.id}/${action}`, { method: "POST" });
+      if (!res.ok) throw new Error("failed");
+      const updated = await res.json();
+      job.status = updated.status;
+      statusBadge.textContent = updated.status;
+      statusBadge.className = "job-status-badge job-status-" + updated.status;
+      toggleStatusBtn.textContent = updated.status === "open" ? "Close posting" : "Reopen posting";
+    } catch (err) {
+      alert("Could not update the posting — please try again.");
+    } finally {
+      toggleStatusBtn.disabled = false;
+    }
+  });
+
+  actions.append(toggleApplicantsBtn, toggleStatusBtn);
+  card.append(top, meta, actions, panel);
+  return card;
+}
+
+async function loadMyJobs() {
+  try {
+    const res = await fetch("/api/my-jobs");
+    if (!res.ok) throw new Error(`API responded with ${res.status}`);
+    const jobs = await res.json();
+
+    myJobsCountEl.textContent = `${jobs.length} posting${jobs.length === 1 ? "" : "s"}`;
+    myJobsListEl.innerHTML = "";
+
+    if (jobs.length === 0) {
+      myJobsListEl.textContent = "You haven't posted any jobs yet — use the form above.";
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    jobs.forEach((job) => fragment.appendChild(createMyJobCard(job)));
+    myJobsListEl.appendChild(fragment);
+  } catch (err) {
+    myJobsListEl.textContent = "Could not load your postings right now.";
+  }
+}
+
+postJobForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  formErrorEl.hidden = true;
+
+  const skillsRaw = document.getElementById("skills").value;
+  const payload = {
+    title: document.getElementById("title").value.trim(),
+    company: document.getElementById("company").value.trim(),
+    location: document.getElementById("location").value.trim(),
+    job_type: document.getElementById("job_type").value,
+    skills: skillsRaw.split(",").map((s) => s.trim()).filter(Boolean),
+    salary: document.getElementById("salary").value.trim(),
+    description: document.getElementById("description").value.trim(),
+  };
+
+  try {
+    const res = await fetch("/api/jobs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      formErrorEl.textContent = data.error || "Could not post the job.";
+      formErrorEl.hidden = false;
+      return;
+    }
+
+    postJobForm.reset();
+    await loadMyJobs();
+  } catch (err) {
+    formErrorEl.textContent = "Network error — please try again.";
+    formErrorEl.hidden = false;
+  }
+});
+
+async function initDashboard() {
+  const user = await fetchCurrentUser(); // from auth.js
+
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  if (user.role !== "recruiter" && user.role !== "admin") {
+    accessDeniedEl.hidden = false;
+    return;
+  }
+
+  dashboardContentEl.hidden = false;
+  await loadMyJobs();
+}
+
+document.addEventListener("DOMContentLoaded", initDashboard);

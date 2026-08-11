@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Fieldnote</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">Field<span>note</span></a>
+      <nav class="main-nav">
+        <a href="index.html#jobs">Jobs</a>
+        <span id="nav-auth-slot" class="nav-auth"></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 48px 24px 80px;">
+    <p class="eyebrow">Milestone 05 — Job Management</p>
+    <h2 style="font-family: var(--font-display); margin: 0 0 24px;">Recruiter dashboard</h2>
+
+    <p id="access-denied" class="empty-state" hidden>
+      This page is for recruiters. <a href="index.html">Back to job listings</a>
+    </p>
+
+    <div id="dashboard-content" hidden>
+      <!-- Post a new job -->
+      <section class="dashboard-section">
+        <h3>Post a new job</h3>
+        <form id="post-job-form" class="auth-form post-job-form" novalidate>
+          <label for="title">Title</label>
+          <input type="text" id="title" required />
+
+          <label for="company">Company</label>
+          <input type="text" id="company" required />
+
+          <label for="location">Location</label>
+          <input type="text" id="location" required />
+
+          <label for="job_type">Job type</label>
+          <select id="job_type">
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Internship">Internship</option>
+          </select>
+
+          <label for="skills">Skills (comma-separated)</label>
+          <input type="text" id="skills" placeholder="Python, SQL, Git" />
+
+          <label for="salary">Salary (optional)</label>
+          <input type="text" id="salary" placeholder="e.g. 6-9 LPA" />
+
+          <label for="description">Description</label>
+          <textarea id="description" rows="3"></textarea>
+
+          <p id="form-error" class="form-error" role="alert" hidden></p>
+
+          <button type="submit">Post job</button>
+        </form>
+      </section>
+
+      <!-- Your postings -->
+      <section class="dashboard-section">
+        <h3>Your postings</h3>
+        <p id="my-jobs-count" class="results-count"></p>
+        <div id="my-jobs-list" class="my-jobs-list"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>AI Job Portal — learning project.</p>
+    </div>
+  </footer>
+
+  <script src="auth.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

@@ -33,6 +33,14 @@ def list_jobs():
     return jsonify(jobs)
 
 
+@jobs_bp.route("/my-jobs", methods=["GET"])
+@role_required("recruiter", "admin")
+def my_jobs():
+    """A recruiter's own postings, open and closed — their dashboard list."""
+    jobs = job_model.get_jobs_by_recruiter(session["user_id"])
+    return jsonify(jobs)
+
+
 @jobs_bp.route("/jobs/<int:job_id>", methods=["GET"])
 def get_job(job_id):
     job = job_model.get_job_by_id(job_id)
@@ -92,3 +100,31 @@ def delete_job(job_id):
 
     job_model.delete_job(job_id)
     return jsonify({"message": "job deleted"})
+
+
+@jobs_bp.route("/jobs/<int:job_id>/close", methods=["POST"])
+@role_required("recruiter", "admin")
+def close_job(job_id):
+    existing = job_model.get_job_by_id(job_id)
+    if existing is None:
+        return jsonify({"error": "job not found"}), 404
+
+    denied = _check_ownership(existing)
+    if denied:
+        return denied
+
+    return jsonify(job_model.set_job_status(job_id, "closed"))
+
+
+@jobs_bp.route("/jobs/<int:job_id>/reopen", methods=["POST"])
+@role_required("recruiter", "admin")
+def reopen_job(job_id):
+    existing = job_model.get_job_by_id(job_id)
+    if existing is None:
+        return jsonify({"error": "job not found"}), 404
+
+    denied = _check_ownership(existing)
+    if denied:
+        return denied
+
+    return jsonify(job_model.set_job_status(job_id, "open"))

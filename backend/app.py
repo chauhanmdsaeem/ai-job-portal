@@ -21,6 +21,7 @@ from flask import Flask, send_from_directory
 import db
 from routes.auth import auth_bp
 from routes.jobs import jobs_bp
+from routes.applications import applications_bp
 
 BASE_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE_DIR.parent
@@ -41,6 +42,7 @@ db.init_app(app)
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(jobs_bp)
+app.register_blueprint(applications_bp)
 
 
 # ---------------------------------------------------------

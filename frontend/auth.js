@@ -30,6 +30,15 @@ function renderNavAuth(user) {
   slot.innerHTML = "";
 
   if (user) {
+    const roleLink = document.createElement("a");
+    if (user.role === "candidate") {
+      roleLink.href = "applications.html";
+      roleLink.textContent = "My applications";
+    } else {
+      roleLink.href = "dashboard.html";
+      roleLink.textContent = "Dashboard";
+    }
+
     const greeting = document.createElement("span");
     greeting.className = "nav-user";
     greeting.textContent = `${user.name} · ${user.role}`;
@@ -43,7 +52,7 @@ function renderNavAuth(user) {
       window.location.href = "index.html";
     });
 
-    slot.append(greeting, logoutBtn);
+    slot.append(roleLink, greeting, logoutBtn);
   } else {
     const loginLink = document.createElement("a");
     loginLink.href = "login.html";

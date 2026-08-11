@@ -1,0 +1,124 @@
+"""
+models/application.py
+---------------------------------------------------------
+All database access for the `applications` table — the
+join between a candidate and a job they've applied to.
+
+The UNIQUE(job_id, candidate_id) constraint in schema.sql
+is what actually stops someone applying twice; this file
+just needs to let that sqlite3.IntegrityError bubble up so
+the route can turn it into a friendly 409 response.
+"""
+from db import get_db
+
+VALID_STATUSES = (
+    "Applied",
+    "Under Review",
+    "Shortlisted",
+    "Interview",
+    "Rejected",
+    "Selected",
+)
+
+
+def _row_to_dict(row):
+    return {
+        "id": row["id"],
+        "job_id": row["job_id"],
+        "candidate_id": row["candidate_id"],
+        "resume": row["resume"],
+        "status": row["status"],
+        "applied_at": row["applied_at"],
+    }
+
+
+def create_application(job_id, candidate_id, resume=None):
+    db = get_db()
+    cursor = db.execute(
+        "INSERT INTO applications (job_id, candidate_id, resume) VALUES (?, ?, ?)",
+        (job_id, candidate_id, resume),
+    )
+    db.commit()
+    return get_application_by_id(cursor.lastrowid)
+
+
+def get_application_by_id(application_id):
+    db = get_db()
+    row = db.execute(
+        "SELECT * FROM applications WHERE id = ?", (application_id,)
+    ).fetchone()
+    return _row_to_dict(row) if row else None
+
+
+def has_applied(job_id, candidate_id):
+    db = get_db()
+    row = db.execute(
+        "SELECT id FROM applications WHERE job_id = ? AND candidate_id = ?",
+        (job_id, candidate_id),
+    ).fetchone()
+    return row is not None
+
+
+def get_applications_for_candidate(candidate_id):
+    """A candidate's own applications, joined with job details so the
+    frontend can show "Python Developer at XYZ — Under Review" without
+    a second round trip per row."""
+    db = get_db()
+    rows = db.execute(
+        """SELECT applications.*,
+                  jobs.title AS job_title,
+                  jobs.company AS job_company,
+                  jobs.location AS job_location,
+                  jobs.status AS job_status
+           FROM applications
+           JOIN jobs ON jobs.id = applications.job_id
+           WHERE applications.candidate_id = ?
+           ORDER BY applications.applied_at DESC""",
+        (candidate_id,),
+    ).fetchall()
+
+    return [
+        {
+            **_row_to_dict(row),
+            "job_title": row["job_title"],
+            "job_company": row["job_company"],
+            "job_location": row["job_location"],
+            "job_status": row["job_status"],
+        }
+        for row in rows
+    ]
+
+
+def get_applications_for_job(job_id):
+    """All applicants for one job, joined with the candidate's name/email
+    so a recruiter can see who applied without a separate user lookup."""
+    db = get_db()
+    rows = db.execute(
+        """SELECT applications.*,
+                  users.name AS candidate_name,
+                  users.email AS candidate_email
+           FROM applications
+           JOIN users ON users.id = applications.candidate_id
+           WHERE applications.job_id = ?
+           ORDER BY applications.applied_at ASC""",
+        (job_id,),
+    ).fetchall()
+
+    return [
+        {
+            **_row_to_dict(row),
+            "candidate_name": row["candidate_name"],
+            "candidate_email": row["candidate_email"],
+        }
+        for row in rows
+    ]
+
+
+def update_status(application_id, status):
+    db = get_db()
+    db.execute(
+        "UPDATE applications SET status = ? WHERE id = ?",
+        (status, application_id),
+    )
+    db.commit()
+    return get_application_by_id(application_id)

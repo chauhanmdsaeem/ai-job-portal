@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS jobs (
     skills      TEXT,                  -- comma-separated, e.g. "Python,SQL,Git"
     salary      TEXT,
     job_type    TEXT NOT NULL DEFAULT 'Full-time',
+    status      TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'closed')),
     created_by  INTEGER REFERENCES users(id) ON DELETE SET NULL,
     created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
