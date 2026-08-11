@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register — Fieldnote</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">Field<span>note</span></a>
+      <nav class="main-nav">
+        <a href="index.html#jobs">Jobs</a>
+        <span id="nav-auth-slot" class="nav-auth"></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container auth-page">
+    <div class="auth-card">
+      <p class="eyebrow">Milestone 04 — Authentication</p>
+      <h1 class="auth-title">Create an account</h1>
+      <p class="auth-sub">Candidates and recruiters both register here — pick your role below.</p>
+
+      <form id="register-form" class="auth-form" novalidate>
+        <label for="name">Full name</label>
+        <input type="text" id="name" name="name" required autocomplete="name" />
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required autocomplete="email" />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required minlength="8" autocomplete="new-password" />
+        <p class="field-hint">At least 8 characters.</p>
+
+        <label for="role">I am a…</label>
+        <select id="role" name="role">
+          <option value="candidate">Candidate — looking for a job</option>
+          <option value="recruiter">Recruiter — hiring for a company</option>
+        </select>
+
+        <p id="form-error" class="form-error" role="alert" hidden></p>
+
+        <button type="submit">Create account</button>
+      </form>
+
+      <p class="auth-switch">
+        Already have an account? <a href="login.html">Log in</a>
+      </p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>AI Job Portal — learning project.</p>
+    </div>
+  </footer>
+
+  <script src="auth.js"></script>
+  <script src="auth-forms.js"></script>
+</body>
+</html>
