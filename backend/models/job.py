@@ -24,6 +24,7 @@ def _row_to_dict(row):
         "skills": row["skills"].split(",") if row["skills"] else [],
         "salary": row["salary"],
         "job_type": row["job_type"],
+        "status": row.keys().count("status") > 0 and row["status"] or "open",  # Handle missing status gracefully just in case
         "created_by": row["created_by"],
         "created_at": row["created_at"],
     }
@@ -58,6 +59,15 @@ def get_all_jobs(location=None, job_type=None, q=None):
     return [_row_to_dict(row) for row in rows]
 
 
+def get_jobs_by_recruiter(recruiter_id):
+    db = get_db()
+    rows = db.execute(
+        "SELECT * FROM jobs WHERE created_by = ? ORDER BY created_at DESC", 
+        (recruiter_id,)
+    ).fetchall()
+    return [_row_to_dict(row) for row in rows]
+
+
 def get_job_by_id(job_id):
     db = get_db()
     row = db.execute("SELECT * FROM jobs WHERE id = ?", (job_id,)).fetchone()
@@ -68,8 +78,8 @@ def create_job(data, created_by):
     db = get_db()
     skills = ",".join(data.get("skills", []))
     cursor = db.execute(
-        """INSERT INTO jobs (title, company, location, description, skills, salary, job_type, created_by)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+        """INSERT INTO jobs (title, company, location, description, skills, salary, job_type, status, created_by)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         (
             data["title"],
             data["company"],
@@ -78,6 +88,7 @@ def create_job(data, created_by):
             skills,
             data.get("salary", ""),
             data.get("job_type", "Full-time"),
+            data.get("status", "open"),
             created_by,
         ),
     )
@@ -98,7 +109,7 @@ def update_job(job_id, data):
     db.execute(
         """UPDATE jobs
            SET title = ?, company = ?, location = ?, description = ?,
-               skills = ?, salary = ?, job_type = ?
+               skills = ?, salary = ?, job_type = ?, status = ?
            WHERE id = ?""",
         (
             data.get("title", existing["title"]),
@@ -108,6 +119,7 @@ def update_job(job_id, data):
             skills_str,
             data.get("salary", existing["salary"]),
             data.get("job_type", existing["job_type"]),
+            data.get("status", existing["status"]),
             job_id,
         ),
     )
@@ -120,3 +132,10 @@ def delete_job(job_id):
     cursor = db.execute("DELETE FROM jobs WHERE id = ?", (job_id,))
     db.commit()
     return cursor.rowcount > 0
+
+
+def set_job_status(job_id, status):
+    db = get_db()
+    db.execute("UPDATE jobs SET status = ? WHERE id = ?", (status, job_id))
+    db.commit()
+    return get_job_by_id(job_id)

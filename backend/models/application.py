@@ -9,6 +9,7 @@ is what actually stops someone applying twice; this file
 just needs to let that sqlite3.IntegrityError bubble up so
 the route can turn it into a friendly 409 response.
 """
+import json
 from db import get_db
 
 VALID_STATUSES = (
@@ -29,6 +30,7 @@ def _row_to_dict(row):
         "resume": row["resume"],
         "status": row["status"],
         "applied_at": row["applied_at"],
+        "ai_analysis": json.loads(row["ai_analysis"]) if "ai_analysis" in row.keys() and row["ai_analysis"] else None,
     }
 
 
@@ -119,6 +121,15 @@ def update_status(application_id, status):
     db.execute(
         "UPDATE applications SET status = ? WHERE id = ?",
         (status, application_id),
+    )
+    db.commit()
+    return get_application_by_id(application_id)
+
+def save_ai_analysis(application_id, analysis_json_str):
+    db = get_db()
+    db.execute(
+        "UPDATE applications SET ai_analysis = ? WHERE id = ?",
+        (analysis_json_str, application_id),
     )
     db.commit()
     return get_application_by_id(application_id)

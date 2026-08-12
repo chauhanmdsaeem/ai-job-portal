@@ -263,8 +263,8 @@ applied_at (TEXT, timestamp)
 | 3 | Python Backend | ✅ Complete | 100% |
 | 4 | Database | ✅ Complete | 100% |
 | 5 | Authentication | ✅ Complete | 100% |
-| 6 | Candidate Features | 🔶 In Progress | ~40% |
-| 7 | Recruiter Features | 🔶 In Progress | ~60% |
+| 6 | Candidate Features | ✅ Complete | 100% |
+| 7 | Recruiter Features | ✅ Complete | 100% |
 | 8 | AI Resume Analysis | ⏸️ Planned | 0% |
 | 9 | AI Job Matching | ⏸️ Planned | 0% |
 | 10 | Testing & Security | ⏸️ Planned | 0% |

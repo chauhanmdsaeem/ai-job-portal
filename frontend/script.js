@@ -94,38 +94,96 @@ function createApplyControl(job) {
   button.className = "apply-link apply-button";
   button.textContent = "Apply →";
 
-  button.addEventListener("click", async () => {
-    button.disabled = true;
-    button.textContent = "Applying…";
+  button.addEventListener("click", () => {
+    openApplyModal(job, button);
+  });
+
+  return button;
+}
+
+// Modal handling logic
+const applyModal = document.getElementById("apply-modal");
+const closeModalBtn = document.getElementById("close-modal");
+const modalJobTitle = document.getElementById("modal-job-title");
+const modalJobCompany = document.getElementById("modal-job-company");
+const applyForm = document.getElementById("apply-form");
+const applyError = document.getElementById("apply-error");
+const submitAppBtn = document.getElementById("submit-application-btn");
+
+let currentApplyingJob = null;
+let currentApplyingButton = null;
+
+function openApplyModal(job, buttonEl) {
+  if (!applyModal) return; // safety check
+  
+  currentApplyingJob = job;
+  currentApplyingButton = buttonEl;
+  
+  modalJobTitle.textContent = job.title;
+  modalJobCompany.textContent = job.company;
+  
+  applyForm.reset();
+  applyError.hidden = true;
+  submitAppBtn.disabled = false;
+  submitAppBtn.textContent = "Submit Application";
+  
+  applyModal.showModal();
+}
+
+if (applyModal) {
+  closeModalBtn.addEventListener("click", () => {
+    applyModal.close();
+  });
+
+  applyModal.addEventListener("click", (e) => {
+    if (e.target === applyModal) applyModal.close(); // click outside to close
+  });
+
+  applyForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    
+    if (!currentApplyingJob) return;
+    
+    const resumeVal = document.getElementById("resume-input").value.trim();
+    
+    submitAppBtn.disabled = true;
+    submitAppBtn.textContent = "Submitting…";
+    applyError.hidden = true;
 
     try {
-      const response = await fetch(`/api/jobs/${job.id}/apply`, {
+      const response = await fetch(`/api/jobs/${currentApplyingJob.id}/apply`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ resume: resumeVal }),
       });
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        button.disabled = false;
-        button.textContent = "Apply →";
-        alert(data.error || "Could not submit your application.");
+        submitAppBtn.disabled = false;
+        submitAppBtn.textContent = "Submit Application";
+        applyError.textContent = data.error || "Could not submit your application.";
+        applyError.hidden = false;
         return;
       }
 
-      appliedJobIds.add(job.id);
+      appliedJobIds.add(currentApplyingJob.id);
+      
       const applied = document.createElement("span");
       applied.className = "apply-applied";
       applied.textContent = "Applied ✓";
-      button.replaceWith(applied);
+      
+      if (currentApplyingButton && currentApplyingButton.parentNode) {
+        currentApplyingButton.replaceWith(applied);
+      }
+      
+      applyModal.close();
     } catch (err) {
-      button.disabled = false;
-      button.textContent = "Apply →";
-      alert("Network error — please try again.");
+      submitAppBtn.disabled = false;
+      submitAppBtn.textContent = "Submit Application";
+      applyError.textContent = "Network error — please try again.";
+      applyError.hidden = false;
     }
   });
-
-  return button;
 }
 
 /**

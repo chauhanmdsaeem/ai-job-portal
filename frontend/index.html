@@ -69,6 +69,31 @@
     </div>
   </footer>
 
+  <!-- ===== Application Modal ===== -->
+  <dialog id="apply-modal" class="modal">
+    <div class="modal-content">
+      <button id="close-modal" class="modal-close" aria-label="Close modal">&times;</button>
+      <h2 id="modal-job-title" class="modal-title">Apply to Role</h2>
+      <p id="modal-job-company" class="modal-subtitle">Company Name</p>
+      
+      <form id="apply-form" class="auth-form" style="margin-top: 20px;">
+        <label for="resume-input">Resume / Cover Letter</label>
+        <textarea 
+          id="resume-input" 
+          name="resume" 
+          rows="5" 
+          placeholder="Paste your resume text or a link to your portfolio/resume here..." 
+          required
+        ></textarea>
+        <p class="field-hint">For this milestone, please use text or a URL instead of a file upload.</p>
+        
+        <p id="apply-error" class="form-error" hidden></p>
+        
+        <button type="submit" id="submit-application-btn">Submit Application</button>
+      </form>
+    </div>
+  </dialog>
+
   <script src="auth.js"></script>
   <script src="script.js"></script>
 </body>

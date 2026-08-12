@@ -38,75 +38,232 @@ function createApplicantsPanel(job) {
   panel.className = "applicants-panel";
   panel.hidden = true;
 
+  let allApplicants = [];
+  let currentFilter = "All";
+  let currentSort = "desc";
+
+  const renderApplicants = () => {
+    panel.innerHTML = "";
+
+    // Toolbar
+    const toolbar = document.createElement("div");
+    toolbar.className = "applicants-toolbar";
+    
+    const filterSelect = document.createElement("select");
+    const allOpt = document.createElement("option");
+    allOpt.value = "All";
+    allOpt.textContent = "All Statuses";
+    filterSelect.appendChild(allOpt);
+    APPLICATION_STATUSES.forEach(status => {
+      const opt = document.createElement("option");
+      opt.value = status;
+      opt.textContent = status;
+      filterSelect.appendChild(opt);
+    });
+    filterSelect.value = currentFilter;
+    filterSelect.addEventListener("change", (e) => {
+      currentFilter = e.target.value;
+      renderApplicants();
+    });
+
+    const sortSelect = document.createElement("select");
+    const descOpt = document.createElement("option");
+    descOpt.value = "desc";
+    descOpt.textContent = "Newest First";
+    const ascOpt = document.createElement("option");
+    ascOpt.value = "asc";
+    ascOpt.textContent = "Oldest First";
+    sortSelect.append(descOpt, ascOpt);
+    sortSelect.value = currentSort;
+    sortSelect.addEventListener("change", (e) => {
+      currentSort = e.target.value;
+      renderApplicants();
+    });
+
+    toolbar.append(filterSelect, sortSelect);
+    panel.appendChild(toolbar);
+
+    let filtered = allApplicants;
+    if (currentFilter !== "All") {
+      filtered = filtered.filter(a => a.status === currentFilter);
+    }
+
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.applied_at);
+      const dateB = new Date(b.applied_at);
+      return currentSort === "desc" ? dateB - dateA : dateA - dateB;
+    });
+
+    if (filtered.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "applicants-empty";
+      empty.textContent = "No applicants match the current filters.";
+      panel.appendChild(empty);
+      return;
+    }
+
+    filtered.forEach((app) => {
+      const container = document.createElement("div");
+      container.className = "applicant-row-container";
+
+      const row = document.createElement("div");
+      row.className = "applicant-row";
+
+      const info = document.createElement("div");
+      info.className = "applicant-info";
+
+      const name = document.createElement("p");
+      name.className = "applicant-name";
+      name.textContent = app.candidate_name;
+
+      const email = document.createElement("p");
+      email.className = "applicant-email";
+      email.textContent = app.candidate_email;
+
+      const dateStr = new Date(app.applied_at).toLocaleDateString();
+      const applied = document.createElement("p");
+      applied.className = "applicant-date";
+      applied.textContent = `Applied ${dateStr}`;
+
+      const toggleResumeBtn = document.createElement("button");
+      toggleResumeBtn.className = "toggle-resume-btn";
+      toggleResumeBtn.textContent = "View Resume";
+
+      const analyzeBtn = document.createElement("button");
+      analyzeBtn.className = "analyze-btn";
+      analyzeBtn.textContent = "✨ Analyze with AI";
+      analyzeBtn.type = "button";
+
+      info.append(name, email, applied, toggleResumeBtn, analyzeBtn);
+
+      const select = document.createElement("select");
+      select.className = "status-select " + statusClass(app.status);
+      APPLICATION_STATUSES.forEach((status) => {
+        const option = document.createElement("option");
+        option.value = status;
+        option.textContent = status;
+        if (status === app.status) option.selected = true;
+        select.appendChild(option);
+      });
+
+      select.addEventListener("change", async () => {
+        const newStatus = select.value;
+        select.disabled = true;
+        try {
+          const res = await fetch(`/api/applications/${app.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: newStatus }),
+          });
+          if (!res.ok) throw new Error("update failed");
+          select.className = "status-select " + statusClass(newStatus);
+          app.status = newStatus; // update local model
+        } catch (err) {
+          alert("Could not update status — please try again.");
+          select.value = app.status; // revert
+        } finally {
+          select.disabled = false;
+        }
+      });
+
+      row.append(info, select);
+      container.appendChild(row);
+
+      const resumeBox = document.createElement("div");
+      resumeBox.className = "resume-box";
+      resumeBox.hidden = true;
+      
+      const resumeContent = app.resume ? app.resume.trim() : "No resume provided.";
+      
+      if (resumeContent.startsWith("http://") || resumeContent.startsWith("https://")) {
+        const link = document.createElement("a");
+        link.href = resumeContent;
+        link.target = "_blank";
+        link.textContent = resumeContent;
+        resumeBox.appendChild(link);
+      } else {
+        resumeBox.textContent = resumeContent;
+      }
+
+      toggleResumeBtn.addEventListener("click", () => {
+        resumeBox.hidden = !resumeBox.hidden;
+        toggleResumeBtn.textContent = resumeBox.hidden ? "View Resume" : "Hide Resume";
+      });
+
+      container.appendChild(resumeBox);
+
+      const aiInsightsBox = document.createElement("div");
+      aiInsightsBox.className = "ai-insights";
+      aiInsightsBox.hidden = true;
+
+      const renderAiInsights = (analysis) => {
+        aiInsightsBox.hidden = false;
+        aiInsightsBox.innerHTML = `
+          <div class="ai-insights-header">
+            <span class="ai-insights-title">AI Compatibility Analysis</span>
+            <span class="ai-score ${analysis.score >= 80 ? 'score-high' : analysis.score >= 50 ? 'score-med' : 'score-low'}">
+              ${analysis.score}%
+            </span>
+          </div>
+          <div class="ai-insights-body">${analysis.summary}</div>
+          <div class="ai-skills">
+            <strong>Skills Matched:</strong>
+            <div class="skill-list">
+              ${analysis.matched_skills.map(s => `<span class="skill-tag matched">${s}</span>`).join('')}
+              ${analysis.matched_skills.length === 0 ? '<span class="skill-tag">None</span>' : ''}
+            </div>
+            <strong>Skills Missing:</strong>
+            <div class="skill-list">
+              ${analysis.missing_skills.map(s => `<span class="skill-tag missing">${s}</span>`).join('')}
+              ${analysis.missing_skills.length === 0 ? '<span class="skill-tag">None</span>' : ''}
+            </div>
+          </div>
+        `;
+        analyzeBtn.textContent = "✨ AI Analysis Complete";
+        analyzeBtn.disabled = true;
+      };
+
+      if (app.ai_analysis) {
+        renderAiInsights(app.ai_analysis);
+      }
+
+      analyzeBtn.addEventListener("click", async () => {
+        analyzeBtn.disabled = true;
+        analyzeBtn.textContent = "Analyzing...";
+        try {
+          const res = await fetch(`/api/applications/${app.id}/analyze`, { method: "POST" });
+          if (!res.ok) throw new Error("failed");
+          const updatedApp = await res.json();
+          app.ai_analysis = updatedApp.ai_analysis;
+          renderAiInsights(app.ai_analysis);
+        } catch (err) {
+          alert("AI Analysis failed.");
+          analyzeBtn.disabled = false;
+          analyzeBtn.textContent = "✨ Analyze with AI";
+        }
+      });
+
+      container.appendChild(aiInsightsBox);
+      panel.appendChild(container);
+    });
+  };
+
   const loadAndRender = async () => {
     panel.textContent = "Loading…";
     try {
       const res = await fetch(`/api/jobs/${job.id}/applicants`);
       if (!res.ok) throw new Error(`API responded with ${res.status}`);
-      const applicants = await res.json();
-
-      panel.textContent = "";
-
-      if (applicants.length === 0) {
+      allApplicants = await res.json();
+      
+      if (allApplicants.length === 0) {
+        panel.textContent = "";
         const empty = document.createElement("p");
         empty.className = "applicants-empty";
         empty.textContent = "No applicants yet.";
         panel.appendChild(empty);
-        return;
+      } else {
+        renderApplicants();
       }
-
-      applicants.forEach((app) => {
-        const row = document.createElement("div");
-        row.className = "applicant-row";
-
-        const info = document.createElement("div");
-        info.className = "applicant-info";
-
-        const name = document.createElement("p");
-        name.className = "applicant-name";
-        name.textContent = app.candidate_name;
-
-        const email = document.createElement("p");
-        email.className = "applicant-email";
-        email.textContent = app.candidate_email;
-
-        const applied = document.createElement("p");
-        applied.className = "applicant-date";
-        applied.textContent = `Applied ${app.applied_at}`;
-
-        info.append(name, email, applied);
-
-        const select = document.createElement("select");
-        select.className = "status-select " + statusClass(app.status);
-        APPLICATION_STATUSES.forEach((status) => {
-          const option = document.createElement("option");
-          option.value = status;
-          option.textContent = status;
-          if (status === app.status) option.selected = true;
-          select.appendChild(option);
-        });
-
-        select.addEventListener("change", async () => {
-          const newStatus = select.value;
-          select.disabled = true;
-          try {
-            const res = await fetch(`/api/applications/${app.id}`, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ status: newStatus }),
-            });
-            if (!res.ok) throw new Error("update failed");
-            select.className = "status-select " + statusClass(newStatus);
-          } catch (err) {
-            alert("Could not update status — please try again.");
-          } finally {
-            select.disabled = false;
-          }
-        });
-
-        row.append(info, select);
-        panel.appendChild(row);
-      });
     } catch (err) {
       panel.textContent = "Could not load applicants right now.";
     }
