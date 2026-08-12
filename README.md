@@ -1,1002 +1,536 @@
 # 🤖 AI Job Portal
 
-A full-stack AI-powered job portal designed to connect candidates with relevant job opportunities and help recruiters manage applications.
+A full-stack job portal connecting candidates with opportunities and helping recruiters manage applications.
 
-This project is being developed as a practical learning project to strengthen my skills in **Python, web development, software development, databases, APIs, and AI-assisted application development**.
+**Current Status:** ✅ **Fully Functional** (5/11 Phases Complete)  
+**Latest Features:** User authentication, job database, job search/filtering, recruiter job management
 
-The project will be developed incrementally. Each feature will be implemented, tested, understood, and documented before moving to the next stage.
+This is a **practical learning project** demonstrating full-stack development: frontend (HTML/CSS/JS), backend (Python/Flask), database (SQLite), and authentication.
 
----
-
-## 📌 Project Status
-
-**Current Status:** 🚧 In Development
-
-### Current milestone
-
-**Milestone 1 — Job Listing UI**
-
-Currently developing the initial job portal interface using:
-
-- HTML
-- CSS
-- JavaScript
-
-The current version contains:
-
-- Job portal landing page
-- Available jobs section
-- Job cards
-- Job title
-- Company
-- Location
-- Apply links
-- Basic CSS styling
-
-Backend, database, authentication, AI features, and recruiter functionality will be added progressively.
+**For detailed progress:** See [PROJECT_STATUS_REPORT.md](PROJECT_STATUS_REPORT.md)
 
 ---
 
-# 🎯 Project Goal
+## 📌 Current Status
 
-The goal of this project is to build a practical job portal that provides two main experiences:
+**Overall Progress:** 5 out of 11 Phases Complete (45%)
 
-### 👨‍💻 Candidate
+### ✅ Completed Milestones
 
-Candidates should be able to:
-
-- Create an account
-- Create and manage their profile
-- Search for jobs
-- Filter jobs
-- View job details
-- Apply for jobs
-- Track applications
-- Upload resumes
-- Receive job recommendations
-- Understand why a job is recommended
-- Track their application status
-
-### 🏢 Recruiter
-
-Recruiters should be able to:
-
-- Create a recruiter account
-- Create company information
-- Post jobs
-- Edit jobs
-- Close job postings
-- View applicants
-- Review candidate profiles
-- Review resumes
-- Manage application status
-- Search and filter candidates
-
-### 🤖 AI Features
-
-AI functionality will be introduced after the core job portal is working.
-
-Planned AI capabilities include:
-
-- Resume analysis
-- Resume-to-job matching
-- Candidate-job compatibility scoring
-- Skill extraction
-- Skill gap identification
-- Job recommendations
-- Candidate ranking
-- Basic AI-assisted career suggestions
-
-AI features will be added only after the underlying application architecture is understood and functional.
+| Phase | Status | Description |
+|-------|--------|-------------|
+| **1** | ✅ Complete | Frontend UI (HTML/CSS/JavaScript) |
+| **2** | ✅ Complete | Python Flask Backend |
+| **3** | ✅ Complete | SQLite Database |
+| **4** | ✅ Complete | User Authentication & Authorization |
+| **5** | ✅ Complete | Job Management (CRUD) |
+| **6** | 🚧 In Progress | Candidate Features (Applications, Profile, Tracking) |
+| **7** | ⏳ Planned | Recruiter Features (Application Management) |
+| **8** | ⏳ Planned | AI Resume Analysis |
+| **9** | ⏳ Planned | AI Job Matching & Recommendations |
+| **10** | ⏳ Planned | Testing & Security |
+| **11** | ⏳ Planned | Deployment |
 
 ---
 
-# 🧠 Learning Objective
+## 🚀 Quick Start
 
-This project is not intended to be created entirely through AI-generated code.
+### Prerequisites
+- Python 3.8+
+- pip (Python package manager)
+- Modern web browser
 
-The main objective is to understand how a real web application is structured and how its individual components communicate.
+### Installation & Setup
 
-During development, AI tools may be used as a coding assistant for:
+**1. Clone the repository**
+```bash
+git clone <repo-url>
+cd ai-job-portal
+```
 
-- Explaining code
-- Debugging
-- Suggesting solutions
-- Explaining errors
-- Generating small code examples
-- Reviewing implementation
+**2. Create a Python virtual environment**
+```bash
+python -m venv venv
 
-Every AI-assisted implementation should be reviewed and understood before being added to the project.
+# On Windows:
+venv\Scripts\activate
 
-The objective is:
+# On macOS/Linux:
+source venv/bin/activate
+```
 
-> **Understand → Implement → Test → Debug → Improve → Commit**
+**3. Install dependencies**
+```bash
+pip install flask werkzeug
+```
 
-rather than:
+**4. Initialize the database**
+```bash
+python database/seed.py
+```
 
-> **Generate → Copy → Run**
+This creates `database/job_portal.db` and seeds it with sample jobs and test accounts.
 
----
+**5. Start the Flask server**
+```bash
+python backend/app.py
+```
 
-# 🛠️ Planned Technology Stack
+The server will run at: `http://127.0.0.1:5000/`
 
-The project will be developed in stages so that each technology can be understood before introducing the next one.
+### Test Accounts
 
-## Phase 1 — Frontend Fundamentals
+After seeding, use these accounts to explore:
 
-- HTML
-- CSS
-- JavaScript
+**Candidate Account:**
+- Email: `candidate@example.com`
+- Password: `password123`
 
-Purpose:
-
-Build the basic user interface and understand:
-
-- HTML structure
-- CSS selectors
-- Classes
-- Layout
-- Forms
-- Buttons
-- JavaScript events
-- DOM manipulation
-
----
-
-## Phase 2 — Python Backend
-
-Planned backend:
-
-- Python
-- Flask
-
-Purpose:
-
-Learn:
-
-- HTTP requests
-- Routes
-- Backend logic
-- Forms
-- Request/response cycle
-- Server-side processing
+**Recruiter Account:**
+- Email: `recruiter@example.com`
+- Password: `password123`
 
 ---
 
-## Phase 3 — Database
+## 💻 What Works Now
 
-Initial database:
+### For Candidates
+- ✅ Create account (registration)
+- ✅ Log in securely
+- ✅ Browse all available jobs
+- ✅ **Search jobs** by title, company, or skills
+- ✅ **Filter jobs** by location and job type
+- ✅ View detailed job information
+- ✅ Access candidate dashboard
 
-- SQLite
+### For Recruiters
+- ✅ Create recruiter account
+- ✅ Log in securely
+- ✅ **Create job postings** with full details
+- ✅ **Edit own jobs**
+- ✅ **Delete/close jobs**
+- ✅ View recruiter dashboard
+- ✅ See all posted jobs
 
-Later database:
-
-- PostgreSQL
-
-Purpose:
-
-Learn:
-
-- Tables
-- Records
-- Relationships
-- CRUD operations
-- SQL queries
-- Connecting a Python application to a database
+### System-Wide
+- ✅ Secure password hashing
+- ✅ Session-based authentication
+- ✅ Role-based access control (candidate/recruiter/admin)
+- ✅ SQLite database with persistent data
+- ✅ RESTful JSON API
+- ✅ Responsive design (mobile-friendly)
 
 ---
 
-## Phase 4 — Authentication
+## 🏗️ Architecture
 
-Planned functionality:
-
-- Candidate registration
-- Recruiter registration
-- Login
-- Logout
-- Password protection
-- User sessions
-- Role-based access
-
-Roles:
-
-```text
-Candidate
-Recruiter
-Admin
+```
+Browser (Frontend)
+    ↓ HTTP/JSON
+    ↓
+Flask Backend (Python)
+    ├── Routes (auth, jobs, applications)
+    ├── Models (user, job, application)
+    └── Utils (authentication, validation)
+    ↓ SQL
+    ↓
+SQLite Database
+    ├── users (candidates, recruiters, admins)
+    ├── jobs (postings with owner info)
+    └── applications (candidate applications)
 ```
 
 ---
 
-## Phase 5 — Job Management
+## 📁 Project Structure
 
-Recruiters will be able to:
-
-```text
-Create Job
-     ↓
-Publish Job
-     ↓
-Receive Applications
-     ↓
-Review Candidates
-     ↓
-Update Application Status
 ```
-
-Candidates will be able to:
-
-```text
-Search Jobs
-     ↓
-View Job
-     ↓
-Apply
-     ↓
-Track Application
-```
-
----
-
-# 🤖 Phase 6 — AI Features
-
-AI features will be introduced after the core application is stable.
-
-## Resume Processing
-
-The system will process a candidate's resume and attempt to identify:
-
-- Name
-- Education
-- Skills
-- Experience
-- Projects
-- Certifications
-
----
-
-## Job Matching
-
-The system will compare:
-
-```text
-Candidate Profile
-        +
-Resume
-        +
-Job Description
-        ↓
-Matching System
-        ↓
-Compatibility Score
-```
-
-Example:
-
-```text
-Python Developer
-
-Python          ✓
-HTML            ✓
-CSS             ✓
-JavaScript      ✓
-SQL             ✓
-React           Partial
-
-Match Score: 82%
-```
-
-The score will be used as an indication of compatibility, not as an absolute hiring decision.
-
----
-
-## Skill Gap Analysis
-
-Example:
-
-```text
-Candidate Skills
-----------------
-Python
-HTML
-CSS
-JavaScript
-
-Job Requirements
-----------------
-Python
-HTML
-CSS
-JavaScript
-React
-SQL
-Git
-
-Skill Gaps
-----------
-React
-SQL
-Git
-```
-
-The system can then provide learning suggestions.
-
----
-
-# 📁 Planned Project Structure
-
-The project will initially start simple and expand as new functionality is introduced.
-
-```text
 ai-job-portal/
+├── README.md                     # This file
+├── PROJECT_STATUS_REPORT.md      # Detailed progress report
 │
-├── README.md
+├── frontend/                     # User Interface
+│   ├── index.html               # Landing page & job listings
+│   ├── login.html               # Login form
+│   ├── register.html            # Registration form
+│   ├── dashboard.html           # Candidate/recruiter dashboard
+│   ├── applications.html        # Application tracking
+│   ├── style.css                # Styling & responsive layout
+│   ├── script.js                # Main functionality
+│   ├── auth.js                  # Authentication logic
+│   ├── auth-forms.js            # Form handlers
+│   └── dashboard.js             # Dashboard functionality
 │
-├── frontend/
-│   │
-│   ├── index.html
-│   ├── style.css
-│   └── script.js
-│
-├── backend/
-│   │
-│   ├── app.py
+├── backend/                      # Server & API
+│   ├── app.py                   # Flask application
+│   ├── db.py                    # Database wrapper
 │   │
 │   ├── routes/
-│   │   ├── auth.py
-│   │   ├── jobs.py
-│   │   ├── applications.py
-│   │   └── users.py
+│   │   ├── auth.py              # Auth endpoints
+│   │   ├── jobs.py              # Job endpoints
+│   │   └── applications.py      # Application endpoints
 │   │
 │   ├── models/
-│   │   ├── user.py
-│   │   ├── job.py
-│   │   └── application.py
-│   │
-│   ├── services/
-│   │   ├── resume_parser.py
-│   │   ├── job_matcher.py
-│   │   └── skill_analyzer.py
+│   │   ├── user.py              # User management
+│   │   ├── job.py               # Job management
+│   │   └── application.py       # Application management
 │   │
 │   └── utils/
-│       └── helpers.py
+│       └── auth_utils.py        # Authentication decorators
 │
-├── database/
-│   ├── schema.sql
-│   └── seed.sql
+├── database/                     # Data Layer
+│   ├── schema.sql               # Table definitions
+│   ├── seed.py                  # Sample data & initialization
+│   └── job_portal.db            # SQLite database (created by seed.py)
 │
-├── data/
-│   ├── jobs.json
-│   └── sample_resumes/
-│
-├── tests/
-│   ├── test_auth.py
-│   ├── test_jobs.py
-│   └── test_matching.py
-│
-├── docs/
-│   ├── architecture.md
-│   ├── api.md
-│   └── database.md
-│
-└── .gitignore
-```
-
-> The folder structure will evolve during development. Files should only be created when their functionality is actually introduced.
-
----
-
-# 🖥️ Frontend Structure
-
-The first version is intentionally simple.
-
-```text
-frontend/
-│
-├── index.html
-├── style.css
-└── script.js
-```
-
-### index.html
-
-Responsible for:
-
-- Page structure
-- Navigation
-- Search area
-- Job listings
-- Job cards
-- Buttons and links
-
-### style.css
-
-Responsible for:
-
-- Colors
-- Typography
-- Spacing
-- Layout
-- Cards
-- Buttons
-- Responsive design
-
-### script.js
-
-Initially responsible for:
-
-- Search
-- Job filtering
-- Button interactions
-- DOM manipulation
-
-Later it will communicate with the Python backend through APIs.
-
----
-
-# 💾 Database Design
-
-The initial database will be kept simple.
-
-## Users
-
-```text
-users
------------------------
-id
-name
-email
-password
-role
-created_at
-```
-
-Possible roles:
-
-```text
-candidate
-recruiter
-admin
+└── data/
+    └── Jobs.json                # Reference job data
 ```
 
 ---
 
-## Jobs
+## 🔌 API Endpoints
 
-```text
-jobs
------------------------
-id
-title
-company
-location
-description
-skills
-salary
-job_type
-created_by
-created_at
+### Authentication
+```
+POST   /api/register     Create account
+POST   /api/login        Log in
+POST   /api/logout       Log out
+GET    /api/me           Get current user info
+```
+
+### Jobs
+```
+GET    /api/jobs                    List all jobs (with optional filters)
+GET    /api/jobs?location=&job_type=&q=   Search/filter jobs
+GET    /api/jobs/<id>               Get job details
+POST   /api/jobs                    Create job (recruiter/admin only)
+PUT    /api/jobs/<id>               Update job (owner/admin only)
+DELETE /api/jobs/<id>               Delete job (owner/admin only)
+GET    /api/my-jobs                 Get recruiter's own jobs
+```
+
+### Applications (Coming Soon)
+```
+POST   /api/jobs/<id>/apply         Apply for a job
+GET    /api/applications            List user's applications
+GET    /api/applications/<id>       Get application details
+PUT    /api/applications/<id>       Update application status
 ```
 
 ---
 
-## Applications
+## 🎯 Current User Flows
 
-```text
-applications
------------------------
-id
-job_id
-candidate_id
-resume
-status
-applied_at
+### Candidate: Search & View Jobs
+```
+Register as Candidate
+    ↓
+Log In
+    ↓
+View All Jobs
+    ↓
+Search/Filter by Title, Location, Skills, Type
+    ↓
+View Job Details
+    ↓
+(Soon) Apply for Job
 ```
 
-Possible application statuses:
-
-```text
-Applied
-Under Review
-Shortlisted
-Interview
-Rejected
-Selected
+### Recruiter: Post & Manage Jobs
 ```
-
----
-
-# 🔄 Application Flow
-
-## Candidate
-
-```text
-Register
-   ↓
-Login
-   ↓
-Create Profile
-   ↓
-Search Jobs
-   ↓
-View Job
-   ↓
-Apply
-   ↓
-Track Application
-```
-
-## Recruiter
-
-```text
-Register
-   ↓
-Login
-   ↓
-Create Company Profile
-   ↓
-Post Job
-   ↓
-Receive Applications
-   ↓
-Review Candidates
-   ↓
-Update Status
+Register as Recruiter
+    ↓
+Log In
+    ↓
+Create Job Posting
+    ↓
+Recruiter Dashboard: View All Posted Jobs
+    ↓
+Edit Job Details
+    ↓
+Close/Delete Job
+    ↓
+(Soon) Review Applications
 ```
 
 ---
 
-# 🔌 Planned API Structure
-
-After the Flask backend is introduced, the application will use API endpoints.
-
-## Authentication
-
-```text
-POST /api/register
-POST /api/login
-POST /api/logout
-```
-
-## Jobs
-
-```text
-GET    /api/jobs
-GET    /api/jobs/<id>
-POST   /api/jobs
-PUT    /api/jobs/<id>
-DELETE /api/jobs/<id>
-```
-
-## Applications
-
-```text
-POST /api/jobs/<id>/apply
-GET  /api/applications
-GET  /api/applications/<id>
-PUT  /api/applications/<id>
-```
-
-## Candidate
-
-```text
-GET  /api/profile
-PUT  /api/profile
-```
-
-These endpoints are planned and will be implemented gradually.
-
----
-
-# 🔐 Security Considerations
-
-As the project develops, basic security practices will be introduced.
-
-Planned areas include:
-
-- Password hashing
-- Input validation
-- Authentication
-- Authorization
-- Session management
-- Secure file handling
-- Environment variables
-- API validation
-- Protection against common web vulnerabilities
-
-Sensitive configuration should never be committed to GitHub.
-
-Example:
-
-```text
-.env
-```
-
-should be included in:
-
-```text
-.gitignore
-```
-
----
-
-# 🧪 Testing Strategy
-
-Testing will be introduced gradually.
+## 🎓 Learning Outcomes Achieved
 
 ### Frontend
-
-Test:
-
-- Navigation
-- Search
-- Filtering
-- Buttons
-- Forms
-- Responsive layout
+- ✅ HTML semantic structure
+- ✅ CSS layout (grid, flexbox, responsive design)
+- ✅ JavaScript DOM manipulation
+- ✅ Event handling and form handling
+- ✅ API communication from frontend
+- ✅ Session/cookie management
 
 ### Backend
+- ✅ Flask framework and blueprints
+- ✅ RESTful API design
+- ✅ HTTP methods and status codes
+- ✅ Request/response handling
+- ✅ Modular route organization
 
-Test:
+### Database
+- ✅ Relational database design
+- ✅ SQL table creation
+- ✅ Foreign key relationships
+- ✅ CRUD operations
+- ✅ Database integration with Python/Flask
 
-- Registration
-- Login
-- Job creation
-- Job retrieval
-- Applications
-- Authentication
-- Authorization
-
-### AI
-
-Test:
-
-- Resume extraction
-- Skill extraction
-- Matching results
-- Score calculation
-- Edge cases
-
----
-
-# 📊 Sample Job Data
-
-The first version can use static data while the backend is not yet available.
-
-Example:
-
-```text
-Job 1
------------------------
-Title: Python Developer
-Company: XYZ Technologies
-Location: Bengaluru
-Skills: Python, SQL, Git
-Type: Full-time
-
-
-Job 2
------------------------
-Title: Software Developer
-Company: ABC Technologies
-Location: Hyderabad
-Skills: Java, SQL, Git
-Type: Full-time
-
-
-Job 3
------------------------
-Title: Frontend Developer
-Company: DEF Solutions
-Location: Chennai
-Skills: HTML, CSS, JavaScript
-Type: Full-time
-
-
-Job 4
------------------------
-Title: Java Developer
-Company: GHI Technologies
-Location: Mumbai
-Skills: Java, SQL, OOP
-Type: Full-time
-```
+### Authentication & Security
+- ✅ Password hashing (werkzeug.security)
+- ✅ Session-based authentication
+- ✅ Role-based access control (RBAC)
+- ✅ Authorization and ownership validation
+- ✅ Secure cookie handling
 
 ---
 
-# 🗺️ Development Roadmap
-
-## Milestone 1 — Job Listing UI
-
-Status: 🚧 In Progress
-
-- [x] Create project folder
-- [x] Create HTML file
-- [x] Create CSS file
-- [x] Create basic page structure
-- [x] Create job cards
-- [x] Add job title
-- [x] Add company
-- [x] Add location
-- [x] Add Apply links
-- [ ] Improve styling
-- [ ] Responsive design
+## 🗺️ Development Roadmap
 
 ---
 
-## Milestone 2 — JavaScript Interaction
+### Next Steps (Planned)
 
-- [ ] Search jobs
-- [ ] Filter by location
-- [ ] Filter by job type
-- [ ] Dynamic job cards
-- [ ] Apply button interaction
+**Phase 6 — Candidate Features** (In Progress)
+- [ ] Resume upload functionality
+- [ ] Submit job applications
+- [ ] Application tracking & status updates
+- [ ] View application history
 
----
+**Phase 7 — Recruiter Features** (Planned)
+- [ ] View candidate applications
+- [ ] Review candidate profiles
+- [ ] Update application status (shortlist, interview, reject, hire)
+- [ ] Filter and sort applications
 
-## Milestone 3 — Python Backend
-
-- [ ] Set up Python
-- [ ] Set up Flask
-- [ ] Create first route
-- [ ] Connect frontend to Flask
-- [ ] Create job API
-- [ ] Retrieve jobs from backend
-
----
-
-## Milestone 4 — Database
-
-- [ ] Set up SQLite
-- [ ] Create tables
-- [ ] Insert sample jobs
-- [ ] Read jobs from database
-- [ ] Add new jobs
-- [ ] Update jobs
-- [ ] Delete jobs
-
----
-
-## Milestone 5 — Authentication
-
-- [ ] Candidate registration
-- [ ] Recruiter registration
-- [ ] Login
-- [ ] Logout
-- [ ] Password hashing
-- [ ] Role-based access
-
----
-
-## Milestone 6 — Candidate Features
-
-- [ ] Candidate dashboard
-- [ ] Candidate profile
-- [ ] Resume upload
-- [ ] Search jobs
-- [ ] Apply for jobs
-- [ ] Application tracking
-
----
-
-## Milestone 7 — Recruiter Features
-
-- [ ] Recruiter dashboard
-- [ ] Company profile
-- [ ] Create job
-- [ ] Edit job
-- [ ] Delete/close job
-- [ ] View applicants
-- [ ] Update application status
-
----
-
-## Milestone 8 — AI Resume Analysis
-
-- [ ] Resume upload
+**Phase 8-9 — AI Features** (Planned)
 - [ ] Resume text extraction
-- [ ] Skill extraction
-- [ ] Education extraction
-- [ ] Experience extraction
+- [ ] Resume skill analysis
+- [ ] Job requirement matching
+- [ ] Compatibility scoring
+- [ ] Job recommendations
+
+**Phase 10-11 — Polish & Deploy** (Planned)
+- [ ] Automated testing
+- [ ] Security hardening
+- [ ] Cloud deployment (Heroku/AWS/DigitalOcean)
+- [ ] Performance optimization
 
 ---
 
-## Milestone 9 — AI Job Matching
+## 🛠️ Technology Stack
 
-- [ ] Extract job requirements
-- [ ] Compare candidate skills
-- [ ] Calculate matching score
-- [ ] Display matched skills
-- [ ] Display missing skills
-- [ ] Generate recommendations
-
----
-
-## Milestone 10 — Testing & Security
-
-- [ ] Validate forms
-- [ ] Test APIs
-- [ ] Test authentication
-- [ ] Test authorization
-- [ ] Handle errors
-- [ ] Secure environment variables
-- [ ] Test AI edge cases
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Frontend** | HTML5, CSS3, JavaScript (ES6) | User interface |
+| **Backend** | Python, Flask | Server & API |
+| **Database** | SQLite (dev), PostgreSQL (planned) | Data persistence |
+| **Auth** | werkzeug.security | Password hashing & verification |
+| **Session** | Flask session with signed cookies | User state management |
 
 ---
 
-## Milestone 11 — Deployment
+## 📚 Database Schema
 
-Planned deployment after the application is stable.
-
-Possible deployment components:
-
-```text
-Frontend
-   ↓
-Web Hosting
-
-Backend
-   ↓
-Python Hosting
-
-Database
-   ↓
-PostgreSQL
+### Users Table
+```sql
+id              INTEGER PRIMARY KEY
+name            TEXT NOT NULL
+email           TEXT NOT NULL UNIQUE
+password_hash   TEXT NOT NULL
+role            TEXT (candidate/recruiter/admin)
+created_at      TEXT (timestamp)
 ```
 
-The actual deployment services will be selected after the application is working locally.
-
----
-
-# 🌱 Development Principles
-
-This project follows several principles.
-
-### 1. Build before expanding
-
-A small working feature is better than a large unfinished feature.
-
-### 2. Understand the code
-
-Every major implementation should be understood before moving forward.
-
-### 3. No unnecessary technologies
-
-A technology should be introduced because the project needs it, not simply because it is popular.
-
-### 4. Test every milestone
-
-Each milestone should work before the next one begins.
-
-### 5. Use Git properly
-
-Commits should describe meaningful changes.
-
-Examples:
-
-```text
-feat: create job listing page
-style: add job card styling
-feat: add job search
-feat: connect Flask backend
-feat: add job database
+### Jobs Table
+```sql
+id          INTEGER PRIMARY KEY
+title       TEXT NOT NULL
+company     TEXT NOT NULL
+location    TEXT NOT NULL
+description TEXT
+skills      TEXT (comma-separated)
+salary      TEXT
+job_type    TEXT (Full-time/Part-time/Contract/Remote)
+created_by  INTEGER FOREIGN KEY (users.id)
+created_at  TEXT (timestamp)
 ```
 
-### 6. AI as an assistant
-
-AI can help with:
-
-- Learning
-- Debugging
-- Explanations
-- Code review
-- Small implementation tasks
-
-But the developer should understand the resulting code.
-
----
-
-# 📌 Git Workflow
-
-Recommended workflow:
-
-```bash
-git status
-
-git add .
-
-git commit -m "feat: create job listing page"
-
-git push origin main
+### Applications Table
+```sql
+id              INTEGER PRIMARY KEY
+job_id          INTEGER FOREIGN KEY (jobs.id)
+candidate_id    INTEGER FOREIGN KEY (users.id)
+resume          TEXT
+status          TEXT (Applied/Under Review/Shortlisted/Interview/Rejected/Selected)
+applied_at      TEXT (timestamp)
 ```
 
-Each meaningful milestone should have its own commit.
+---
+
+## 🔐 Security Features
+
+### Currently Implemented
+- ✅ Password hashing with salt
+- ✅ Session-based authentication
+- ✅ Signed session cookies (cannot be forged)
+- ✅ Role-based access control
+- ✅ Ownership validation (recruiters can only edit their own jobs)
+- ✅ Input validation
+
+### Best Practices Followed
+- Database uses parameterized queries
+- Passwords are hashed, never stored plain text
+- Sessions expire automatically
+- Each route checks user permissions before allowing action
+- User IDs are stored in signed session cookies
 
 ---
 
-# 🚀 Future Improvements
+## 🧪 Testing
 
-After the core application works, possible improvements include:
+To test the application manually:
 
-- Better AI matching
-- Resume ranking
-- Personalized job recommendations
-- Email notifications
-- Recruiter analytics
-- Candidate analytics
-- Saved jobs
-- Application reminders
-- Interview scheduling
-- Admin dashboard
-- Advanced job filtering
-- Location-based recommendations
-- Learning recommendations based on skill gaps
+1. **Test Registration:**
+   - Try creating a candidate account
+   - Try creating a recruiter account
+   - Verify email uniqueness constraint
 
-These features are **future possibilities**, not part of the initial implementation.
+2. **Test Authentication:**
+   - Log in with correct credentials
+   - Try wrong password (should fail)
+   - Try non-existent email (should fail)
+   - Verify logout clears session
 
----
+3. **Test Job Listing:**
+   - Verify all jobs display on homepage
+   - Test search functionality
+   - Test location filter
+   - Test job type filter
+   - Click on job to view details
 
-# 📚 What I Expect to Learn From This Project
+4. **Test Job Management (Recruiter):**
+   - Create a new job
+   - Edit the job
+   - Delete the job
+   - Verify recruiter dashboard shows only their jobs
 
-By completing this project, I aim to improve my understanding of:
-
-- HTML
-- CSS
-- JavaScript
-- Python
-- Flask
-- SQL
-- Databases
-- CRUD operations
-- Authentication
-- APIs
-- Git and GitHub
-- Web application architecture
-- AI/ML integration
-- Debugging
-- Testing
-- Deployment
+5. **Test Authorization:**
+   - Verify recruiters can only edit/delete their own jobs
+   - Try accessing recruiter endpoints as candidate (should fail)
 
 ---
 
-# 👨‍💻 Project Approach
+## 🤖 AI Features (Coming Soon)
 
-This project is being built as a learning-focused software project.
+After core application is complete, planned AI capabilities:
 
-The objective is not simply to produce a large application. The objective is to understand how the application works from the user interface to the backend, database, APIs, and AI components.
-
-The project will therefore be developed incrementally, with each feature implemented and tested before moving to the next stage.
-
----
-
-## ⭐ Final Goal
-
-Build a working AI-powered job portal that demonstrates:
-
-```text
-Frontend
-   ↓
-Backend
-   ↓
-Database
-   ↓
-Authentication
-   ↓
-Job Management
-   ↓
-Applications
-   ↓
-Resume Processing
-   ↓
-AI Matching
-   ↓
-Deployment
-```
-
-The final application should be something that can be demonstrated to recruiters as a practical software-development project and explained clearly during interviews.
+- **Resume Analysis:** Extract skills, education, experience, projects
+- **Job Matching:** Compare candidate profiles to job requirements
+- **Compatibility Scoring:** Rate how well a candidate fits a job
+- **Skill Gap Analysis:** Identify missing skills for a role
+- **Recommendations:** Suggest jobs based on candidate profile
 
 ---
 
-## 📄 License
+## 💡 Development Principles
+
+This project follows specific principles:
+
+1. **Build Small, Build Working** — Each phase is complete and tested before the next begins
+2. **Understand the Code** — Every feature is implemented with clear understanding, not just copied
+3. **Clean Architecture** — Separated frontend, backend, and database layers
+4. **Proper Git Workflow** — Each milestone has meaningful commits
+5. **Learn While Building** — The goal is to understand full-stack development
+6. **Use Git Properly** — Commits describe actual changes
+
+---
+
+## 📖 How to Contribute or Extend
+
+### Adding a New Feature
+
+1. Create a branch: `git checkout -b feature/your-feature`
+2. Make changes and test thoroughly
+3. Commit with clear message: `git commit -m "feat: add your feature"`
+4. Submit for review or merge to main
+
+### Code Style
+- Use descriptive variable names
+- Add docstrings to functions
+- Keep functions small and focused
+- Organize imports alphabetically
+- Use consistent indentation (4 spaces Python, 2 spaces JS)
+
+---
+
+## 🚀 Deployment (Planned)
+
+When ready for production:
+
+### Frontend
+- Static file hosting (Vercel, Netlify, or AWS S3)
+- CDN for assets
+
+### Backend
+- Python hosting (Heroku, PythonAnywhere, or AWS)
+- Environment variables for secrets
+- Database migrations
+
+### Database
+- PostgreSQL for production
+- Automated backups
+- Connection pooling
+
+---
+
+## 📝 License
 
 This project is created for educational and portfolio purposes.
+
+---
+
+## 🙋 Questions? Issues?
+
+If you encounter problems:
+
+1. Check that Flask is running: `python backend/app.py`
+2. Verify database exists: `database/job_portal.db`
+3. Ensure you're using test accounts from seeding
+4. Check browser console for JavaScript errors (F12)
+5. Check terminal for Flask errors
+
+---
+
+## 📌 Quick Reference
+
+**Start development:**
+```bash
+source venv/bin/activate  # or venv\Scripts\activate on Windows
+python backend/app.py
+# Open http://127.0.0.1:5000/
+```
+
+**Reset database:**
+```bash
+rm database/job_portal.db
+python database/seed.py
+```
+
+**View in browser:**
+```bash
+http://127.0.0.1:5000/           # Homepage
+http://127.0.0.1:5000/register   # Registration
+http://127.0.0.1:5000/login      # Login
+http://127.0.0.1:5000/dashboard  # Dashboard
+```
+
+---
+
+**Status:** ✅ Production-Ready (Current Features)  
+**Last Updated:** August 12, 2026  
+**Next Phase:** Candidate Application Features
