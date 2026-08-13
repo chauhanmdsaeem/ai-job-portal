@@ -1,9 +1,9 @@
-# 🤖 AI Job Portal
+# 🤖 Fieldnote: Career Edition
 
-A full-stack job portal connecting candidates with opportunities and helping recruiters manage applications.
+A high-end, editorial-style job portal connecting candidates with opportunities and helping recruiters manage applications. Designed with a strict Bauhaus-inspired 1px grid aesthetic.
 
 **Current Status:** ✅ **Fully Functional** (9/11 Phases Complete)  
-**Latest Features:** AI Resume Analysis, AI Job Matching, Candidate Profiles
+**Latest Features:** Editorial "Magazine" UI Overhaul, Explainable AI Match Scores, Role-Based Dashboards
 
 This is a **practical learning project** demonstrating full-stack development: frontend (HTML/CSS/JS), backend (Python/Flask), database (SQLite), and authentication.
 

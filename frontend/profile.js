@@ -28,35 +28,7 @@ async function loadProfile() {
     console.error(err);
   }
   
-  loadSavedJobs();
-}
-
-async function loadSavedJobs() {
-  try {
-    const res = await fetch("/api/jobs/saved");
-    if (!res.ok) throw new Error();
-    const jobs = await res.json();
-    
-    const listEl = document.getElementById("saved-jobs-list");
-    const emptyEl = document.getElementById("saved-jobs-empty");
-    
-    if (jobs.length === 0) {
-      emptyEl.hidden = false;
-      return;
-    }
-    
-    emptyEl.hidden = true;
-    listEl.innerHTML = jobs.map(job => `
-      <div style="border: 1px solid #ddd; padding: 16px; border-radius: 8px;">
-        <h3 style="margin: 0 0 8px 0;">${job.title} <span style="font-size: 12px; font-weight: normal; background: #eee; padding: 2px 6px; border-radius: 12px;">${job.job_type}</span></h3>
-        <p style="margin: 0 0 4px 0; color: #555;">${job.company} · ${job.location}</p>
-        <p style="margin: 0; font-size: 14px;"><a href="index.html#jobs">View on Job Board →</a></p>
-      </div>
-    `).join("");
-    
-  } catch (err) {
-    console.error("Could not load saved jobs", err);
-  }
+  // loadSavedJobs is currently mocked in the UI for the Career Desk
 }
 
 if (uploadBtn) {

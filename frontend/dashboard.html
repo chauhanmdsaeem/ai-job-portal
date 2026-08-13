@@ -7,84 +7,93 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-  <header class="site-header">
-    <div class="container header-inner">
-      <a href="index.html" class="logo">Field<span>note</span></a>
+<div class="container">
+    <header class="site-header">
+    <div class="header-inner" style="padding: 0;">
+      <a href="index.html" class="masthead-logo">
+        <span class="masthead-title">Fieldnote</span>
+        <span>Career Edition // 2026</span>
+      </a>
       <nav class="main-nav">
         <a href="index.html#jobs">Jobs</a>
-        <div id="nav-notifications" class="nav-notifications" style="display: none; position: relative; margin-right: 15px; cursor: pointer;">
-          🔔 <span id="notif-badge" style="background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; position: absolute; top: -5px; right: -10px; display: none;">0</span>
-          <div id="notif-dropdown" style="display: none; position: absolute; right: 0; top: 30px; width: 250px; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 300px; overflow-y: auto; z-index: 1000; padding: 10px;">
-            <p style="font-size: 12px; margin: 0; color: #666;">No new notifications</p>
+        <a href="companies.html">Companies</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="about.html">About</a>
+        <div id="nav-notifications" class="nav-notifications" style="display: none; position: relative; cursor: pointer; border-right: var(--border-thin); padding: 0 24px; align-items: center;">
+          🔔 <span id="notif-badge" style="background: var(--danger); color: white; border-radius: 0; padding: 2px 6px; font-size: 10px; position: absolute; top: 15px; right: 10px; display: none;">0</span>
+          <div id="notif-dropdown" style="display: none; position: absolute; right: 0; top: 100%; width: 250px; background: var(--bg-surface); border: var(--border-thick); box-shadow: 4px 4px 0 var(--ink-main); max-height: 300px; overflow-y: auto; z-index: 1000; padding: 10px;">
+            <p style="font-size: 12px; margin: 0; color: var(--ink-light); font-family: var(--font-mono);">No new notifications</p>
           </div>
         </div>
-        <span id="nav-auth-slot" class="nav-auth"></span>
       </nav>
+      <span id="nav-auth-slot" class="nav-auth"></span>
     </div>
   </header>
 
-  <main class="container" style="padding: 48px 24px 80px;">
-    <p class="eyebrow">Milestone 05 — Job Management</p>
-    <h2 style="font-family: var(--font-display); margin: 0 0 24px;">Recruiter dashboard</h2>
+  <main class="container-body">
+    <div class="section-header">
+      <span class="section-header-num">RECRUITER DESK</span>
+      <h2 class="section-header-title">Recruiter Dashboard</h2>
+    </div>
 
-    <p id="access-denied" class="empty-state" hidden>
+    <p id="access-denied" class="empty-state" hidden style="margin: 32px;">
       This page is for recruiters. <a href="index.html">Back to job listings</a>
     </p>
 
-    <div id="dashboard-content" hidden>
+    <div id="dashboard-content" hidden style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
       <!-- Post a new job -->
-      <section class="dashboard-section">
-        <h3>Post a new job</h3>
-        <form id="post-job-form" class="auth-form post-job-form" novalidate>
-          <label for="title">Title</label>
-          <input type="text" id="title" required />
+      <section class="dashboard-section" style="padding: 32px; border-right: var(--border-thin);">
+        <h3 style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink-light); margin-bottom: 24px; text-transform: uppercase;">Post a new job</h3>
+        <form id="post-job-form" class="auth-form post-job-form" novalidate style="margin: 0;">
+          <label for="title" style="font-size: 0.8rem;">Title</label>
+          <input type="text" id="title" required style="margin-bottom: 16px;" />
 
-          <label for="company">Company</label>
-          <input type="text" id="company" required />
+          <label for="company" style="font-size: 0.8rem;">Company</label>
+          <input type="text" id="company" required style="margin-bottom: 16px;" />
 
-          <label for="location">Location</label>
-          <input type="text" id="location" required />
+          <label for="location" style="font-size: 0.8rem;">Location</label>
+          <input type="text" id="location" required style="margin-bottom: 16px;" />
 
-          <label for="job_type">Job type</label>
-          <select id="job_type">
+          <label for="job_type" style="font-size: 0.8rem;">Job type</label>
+          <select id="job_type" style="margin-bottom: 16px;">
             <option value="Full-time">Full-time</option>
             <option value="Part-time">Part-time</option>
             <option value="Internship">Internship</option>
           </select>
 
-          <label for="skills">Skills (comma-separated)</label>
-          <input type="text" id="skills" placeholder="Python, SQL, Git" />
+          <label for="skills" style="font-size: 0.8rem;">Skills (comma-separated)</label>
+          <input type="text" id="skills" placeholder="Python, SQL, Git" style="margin-bottom: 16px;" />
 
-          <label for="salary">Salary (optional)</label>
-          <input type="text" id="salary" placeholder="e.g. 6-9 LPA" />
+          <label for="salary" style="font-size: 0.8rem;">Salary (optional)</label>
+          <input type="text" id="salary" placeholder="e.g. 6-9 LPA" style="margin-bottom: 16px;" />
 
-          <div style="display: flex; justify-content: space-between; align-items: baseline;">
-            <label for="description">Description</label>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+            <label for="description" style="font-size: 0.8rem; margin: 0;">Description</label>
             <button type="button" id="btn-generate-jd" class="ghost-btn" style="padding: 4px 8px; font-size: 12px; margin: 0;">✨ Generate JD</button>
           </div>
-          <textarea id="description" rows="5"></textarea>
+          <textarea id="description" rows="5" style="margin-bottom: 16px;"></textarea>
 
           <p id="form-error" class="form-error" role="alert" hidden></p>
 
-          <button type="submit">Post job</button>
+          <button type="submit" style="width: 100%; padding: 12px; font-size: 1rem;">Post job</button>
         </form>
       </section>
 
       <!-- Your postings -->
-      <section class="dashboard-section">
-        <h3>Your postings</h3>
-        <p id="my-jobs-count" class="results-count"></p>
-        <div id="my-jobs-list" class="my-jobs-list"></div>
+      <section class="dashboard-section" style="padding: 32px; background: var(--bg-surface);">
+        <h3 style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink-light); margin-bottom: 24px; text-transform: uppercase;">Your postings</h3>
+        <p id="my-jobs-count" class="results-count" style="margin-bottom: 24px;"></p>
+        <div id="my-jobs-list" class="my-jobs-list" style="display: grid; gap: 16px;"></div>
       </section>
     </div>
   </main>
 
   <footer class="site-footer">
-    <div class="container">
+    <div style="padding: 24px 32px; border-top: var(--border-thick);">
       <p>AI Job Portal — learning project.</p>
     </div>
   </footer>
+</div>
 
   <script src="auth.js"></script>
   <script src="dashboard.js"></script>

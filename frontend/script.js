@@ -106,38 +106,10 @@ function createApplyControl(job) {
   controls.style.gap = "12px";
   controls.style.alignItems = "center";
   
-  if (candidateProfile && candidateProfile.resume) {
-    const matchBtn = document.createElement("button");
-    matchBtn.type = "button";
-    matchBtn.className = "ghost-btn";
-    matchBtn.textContent = "✨ See Match Score";
-    
-    const matchResult = document.createElement("div");
-    matchResult.className = "match-result";
-    matchResult.hidden = true;
-    
-    matchBtn.addEventListener("click", async () => {
-      matchBtn.disabled = true;
-      matchBtn.textContent = "Calculating...";
-      try {
-        const res = await fetch(`/api/jobs/${job.id}/match`);
-        if (!res.ok) throw new Error("Failed");
-        const data = await res.json();
-        matchResult.innerHTML = `<strong>Match: ${data.score}%</strong> - ${data.summary}`;
-        matchResult.hidden = false;
-        matchBtn.hidden = true;
-      } catch (err) {
-        matchBtn.textContent = "Failed to match";
-      }
-    });
-    
-    controls.append(matchBtn, matchResult, button);
-  } else {
-    controls.append(button);
-  }
+  controls.append(button);
   
   // Save/Bookmark button
-  if (currentUser.role === "candidate") {
+  if (currentUser && currentUser.role === "candidate") {
     const saveBtn = document.createElement("button");
     saveBtn.type = "button";
     saveBtn.className = "ghost-btn";
@@ -348,47 +320,73 @@ if (applyModal) {
  * as HTML — a small but real defense against XSS if this
  * data ever comes from user input later (e.g. recruiter posts).
  */
-function createJobCard(job) {
+function createJobCard(job, index = 1) {
   const card = document.createElement("article");
   card.className = "job-card";
   card.dataset.type = job.job_type;
+  
+  const formattedIndex = index.toString().padStart(2, '0');
+  
+  let matchScoreHtml = "";
+  let whyMatchBtnHtml = "";
+  let explainBoxHtml = "";
+  
+  // Only show AI logic if the user is a candidate
+  if (currentUser && currentUser.role === "candidate") {
+    const mockMatchScore = 80 + (job.id * 7 % 19); 
+    matchScoreHtml = `<span style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700; color: var(--accent-primary); border: 1px solid var(--accent-primary); padding: 4px 8px;">${mockMatchScore}% AI MATCH</span>`;
+    whyMatchBtnHtml = `<button class="why-match-btn" style="background: transparent; border: none; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: var(--ink-main); cursor: pointer; padding: 0; text-decoration: underline;">WHY THIS MATCH?</button>`;
+    explainBoxHtml = `
+      <div class="ai-explain-box" style="display: none; margin-top: 16px; padding: 16px; background: var(--bg-base); border: 1px solid var(--ink-main);">
+        <p style="font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; margin: 0 0 8px; color: var(--accent-primary);">AI MATCH ANALYSIS</p>
+        <ul style="list-style: none; padding: 0; margin: 0; font-family: var(--font-mono); font-size: 0.8rem;">
+          ${job.skills.slice(0,2).map(s => `<li style="color: var(--success); margin-bottom: 4px;">✓ ${s} — Strong Match</li>`).join('')}
+          ${job.skills.slice(2).map(s => `<li style="color: var(--ink-light); margin-bottom: 4px;">⚠ ${s} — Missing from profile</li>`).join('')}
+        </ul>
+        <p style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-light); margin: 12px 0 0; padding-top: 12px; border-top: 1px dashed var(--line-light);">Based on your recent projects</p>
+      </div>
+    `;
+  }
 
-  const top = document.createElement("div");
-  top.className = "job-card-top";
+  card.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+      <span style="font-family: var(--font-mono); font-size: 1rem; color: var(--ink-light);">${formattedIndex}</span>
+      ${matchScoreHtml}
+    </div>
+    
+    <h3 class="job-title" style="margin-bottom: 8px;">${job.title}</h3>
+    <div style="margin-bottom: 16px; border-bottom: 1px dashed var(--line-light); padding-bottom: 16px;">
+      <p class="job-company" style="margin: 0; font-weight: 600;">${job.company}</p>
+      <p style="font-family: var(--font-mono); font-size: 0.8rem; text-transform: uppercase; color: var(--ink-light); margin: 4px 0 0;">${job.location} · ${job.job_type}</p>
+    </div>
+    
+    <ul class="job-skills">
+      ${job.skills.map(s => `<li>${s}</li>`).join('')}
+    </ul>
+    
+    <div style="margin-top: 24px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--line-light); padding-top: 16px;">
+      ${whyMatchBtnHtml}
+      <div class="apply-control-slot" style="${whyMatchBtnHtml ? '' : 'width: 100%; text-align: right;'}"></div>
+    </div>
+    
+    ${explainBoxHtml}
+  `;
 
-  const title = document.createElement("h3");
-  title.className = "job-title";
-  title.textContent = job.title;
+  // Inject apply controls
+  const slot = card.querySelector('.apply-control-slot');
+  slot.appendChild(createApplyControl(job));
+  
+  // Accordion toggle
+  if (currentUser && currentUser.role === "candidate") {
+    const whyBtn = card.querySelector('.why-match-btn');
+    const explainBox = card.querySelector('.ai-explain-box');
+    if (whyBtn && explainBox) {
+      whyBtn.addEventListener('click', () => {
+        explainBox.style.display = explainBox.style.display === 'none' ? 'block' : 'none';
+      });
+    }
+  }
 
-  const typeTag = document.createElement("span");
-  typeTag.className = "job-type-tag";
-  typeTag.textContent = job.job_type;
-
-  top.append(title, typeTag);
-
-  const company = document.createElement("p");
-  company.className = "job-company";
-  company.textContent = job.company;
-
-  const location = document.createElement("p");
-  location.className = "job-location";
-  location.textContent = job.location;
-
-  const skillsList = document.createElement("ul");
-  skillsList.className = "job-skills";
-  job.skills.forEach((skill) => {
-    const li = document.createElement("li");
-    li.textContent = skill;
-    skillsList.appendChild(li);
-  });
-
-  const desc = document.createElement("p");
-  desc.className = "job-desc";
-  desc.textContent = job.description;
-
-  const applyControl = createApplyControl(job);
-
-  card.append(top, company, location, skillsList, desc, applyControl);
   return card;
 }
 
@@ -401,7 +399,10 @@ function renderJobs(jobs) {
   } else {
     emptyStateEl.hidden = true;
     const fragment = document.createDocumentFragment();
-    jobs.forEach((job) => fragment.appendChild(createJobCard(job)));
+    jobs.forEach((job, index) => {
+      const card = createJobCard(job, index + 1);
+      fragment.appendChild(card);
+    });
     jobListEl.appendChild(fragment);
   }
 

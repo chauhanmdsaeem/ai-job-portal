@@ -5,37 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Profile — Fieldnote</title>
   <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-
+</head><body>
+<div class="container">
   <header class="site-header">
-    <div class="container header-inner">
-      <a href="index.html" class="logo">Field<span>note</span></a>
+    <div class="header-inner" style="padding: 0;">
+      <a href="index.html" class="masthead-logo">
+        <span class="masthead-title">Fieldnote</span>
+        <span>Career Edition // 2026</span>
+      </a>
       <nav class="main-nav">
         <a href="index.html#jobs">Jobs</a>
-        <div id="nav-notifications" class="nav-notifications" style="display: none; position: relative; margin-right: 15px; cursor: pointer;">
-          🔔 <span id="notif-badge" style="background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; position: absolute; top: -5px; right: -10px; display: none;">0</span>
-          <div id="notif-dropdown" style="display: none; position: absolute; right: 0; top: 30px; width: 250px; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 300px; overflow-y: auto; z-index: 1000; padding: 10px;">
-            <p style="font-size: 12px; margin: 0; color: #666;">No new notifications</p>
+        <a href="companies.html">Companies</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="about.html">About</a>
+        <div id="nav-notifications" class="nav-notifications" style="display: none; position: relative; cursor: pointer; border-right: var(--border-thin); padding: 0 24px; align-items: center;">
+          🔔 <span id="notif-badge" style="background: var(--danger); color: white; border-radius: 0; padding: 2px 6px; font-size: 10px; position: absolute; top: 15px; right: 10px; display: none;">0</span>
+          <div id="notif-dropdown" style="display: none; position: absolute; right: 0; top: 100%; width: 250px; background: var(--bg-surface); border: var(--border-thick); box-shadow: 4px 4px 0 var(--ink-main); max-height: 300px; overflow-y: auto; z-index: 1000; padding: 10px;">
+            <p style="font-size: 12px; margin: 0; color: var(--ink-light); font-family: var(--font-mono);">No new notifications</p>
           </div>
         </div>
-        <span id="nav-auth-slot" class="nav-auth"></span>
       </nav>
+      <span id="nav-auth-slot" class="nav-auth"></span>
     </div>
   </header>
 
-  <main class="container">
-    <section class="auth-section">
-      <div class="auth-box" style="max-width: 800px; width: 100%;">
-        <h2 style="margin-bottom: 24px;">My Profile</h2>
-        <p class="field-hint" style="margin-bottom: 24px;">Save your master resume here. We will use this to automatically match you with jobs and give you personalized recommendations!</p>
+  <main class="container-body">
+    <div class="section-header">
+      <span class="section-header-num">CAREER DESK</span>
+      <h2 class="section-header-title">Candidate Profile</h2>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
+      <!-- Profile Col -->
+      <div style="padding: 32px; border-right: var(--border-thin);">
+        <h3 style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink-light); margin-bottom: 24px; text-transform: uppercase;">Your Profile <span style="color: var(--success); float: right; font-weight: 700;">87% COMPLETE</span></h3>
         
-        <form id="profile-form" class="auth-form">
-          <label for="profile-resume">Master Resume / Profile</label>
+        <p style="margin-bottom: 24px; font-size: 0.9rem;">Save your master resume here. We will use this to automatically match you with jobs and give you personalized recommendations!</p>
+        
+        <form id="profile-form" class="auth-form" style="margin: 0;">
           <div style="margin-bottom: 16px;">
-            <p class="field-hint" style="margin-bottom: 8px;">Upload a PDF to automatically extract text, or paste your resume manually below.</p>
+            <label style="font-size: 0.8rem; margin-bottom: 8px; display: block;">Upload PDF Resume</label>
             <input type="file" id="resume-upload" accept=".pdf" style="margin-bottom: 8px;" />
-            <button type="button" id="upload-pdf-btn" class="secondary-btn">Extract from PDF</button>
+            <button type="button" id="upload-pdf-btn" class="ghost-btn">Extract from PDF</button>
             <span id="upload-status" style="margin-left: 12px; font-size: 14px;"></span>
           </div>
           <textarea 
@@ -46,29 +57,49 @@
           ></textarea>
           
           <p id="profile-error" class="form-error" hidden></p>
-          <p id="profile-success" class="form-error" style="color: green; background-color: #e6ffe6; border-color: #b3ffb3;" hidden>Profile saved successfully!</p>
+          <p id="profile-success" class="form-error" style="color: var(--success); border: 1px solid var(--success); background: transparent;" hidden>Profile saved successfully!</p>
           
-          <button type="submit" id="save-profile-btn">Save Profile</button>
+          <button type="submit" id="save-profile-btn" style="width: 100%; margin-top: 16px; padding: 12px; font-size: 1rem;">Save Profile</button>
         </form>
       </div>
       
-      <div class="auth-box" style="max-width: 800px; width: 100%; margin-top: 40px;">
-        <h2 style="margin-bottom: 24px;">Saved Jobs</h2>
-        <div id="saved-jobs-list" style="display: grid; gap: 16px;">
-          <!-- Saved jobs will be rendered here -->
+      <!-- Intelligence Col -->
+      <div style="padding: 32px; background: var(--bg-surface);">
+        <h3 style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink-light); margin-bottom: 24px; text-transform: uppercase;">AI Career Signal</h3>
+        <p style="font-size: 0.9rem; margin-bottom: 16px;">Your profile is strongest in:</p>
+        <ul style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--ink-main); list-style: none; padding: 0; margin: 0 0 32px 0;">
+          <li style="margin-bottom: 8px;">PYTHON</li>
+          <li style="margin-bottom: 8px;">DATA ANALYTICS</li>
+          <li style="margin-bottom: 8px;">MACHINE LEARNING</li>
+        </ul>
+        
+        <div style="border-top: 1px dashed var(--line-light); padding-top: 32px; margin-bottom: 32px;">
+           <h3 style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink-light); margin-bottom: 16px; text-transform: uppercase;">Next Action</h3>
+           <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 16px;">Improve your SQL projects to unlock 23 more positions.</p>
+           <button class="ghost-btn" style="color: var(--accent-secondary); border-color: var(--accent-secondary); padding: 8px 16px;">→ VIEW RECOMMENDATION</button>
         </div>
-        <p id="saved-jobs-empty" style="color: #666;" hidden>You haven't saved any jobs yet.</p>
+
+        <div style="border-top: 1px dashed var(--line-light); padding-top: 32px;">
+           <h3 style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink-light); margin-bottom: 24px; text-transform: uppercase;">Applications</h3>
+           <div style="display: flex; gap: 48px; font-family: var(--font-display); font-size: 2.5rem; font-weight: 700;">
+             <div>03 <span style="display: block; font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-light); font-weight: 400; text-transform: uppercase; margin-top: 4px;">Active</span></div>
+             <div>07 <span style="display: block; font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-light); font-weight: 400; text-transform: uppercase; margin-top: 4px;">Saved</span></div>
+             <div>02 <span style="display: block; font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-light); font-weight: 400; text-transform: uppercase; margin-top: 4px;">Interviews</span></div>
+           </div>
+        </div>
       </div>
-    </section>
+    </div>
   </main>
 
   <footer class="site-footer">
-    <div class="container">
+    <div style="padding: 24px 32px; border-top: var(--border-thick);">
       <p>AI Job Portal — learning project.</p>
     </div>
   </footer>
+</div>
 
   <script src="auth.js"></script>
   <script src="profile.js"></script>
+</body>
 </body>
 </html>
