@@ -26,6 +26,9 @@ from routes.auth import auth_bp
 from routes.jobs import jobs_bp
 from routes.applications import applications_bp
 
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
 BASE_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE_DIR.parent
 FRONTEND_DIR = PROJECT_ROOT / "frontend"
@@ -47,6 +50,26 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(jobs_bp)
 app.register_blueprint(applications_bp)
 
+# Set up Rate Limiting
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://"
+)
+
+# Apply specific limits to the AI endpoints to prevent API abuse
+limiter.limit("5 per minute")(jobs_bp)
+
+# Add Security Headers
+@app.after_request
+def add_security_headers(response):
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    # Strict-Transport-Security is useful for production (HTTPS)
+    # response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    return response
 
 # ---------------------------------------------------------
 # Frontend routes (unchanged from Phase 2)
