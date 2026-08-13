@@ -15,6 +15,9 @@ Run it:
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from flask import Flask, send_from_directory
 

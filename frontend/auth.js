@@ -34,25 +34,46 @@ function renderNavAuth(user) {
     if (user.role === "candidate") {
       roleLink.href = "applications.html";
       roleLink.textContent = "My applications";
+      
+      const profileLink = document.createElement("a");
+      profileLink.href = "profile.html";
+      profileLink.textContent = "My Profile";
+      
+      const greeting = document.createElement("span");
+      greeting.className = "nav-user";
+      greeting.textContent = `${user.name} · ${user.role}`;
+
+      const logoutBtn = document.createElement("button");
+      logoutBtn.type = "button";
+      logoutBtn.className = "nav-logout";
+      logoutBtn.textContent = "Log out";
+      logoutBtn.addEventListener("click", async () => {
+        await fetch("/api/logout", { method: "POST" });
+        window.location.href = "index.html";
+      });
+
+      slot.append(roleLink, profileLink, greeting, logoutBtn);
     } else {
       roleLink.href = "dashboard.html";
       roleLink.textContent = "Dashboard";
+
+      const greeting = document.createElement("span");
+      greeting.className = "nav-user";
+      greeting.textContent = `${user.name} · ${user.role}`;
+
+      const logoutBtn = document.createElement("button");
+      logoutBtn.type = "button";
+      logoutBtn.className = "nav-logout";
+      logoutBtn.textContent = "Log out";
+      logoutBtn.addEventListener("click", async () => {
+        await fetch("/api/logout", { method: "POST" });
+        window.location.href = "index.html";
+      });
+
+      slot.append(roleLink, greeting, logoutBtn);
     }
 
-    const greeting = document.createElement("span");
-    greeting.className = "nav-user";
-    greeting.textContent = `${user.name} · ${user.role}`;
 
-    const logoutBtn = document.createElement("button");
-    logoutBtn.type = "button";
-    logoutBtn.className = "nav-logout";
-    logoutBtn.textContent = "Log out";
-    logoutBtn.addEventListener("click", async () => {
-      await fetch("/api/logout", { method: "POST" });
-      window.location.href = "index.html";
-    });
-
-    slot.append(roleLink, greeting, logoutBtn);
   } else {
     const loginLink = document.createElement("a");
     loginLink.href = "login.html";

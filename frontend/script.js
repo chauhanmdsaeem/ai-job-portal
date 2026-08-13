@@ -57,6 +57,7 @@ let allJobs = [];
 // loadJobs() and read by createJobCard() on every render.
 let currentUser = null;
 let appliedJobIds = new Set();
+let candidateProfile = null;
 
 /**
  * Build the apply control for one job card. What it looks like
@@ -97,8 +98,44 @@ function createApplyControl(job) {
   button.addEventListener("click", () => {
     openApplyModal(job, button);
   });
+  
+  const controls = document.createElement("div");
+  controls.className = "job-controls";
+  controls.style.display = "flex";
+  controls.style.gap = "12px";
+  controls.style.alignItems = "center";
+  
+  if (candidateProfile && candidateProfile.resume) {
+    const matchBtn = document.createElement("button");
+    matchBtn.type = "button";
+    matchBtn.className = "ghost-btn";
+    matchBtn.textContent = "✨ See Match Score";
+    
+    const matchResult = document.createElement("div");
+    matchResult.className = "match-result";
+    matchResult.hidden = true;
+    
+    matchBtn.addEventListener("click", async () => {
+      matchBtn.disabled = true;
+      matchBtn.textContent = "Calculating...";
+      try {
+        const res = await fetch(`/api/jobs/${job.id}/match`);
+        if (!res.ok) throw new Error("Failed");
+        const data = await res.json();
+        matchResult.innerHTML = `<strong>Match: ${data.score}%</strong> - ${data.summary}`;
+        matchResult.hidden = false;
+        matchBtn.hidden = true;
+      } catch (err) {
+        matchBtn.textContent = "Failed to match";
+      }
+    });
+    
+    controls.append(matchBtn, matchResult, button);
+    return controls;
+  }
 
-  return button;
+  controls.append(button);
+  return controls;
 }
 
 // Modal handling logic
@@ -307,8 +344,13 @@ async function loadJobs() {
         const applications = await res.json();
         appliedJobIds = new Set(applications.map((a) => a.job_id));
       }
+      
+      const profileRes = await fetch("/api/me/profile");
+      if (profileRes.ok) {
+        candidateProfile = await profileRes.json();
+      }
     } catch (err) {
-      console.warn("Could not load existing applications:", err.message);
+      console.warn("Could not load candidate data:", err.message);
     }
   }
 
@@ -327,6 +369,47 @@ async function loadJobs() {
 
   populateFilters(allJobs);
   renderJobs(allJobs);
+  
+  if (candidateProfile && candidateProfile.resume) {
+    loadRecommendations();
+  }
+}
+
+async function loadRecommendations() {
+  const container = document.getElementById("recommendations-container");
+  const listEl = document.getElementById("recommendations-list");
+  
+  try {
+    container.hidden = false;
+    listEl.innerHTML = "<p>Finding the perfect roles for you with AI...</p>";
+    
+    const res = await fetch("/api/jobs/recommendations");
+    if (!res.ok) throw new Error("Failed");
+    const data = await res.json();
+    
+    listEl.innerHTML = "";
+    if (!data.recommendations || data.recommendations.length === 0) {
+      listEl.innerHTML = "<p>No recommendations found right now.</p>";
+      return;
+    }
+    
+    data.recommendations.forEach(rec => {
+      const job = allJobs.find(j => j.id === rec.job_id);
+      if (job) {
+        const card = createJobCard(job);
+        
+        const insight = document.createElement("div");
+        insight.className = "ai-insights";
+        insight.style.marginTop = "16px";
+        insight.innerHTML = `<strong>✨ ${rec.match_score}% Match:</strong> ${rec.reason}`;
+        card.appendChild(insight);
+        
+        listEl.appendChild(card);
+      }
+    });
+  } catch (err) {
+    listEl.innerHTML = "<p>Could not load recommendations.</p>";
+  }
 }
 
 // Re-filter as the person types or changes a dropdown —

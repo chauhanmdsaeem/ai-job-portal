@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile — Fieldnote</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">Field<span>note</span></a>
+      <nav class="main-nav">
+        <a href="index.html#jobs">Jobs</a>
+        <span id="nav-auth-slot" class="nav-auth"></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="auth-section">
+      <div class="auth-box" style="max-width: 800px; width: 100%;">
+        <h2 style="margin-bottom: 24px;">My Profile</h2>
+        <p class="field-hint" style="margin-bottom: 24px;">Save your master resume here. We will use this to automatically match you with jobs and give you personalized recommendations!</p>
+        
+        <form id="profile-form" class="auth-form">
+          <label for="profile-resume">Master Resume / Profile</label>
+          <textarea 
+            id="profile-resume" 
+            name="resume" 
+            rows="12" 
+            placeholder="Paste your full resume, skills, and experience here..."
+          ></textarea>
+          
+          <p id="profile-error" class="form-error" hidden></p>
+          <p id="profile-success" class="form-error" style="color: green; background-color: #e6ffe6; border-color: #b3ffb3;" hidden>Profile saved successfully!</p>
+          
+          <button type="submit" id="save-profile-btn">Save Profile</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>AI Job Portal — learning project.</p>
+    </div>
+  </footer>
+
+  <script src="auth.js"></script>
+  <script src="profile.js"></script>
+</body>
+</html>

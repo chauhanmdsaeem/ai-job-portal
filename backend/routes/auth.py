@@ -18,7 +18,7 @@ import sqlite3
 
 from flask import Blueprint, request, jsonify, session
 
-from models.user import create_user, get_user_by_email, get_user_by_id, verify_password, to_public_dict
+from models.user import create_user, get_user_by_email, get_user_by_id, verify_password, to_public_dict, update_user_resume
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api")
 
@@ -99,3 +99,31 @@ def me():
         return jsonify({"user": None})
 
     return jsonify({"user": to_public_dict(user)})
+
+@auth_bp.route("/me/profile", methods=["GET"])
+def get_profile():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "unauthorized"}), 401
+    
+    user = get_user_by_id(user_id)
+    if not user or user["role"] != "candidate":
+        return jsonify({"error": "forbidden"}), 403
+        
+    return jsonify({"resume": user["resume"]})
+
+@auth_bp.route("/me/profile", methods=["PUT"])
+def update_profile():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "unauthorized"}), 401
+        
+    user = get_user_by_id(user_id)
+    if not user or user["role"] != "candidate":
+        return jsonify({"error": "forbidden"}), 403
+        
+    data = request.get_json(silent=True) or {}
+    resume_text = data.get("resume")
+    
+    update_user_resume(user_id, resume_text)
+    return jsonify({"message": "Profile updated successfully"})

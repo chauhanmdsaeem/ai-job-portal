@@ -59,3 +59,10 @@ def to_public_dict(user_row):
         "email": user_row["email"],
         "role": user_row["role"],
     }
+
+def update_user_resume(user_id, resume_text):
+    db = get_db()
+    db.execute(
+        "UPDATE users SET resume = ? WHERE id = ?", (resume_text, user_id)
+    )
+    db.commit()

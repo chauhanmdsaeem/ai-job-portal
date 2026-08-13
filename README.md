@@ -2,8 +2,8 @@
 
 A full-stack job portal connecting candidates with opportunities and helping recruiters manage applications.
 
-**Current Status:** ✅ **Fully Functional** (5/11 Phases Complete)  
-**Latest Features:** User authentication, job database, job search/filtering, recruiter job management
+**Current Status:** ✅ **Fully Functional** (9/11 Phases Complete)  
+**Latest Features:** AI Resume Analysis, AI Job Matching, Candidate Profiles
 
 This is a **practical learning project** demonstrating full-stack development: frontend (HTML/CSS/JS), backend (Python/Flask), database (SQLite), and authentication.
 
@@ -13,7 +13,7 @@ This is a **practical learning project** demonstrating full-stack development: f
 
 ## 📌 Current Status
 
-**Overall Progress:** 5 out of 11 Phases Complete (45%)
+**Overall Progress:** 9 out of 11 Phases Complete (81%)
 
 ### ✅ Completed Milestones
 
@@ -24,10 +24,10 @@ This is a **practical learning project** demonstrating full-stack development: f
 | **3** | ✅ Complete | SQLite Database |
 | **4** | ✅ Complete | User Authentication & Authorization |
 | **5** | ✅ Complete | Job Management (CRUD) |
-| **6** | 🚧 In Progress | Candidate Features (Applications, Profile, Tracking) |
-| **7** | ⏳ Planned | Recruiter Features (Application Management) |
-| **8** | ⏳ Planned | AI Resume Analysis |
-| **9** | ⏳ Planned | AI Job Matching & Recommendations |
+| **6** | ✅ Complete | Candidate Features (Applications, Profile, Tracking) |
+| **7** | ✅ Complete | Recruiter Features (Application Management) |
+| **8** | ✅ Complete | AI Resume Analysis |
+| **9** | ✅ Complete | AI Job Matching & Recommendations |
 | **10** | ⏳ Planned | Testing & Security |
 | **11** | ⏳ Planned | Deployment |
 
@@ -102,15 +102,22 @@ After seeding, use these accounts to explore:
 - ✅ **Filter jobs** by location and job type
 - ✅ View detailed job information
 - ✅ Access candidate dashboard
+- ✅ Save "Master Resume" to Profile
+- ✅ Apply to jobs and track application status
+- ✅ See AI-driven Job Match Scores before applying
+- ✅ Get AI Job Recommendations based on profile
 
 ### For Recruiters
 - ✅ Create recruiter account
 - ✅ Log in securely
 - ✅ **Create job postings** with full details
 - ✅ **Edit own jobs**
-- ✅ **Delete/close jobs**
+- ✅ Delete/close jobs
 - ✅ View recruiter dashboard
 - ✅ See all posted jobs
+- ✅ Review candidate applications
+- ✅ Change application status (Shortlist, Reject, etc.)
+- ✅ Use AI to analyze candidate resumes against job requirements
 
 ### System-Wide
 - ✅ Secure password hashing
@@ -249,9 +256,11 @@ Recruiter Dashboard: View All Posted Jobs
     ↓
 Edit Job Details
     ↓
-Close/Delete Job
+Close/Delete Job 
     ↓
-(Soon) Review Applications
+Review Applications (Change Status)
+    ↓
+Use AI to Analyze Resumes
 ```
 
 ---
@@ -295,24 +304,24 @@ Close/Delete Job
 
 ### Next Steps (Planned)
 
-**Phase 6 — Candidate Features** (In Progress)
-- [ ] Resume upload functionality
-- [ ] Submit job applications
-- [ ] Application tracking & status updates
-- [ ] View application history
+**Phase 6 — Candidate Features** (Complete)
+- [x] Resume upload functionality
+- [x] Submit job applications
+- [x] Application tracking & status updates
+- [x] View application history
 
-**Phase 7 — Recruiter Features** (Planned)
-- [ ] View candidate applications
-- [ ] Review candidate profiles
-- [ ] Update application status (shortlist, interview, reject, hire)
-- [ ] Filter and sort applications
+**Phase 7 — Recruiter Features** (Complete)
+- [x] View candidate applications
+- [x] Review candidate profiles
+- [x] Update application status (shortlist, interview, reject, hire)
+- [x] Filter and sort applications
 
-**Phase 8-9 — AI Features** (Planned)
-- [ ] Resume text extraction
-- [ ] Resume skill analysis
-- [ ] Job requirement matching
-- [ ] Compatibility scoring
-- [ ] Job recommendations
+**Phase 8-9 — AI Features** (Complete)
+- [x] Resume text extraction
+- [x] Resume skill analysis
+- [x] Job requirement matching
+- [x] Compatibility scoring
+- [x] Job recommendations
 
 **Phase 10-11 — Polish & Deploy** (Planned)
 - [ ] Automated testing
@@ -425,10 +434,6 @@ To test the application manually:
 
 ---
 
-## 🤖 AI Features (Coming Soon)
-
-After core application is complete, planned AI capabilities:
-
 - **Resume Analysis:** Extract skills, education, experience, projects
 - **Job Matching:** Compare candidate profiles to job requirements
 - **Compatibility Scoring:** Rate how well a candidate fits a job
@@ -532,5 +537,5 @@ http://127.0.0.1:5000/dashboard  # Dashboard
 ---
 
 **Status:** ✅ Production-Ready (Current Features)  
-**Last Updated:** August 12, 2026  
-**Next Phase:** Candidate Application Features
+**Last Updated:** August 13, 2026  
+**Next Phase:** Testing & Security

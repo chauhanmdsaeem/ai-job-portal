@@ -17,7 +17,9 @@ admin.
 from flask import Blueprint, request, jsonify, session
 
 from models import job as job_model
+from models.user import get_user_by_id
 from utils.auth_utils import role_required
+from utils.ai_analyzer import ai_recommend_jobs, ai_candidate_match
 
 jobs_bp = Blueprint("jobs", __name__, url_prefix="/api")
 
@@ -126,5 +128,27 @@ def reopen_job(job_id):
     denied = _check_ownership(existing)
     if denied:
         return denied
-
     return jsonify(job_model.set_job_status(job_id, "open"))
+
+@jobs_bp.route("/jobs/recommendations", methods=["GET"])
+@role_required("candidate")
+def get_recommendations():
+    user = get_user_by_id(session["user_id"])
+    if not user or not user["resume"]:
+        return jsonify({"recommendations": []})
+        
+    open_jobs = job_model.get_all_jobs()
+    result = ai_recommend_jobs(user["resume"], open_jobs)
+    return jsonify(result)
+
+@jobs_bp.route("/jobs/<int:job_id>/match", methods=["GET"])
+@role_required("candidate")
+def get_job_match(job_id):
+    user = get_user_by_id(session["user_id"])
+    job = job_model.get_job_by_id(job_id)
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+        
+    resume_text = user["resume"] if user and user["resume"] else ""
+    result = ai_candidate_match(resume_text, job)
+    return jsonify(result)
