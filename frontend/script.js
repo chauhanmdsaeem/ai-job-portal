@@ -191,10 +191,10 @@ function openApplyModal(job, buttonEl) {
   modalJobTitle.textContent = job.title;
   modalJobCompany.textContent = job.company;
   
+  applyForm.reset();
+  
   const resumeInput = document.getElementById("resume-input");
   resumeInput.value = candidateProfile && candidateProfile.resume ? candidateProfile.resume : "";
-  
-  applyForm.reset();
   applyError.hidden = true;
   submitAppBtn.disabled = false;
   submitAppBtn.textContent = "Submit Application";

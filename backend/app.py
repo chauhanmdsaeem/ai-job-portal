@@ -56,12 +56,12 @@ app.register_blueprint(notifications_bp)
 limiter = Limiter(
     get_remote_address,
     app=app,
-    default_limits=["200 per day", "50 per hour"],
+    default_limits=["2000 per day", "500 per hour"],
     storage_uri="memory://"
 )
 
 # Apply specific limits to the AI endpoints to prevent API abuse
-limiter.limit("5 per minute")(jobs_bp)
+limiter.limit("50 per minute")(jobs_bp)
 
 # Add Security Headers
 @app.after_request
