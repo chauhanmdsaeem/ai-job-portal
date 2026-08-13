@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing — Fieldnote</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="container">
+  <!-- ===== Top navigation ===== -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="logo">Field<span>note</span></a>
+      <nav class="main-nav">
+        <a href="/#jobs">Jobs</a>
+        <a href="/companies">Companies</a>
+        <a href="/pricing">Pricing</a>
+        <a href="/about">About</a>
+      </nav>
+      <span id="nav-auth-slot" class="nav-auth"></span>
+    </div>
+  </header>
+
+  <main class="container-body">
+    <section class="hero" style="padding: 100px 32px; background: none;">
+      <p class="eyebrow" style="background: var(--ink-main); color: var(--bg-surface);">For Employers</p>
+      <h1>Hire smarter,<br><i>not harder.</i></h1>
+      <p class="hero-sub">
+        Predictable pricing for unparalleled AI screening. Choose the plan that fits your hiring volume.
+      </p>
+    </section>
+
+    <section style="display: grid; grid-template-columns: repeat(3, 1fr); border-top: var(--border-thick);">
+      
+      <!-- Tier 1 -->
+      <div style="padding: 48px 32px; border-right: var(--border-thin);">
+        <h3 style="font-family: var(--font-display); font-size: 2rem; margin: 0 0 8px;">Starter</h3>
+        <p style="font-family: var(--font-mono); font-size: 1.5rem; font-weight: 600; margin: 0 0 24px;">Free</p>
+        <p style="color: var(--ink-light); font-size: 0.95rem; margin-bottom: 32px; min-height: 45px;">
+          Perfect for startups hiring their first few engineers.
+        </p>
+        <a href="/register.html?role=recruiter" class="ghost-btn" style="display: block; text-align: center; text-decoration: none;">Get Started</a>
+        
+        <hr style="border: none; border-top: 1px dashed var(--ink-light); margin: 32px 0;" />
+        <ul style="list-style: none; padding: 0; font-family: var(--font-mono); font-size: 0.85rem; display: flex; flex-direction: column; gap: 16px;">
+          <li>✔ 1 Active Job Listing</li>
+          <li>✔ Basic AI Insights</li>
+          <li>✔ 50 Resumes / mo</li>
+        </ul>
+      </div>
+
+      <!-- Tier 2 -->
+      <div style="padding: 48px 32px; border-right: var(--border-thin); background: var(--bg-base); position: relative;">
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 8px; background: var(--accent-primary);"></div>
+        <h3 style="font-family: var(--font-display); font-size: 2rem; margin: 0 0 8px;">Pro</h3>
+        <p style="font-family: var(--font-mono); font-size: 1.5rem; font-weight: 600; margin: 0 0 24px;">$99 <span style="font-size: 0.8rem; color: var(--ink-light);">/ mo</span></p>
+        <p style="color: var(--ink-light); font-size: 0.95rem; margin-bottom: 32px; min-height: 45px;">
+          For growing teams that need serious screening power.
+        </p>
+        <a href="/register.html?role=recruiter" class="apply-button" style="display: block; text-align: center; width: 100%;">Upgrade to Pro</a>
+        
+        <hr style="border: none; border-top: 1px dashed var(--ink-light); margin: 32px 0;" />
+        <ul style="list-style: none; padding: 0; font-family: var(--font-mono); font-size: 0.85rem; display: flex; flex-direction: column; gap: 16px;">
+          <li>✔ 10 Active Job Listings</li>
+          <li>✔ Advanced AI Scoring (1-100)</li>
+          <li>✔ 1,000 Resumes / mo</li>
+          <li>✔ Automated JD Generation</li>
+        </ul>
+      </div>
+
+      <!-- Tier 3 -->
+      <div style="padding: 48px 32px;">
+        <h3 style="font-family: var(--font-display); font-size: 2rem; margin: 0 0 8px;">Enterprise</h3>
+        <p style="font-family: var(--font-mono); font-size: 1.5rem; font-weight: 600; margin: 0 0 24px;">Custom</p>
+        <p style="color: var(--ink-light); font-size: 0.95rem; margin-bottom: 32px; min-height: 45px;">
+          Unlimited volume and custom AI model fine-tuning.
+        </p>
+        <a href="/contact" class="ghost-btn" style="display: block; text-align: center; text-decoration: none;">Contact Sales</a>
+        
+        <hr style="border: none; border-top: 1px dashed var(--ink-light); margin: 32px 0;" />
+        <ul style="list-style: none; padding: 0; font-family: var(--font-mono); font-size: 0.85rem; display: flex; flex-direction: column; gap: 16px;">
+          <li>✔ Unlimited Job Listings</li>
+          <li>✔ Custom ATS Integrations</li>
+          <li>✔ Unlimited Resumes</li>
+          <li>✔ Dedicated Account Manager</li>
+        </ul>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-text">
+      Fieldnote &copy; 2026.
+    </div>
+    <div class="footer-links">
+      <a href="/about">About Us</a>
+      <a href="/companies">Top Companies</a>
+      <a href="/pricing">For Employers</a>
+      <a href="/contact">Contact</a>
+    </div>
+  </footer>
+</div>
+
+<script src="auth.js"></script>
+</body>
+</html>

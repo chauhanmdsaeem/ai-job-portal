@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us — Fieldnote</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="container">
+  <!-- ===== Top navigation ===== -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="logo">Field<span>note</span></a>
+      <nav class="main-nav">
+        <a href="/#jobs">Jobs</a>
+        <a href="/companies">Companies</a>
+        <a href="/pricing">Pricing</a>
+        <a href="/about">About</a>
+      </nav>
+      <span id="nav-auth-slot" class="nav-auth"></span>
+    </div>
+  </header>
+
+  <main class="container-body" style="display: flex; min-height: calc(100vh - 80px);">
+    
+    <div style="flex: 1; padding: 100px 32px; border-right: var(--border-thick); background: var(--bg-base);">
+      <p class="eyebrow" style="background: var(--ink-main); color: var(--bg-surface);">Get in Touch</p>
+      <h1 style="font-family: var(--font-display); font-size: 4rem; margin: 0 0 24px; line-height: 1.1;">Let's talk <br><i>recruitment.</i></h1>
+      <p style="color: var(--ink-light); font-size: 1.1rem; max-width: 400px; margin-bottom: 48px;">
+        Whether you are an enterprise looking for custom ATS integration or a candidate needing support, our team is ready to help.
+      </p>
+
+      <div style="margin-bottom: 32px;">
+        <h4 style="font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 8px;">Headquarters</h4>
+        <p style="margin: 0; color: var(--ink-light);">123 Tech Boulevard, Suite 400<br>San Francisco, CA 94105</p>
+      </div>
+
+      <div>
+        <h4 style="font-family: var(--font-mono); text-transform: uppercase; margin: 0 0 8px;">Direct Contact</h4>
+        <p style="margin: 0; color: var(--ink-light);">hello@fieldnote.ai<br>+1 (555) 123-4567</p>
+      </div>
+    </div>
+
+    <div style="flex: 1; padding: 100px 64px; display: flex; flex-direction: column; justify-content: center;">
+      <form class="auth-form" onsubmit="event.preventDefault(); alert('Message sent successfully!'); this.reset();">
+        <h2 style="font-family: var(--font-display); font-size: 2rem; margin: 0 0 32px;">Send a Message</h2>
+        
+        <label for="name">Full Name</label>
+        <input type="text" id="name" required />
+        
+        <label for="email">Work Email</label>
+        <input type="email" id="email" required />
+        
+        <label for="subject">Subject</label>
+        <select id="subject" required>
+          <option value="">Select a topic...</option>
+          <option value="sales">Sales & Pricing</option>
+          <option value="support">Technical Support</option>
+          <option value="press">Press & Media</option>
+        </select>
+        
+        <label for="message">Message</label>
+        <textarea id="message" rows="5" required></textarea>
+        
+        <button type="submit" style="margin-top: 32px;">Submit Inquiry</button>
+      </form>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-text">
+      Fieldnote &copy; 2026.
+    </div>
+    <div class="footer-links">
+      <a href="/about">About Us</a>
+      <a href="/companies">Top Companies</a>
+      <a href="/pricing">For Employers</a>
+      <a href="/contact">Contact</a>
+    </div>
+  </footer>
+</div>
+
+<script src="auth.js"></script>
+</body>
+</html>

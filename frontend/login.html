@@ -7,23 +7,26 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
+<div class="container">
   <header class="site-header">
-    <div class="container header-inner">
-      <a href="index.html" class="logo">Field<span>note</span></a>
+    <div class="header-inner">
+      <a href="/" class="logo">Field<span>note</span></a>
       <nav class="main-nav">
-        <a href="index.html#jobs">Jobs</a>
-        <span id="nav-auth-slot" class="nav-auth"></span>
+        <a href="/#jobs">Jobs</a>
+        <a href="/companies">Companies</a>
+        <a href="/pricing">Pricing</a>
+        <a href="/about">About</a>
       </nav>
+      <span id="nav-auth-slot" class="nav-auth"></span>
     </div>
   </header>
 
-  <main class="container auth-page">
+  <main class="container-body auth-page">
     <div class="auth-card">
       <p class="eyebrow">Milestone 04 — Authentication</p>
       <h1 class="auth-title">Log in</h1>
       <p class="auth-sub">
-        Demo accounts, seeded by <code>database/seed.py</code>:<br />
+        Demo accounts, seeded by <code style="font-family: var(--font-mono); background: var(--bg-base); padding: 2px 4px; border: var(--border-thin);">database/seed.py</code>:<br />
         <code>recruiter@example.com</code> / <code>password123</code><br />
         <code>candidate@example.com</code> / <code>password123</code>
       </p>
@@ -47,10 +50,17 @@
   </main>
 
   <footer class="site-footer">
-    <div class="container">
-      <p>AI Job Portal — learning project.</p>
+    <div class="footer-text">
+      Fieldnote &copy; 2026.
+    </div>
+    <div class="footer-links">
+      <a href="/about">About Us</a>
+      <a href="/companies">Top Companies</a>
+      <a href="/pricing">For Employers</a>
+      <a href="/contact">Contact</a>
     </div>
   </footer>
+</div>
 
   <script src="auth.js"></script>
   <script src="auth-forms.js"></script>

@@ -7,18 +7,21 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
+<div class="container">
   <header class="site-header">
-    <div class="container header-inner">
-      <a href="index.html" class="logo">Field<span>note</span></a>
+    <div class="header-inner">
+      <a href="/" class="logo">Field<span>note</span></a>
       <nav class="main-nav">
-        <a href="index.html#jobs">Jobs</a>
-        <span id="nav-auth-slot" class="nav-auth"></span>
+        <a href="/#jobs">Jobs</a>
+        <a href="/companies">Companies</a>
+        <a href="/pricing">Pricing</a>
+        <a href="/about">About</a>
       </nav>
+      <span id="nav-auth-slot" class="nav-auth"></span>
     </div>
   </header>
 
-  <main class="container auth-page">
+  <main class="container-body auth-page">
     <div class="auth-card">
       <p class="eyebrow">Milestone 04 — Authentication</p>
       <h1 class="auth-title">Create an account</h1>
@@ -33,7 +36,7 @@
 
         <label for="password">Password</label>
         <input type="password" id="password" name="password" required minlength="8" autocomplete="new-password" />
-        <p class="field-hint">At least 8 characters.</p>
+        <p class="field-hint" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-light); margin-top: 4px;">At least 8 characters.</p>
 
         <label for="role">I am a…</label>
         <select id="role" name="role">
@@ -53,10 +56,17 @@
   </main>
 
   <footer class="site-footer">
-    <div class="container">
-      <p>AI Job Portal — learning project.</p>
+    <div class="footer-text">
+      Fieldnote &copy; 2026.
+    </div>
+    <div class="footer-links">
+      <a href="/about">About Us</a>
+      <a href="/companies">Top Companies</a>
+      <a href="/pricing">For Employers</a>
+      <a href="/contact">Contact</a>
     </div>
   </footer>
+</div>
 
   <script src="auth.js"></script>
   <script src="auth-forms.js"></script>

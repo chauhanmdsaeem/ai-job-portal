@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us — Fieldnote</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="container">
+  <!-- ===== Top navigation ===== -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="logo">Field<span>note</span></a>
+      <nav class="main-nav">
+        <a href="/#jobs">Jobs</a>
+        <a href="/companies">Companies</a>
+        <a href="/pricing">Pricing</a>
+        <a href="/about">About</a>
+      </nav>
+      <span id="nav-auth-slot" class="nav-auth"></span>
+    </div>
+  </header>
+
+  <main class="container-body">
+    <section class="hero" style="padding: 120px 32px; background: none;">
+      <p class="eyebrow" style="background: var(--ink-main); color: var(--bg-surface);">Our Mission</p>
+      <h1>We believe hiring<br>should be <i>precise.</i></h1>
+      <p class="hero-sub">
+        Fieldnote is an AI-powered job portal designed to eliminate the noise in the recruitment process. We pair brilliant candidates with exact roles using our proprietary Auto-Screening and Resume Tailoring agents.
+      </p>
+    </section>
+
+    <section style="display: grid; grid-template-columns: 1fr 1fr; border-bottom: var(--border-thick);">
+      <div style="padding: 64px 32px; border-right: var(--border-thick);">
+        <h2 style="font-family: var(--font-display); font-size: 2.5rem; margin: 0 0 16px;">For Candidates</h2>
+        <p style="color: var(--ink-light); font-size: 1.1rem; margin-bottom: 24px;">
+          Stop sending generic resumes. Our AI Tailoring Agent automatically rewrites your resume for every single job you apply to, ensuring your experience aligns perfectly with the JD.
+        </p>
+        <ul style="list-style: none; padding: 0; font-family: var(--font-mono); font-size: 0.9rem; display: flex; flex-direction: column; gap: 12px;">
+          <li>&rarr; 1-Click ATS Resume Generation</li>
+          <li>&rarr; AI Skill Gap Analysis</li>
+          <li>&rarr; Smart Job Recommendations</li>
+        </ul>
+      </div>
+      <div style="padding: 64px 32px; background: var(--bg-base);">
+        <h2 style="font-family: var(--font-display); font-size: 2.5rem; margin: 0 0 16px;">For Employers</h2>
+        <p style="color: var(--ink-light); font-size: 1.1rem; margin-bottom: 24px;">
+          Never read an irrelevant resume again. Our Auto-Screening Agent scores every incoming application instantly, separating the top 1% from the rest before you even open your dashboard.
+        </p>
+        <ul style="list-style: none; padding: 0; font-family: var(--font-mono); font-size: 0.9rem; display: flex; flex-direction: column; gap: 12px;">
+          <li>&rarr; Automated Candidate Scoring</li>
+          <li>&rarr; AI JD Generation</li>
+          <li>&rarr; Instant Insights & Summaries</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-text">
+      Fieldnote &copy; 2026.
+    </div>
+    <div class="footer-links">
+      <a href="/about">About Us</a>
+      <a href="/companies">Top Companies</a>
+      <a href="/pricing">For Employers</a>
+      <a href="/contact">Contact</a>
+    </div>
+  </footer>
+</div>
+
+<script src="auth.js"></script>
+</body>
+</html>

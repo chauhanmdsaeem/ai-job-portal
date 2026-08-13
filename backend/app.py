@@ -80,6 +80,22 @@ def add_security_headers(response):
 def serve_index():
     return send_from_directory(FRONTEND_DIR, "index.html")
 
+@app.route("/about")
+def serve_about():
+    return send_from_directory(FRONTEND_DIR, "about.html")
+
+@app.route("/pricing")
+def serve_pricing():
+    return send_from_directory(FRONTEND_DIR, "pricing.html")
+
+@app.route("/companies")
+def serve_companies():
+    return send_from_directory(FRONTEND_DIR, "companies.html")
+
+@app.route("/contact")
+def serve_contact():
+    return send_from_directory(FRONTEND_DIR, "contact.html")
+
 
 @app.route("/<path:filename>")
 def serve_frontend_file(filename):
