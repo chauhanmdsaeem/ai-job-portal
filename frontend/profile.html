@@ -13,6 +13,12 @@
       <a href="index.html" class="logo">Field<span>note</span></a>
       <nav class="main-nav">
         <a href="index.html#jobs">Jobs</a>
+        <div id="nav-notifications" class="nav-notifications" style="display: none; position: relative; margin-right: 15px; cursor: pointer;">
+          🔔 <span id="notif-badge" style="background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; position: absolute; top: -5px; right: -10px; display: none;">0</span>
+          <div id="notif-dropdown" style="display: none; position: absolute; right: 0; top: 30px; width: 250px; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 300px; overflow-y: auto; z-index: 1000; padding: 10px;">
+            <p style="font-size: 12px; margin: 0; color: #666;">No new notifications</p>
+          </div>
+        </div>
         <span id="nav-auth-slot" class="nav-auth"></span>
       </nav>
     </div>
@@ -26,6 +32,12 @@
         
         <form id="profile-form" class="auth-form">
           <label for="profile-resume">Master Resume / Profile</label>
+          <div style="margin-bottom: 16px;">
+            <p class="field-hint" style="margin-bottom: 8px;">Upload a PDF to automatically extract text, or paste your resume manually below.</p>
+            <input type="file" id="resume-upload" accept=".pdf" style="margin-bottom: 8px;" />
+            <button type="button" id="upload-pdf-btn" class="secondary-btn">Extract from PDF</button>
+            <span id="upload-status" style="margin-left: 12px; font-size: 14px;"></span>
+          </div>
           <textarea 
             id="profile-resume" 
             name="resume" 
@@ -38,6 +50,14 @@
           
           <button type="submit" id="save-profile-btn">Save Profile</button>
         </form>
+      </div>
+      
+      <div class="auth-box" style="max-width: 800px; width: 100%; margin-top: 40px;">
+        <h2 style="margin-bottom: 24px;">Saved Jobs</h2>
+        <div id="saved-jobs-list" style="display: grid; gap: 16px;">
+          <!-- Saved jobs will be rendered here -->
+        </div>
+        <p id="saved-jobs-empty" style="color: #666;" hidden>You haven't saved any jobs yet.</p>
       </div>
     </section>
   </main>

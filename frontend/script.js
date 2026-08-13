@@ -57,6 +57,7 @@ let allJobs = [];
 // loadJobs() and read by createJobCard() on every render.
 let currentUser = null;
 let appliedJobIds = new Set();
+let savedJobIds = new Set();
 let candidateProfile = null;
 
 /**
@@ -131,10 +132,41 @@ function createApplyControl(job) {
     });
     
     controls.append(matchBtn, matchResult, button);
-    return controls;
+  } else {
+    controls.append(button);
+  }
+  
+  // Save/Bookmark button
+  if (currentUser.role === "candidate") {
+    const saveBtn = document.createElement("button");
+    saveBtn.type = "button";
+    saveBtn.className = "ghost-btn";
+    
+    const isSaved = savedJobIds.has(job.id);
+    saveBtn.textContent = isSaved ? "🔖 Saved" : "🔖 Save";
+    
+    saveBtn.addEventListener("click", async () => {
+      saveBtn.disabled = true;
+      try {
+        if (savedJobIds.has(job.id)) {
+          await fetch(`/api/jobs/${job.id}/save`, { method: "DELETE" });
+          savedJobIds.delete(job.id);
+          saveBtn.textContent = "🔖 Save";
+        } else {
+          await fetch(`/api/jobs/${job.id}/save`, { method: "POST" });
+          savedJobIds.add(job.id);
+          saveBtn.textContent = "🔖 Saved";
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        saveBtn.disabled = false;
+      }
+    });
+    
+    controls.append(saveBtn);
   }
 
-  controls.append(button);
   return controls;
 }
 
@@ -343,6 +375,12 @@ async function loadJobs() {
       if (res.ok) {
         const applications = await res.json();
         appliedJobIds = new Set(applications.map((a) => a.job_id));
+      }
+      
+      const savedRes = await fetch("/api/jobs/saved");
+      if (savedRes.ok) {
+        const savedJobs = await savedRes.json();
+        savedJobIds = new Set(savedJobs.map((j) => j.id));
       }
       
       const profileRes = await fetch("/api/me/profile");

@@ -139,3 +139,35 @@ def set_job_status(job_id, status):
     db.execute("UPDATE jobs SET status = ? WHERE id = ?", (status, job_id))
     db.commit()
     return get_job_by_id(job_id)
+
+
+def save_job(user_id, job_id):
+    import sqlite3
+    db = get_db()
+    try:
+        db.execute(
+            "INSERT INTO saved_jobs (user_id, job_id) VALUES (?, ?)",
+            (user_id, job_id)
+        )
+        db.commit()
+        return True
+    except sqlite3.IntegrityError:
+        return False  # Already saved
+
+
+def unsave_job(user_id, job_id):
+    db = get_db()
+    db.execute("DELETE FROM saved_jobs WHERE user_id = ? AND job_id = ?", (user_id, job_id))
+    db.commit()
+
+
+def get_saved_jobs(user_id):
+    db = get_db()
+    rows = db.execute(
+        """SELECT j.* FROM jobs j 
+           JOIN saved_jobs sj ON j.id = sj.job_id 
+           WHERE sj.user_id = ? 
+           ORDER BY sj.saved_at DESC""", 
+        (user_id,)
+    ).fetchall()
+    return [_row_to_dict(row) for row in rows]

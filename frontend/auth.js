@@ -73,6 +73,11 @@ function renderNavAuth(user) {
       slot.append(roleLink, greeting, logoutBtn);
     }
 
+    const notifDiv = document.getElementById("nav-notifications");
+    if (notifDiv) {
+      notifDiv.style.display = "inline-block";
+      loadNotifications();
+    }
 
   } else {
     const loginLink = document.createElement("a");
@@ -97,6 +102,57 @@ async function initNavAuth() {
   const user = await fetchCurrentUser();
   renderNavAuth(user);
   return user;
+}
+
+async function logoutUser() {
+  await fetch("/api/logout", { method: "POST" });
+  window.location.reload();
+}
+
+async function loadNotifications() {
+  try {
+    const res = await fetch("/api/notifications");
+    if (!res.ok) return;
+    
+    const notifs = await res.json();
+    const unreadCount = notifs.filter(n => !n.is_read).length;
+    
+    const badge = document.getElementById("notif-badge");
+    const dropdown = document.getElementById("notif-dropdown");
+    const notifContainer = document.getElementById("nav-notifications");
+    
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount;
+      badge.style.display = "inline-block";
+    }
+    
+    if (notifs.length > 0) {
+      dropdown.innerHTML = notifs.map(n => `
+        <div style="padding: 8px; border-bottom: 1px solid #eee; ${n.is_read ? 'opacity: 0.6;' : 'font-weight: bold;'}">
+          <p style="font-size: 13px; margin: 0; color: #333;">${n.message}</p>
+          <small style="color: #999; font-size: 10px;">${n.created_at}</small>
+          ${!n.is_read ? `<button onclick="markNotifRead(${n.id})" style="font-size: 10px; margin-top: 4px;">Mark read</button>` : ''}
+        </div>
+      `).join("");
+    }
+    
+    // Toggle dropdown on click
+    notifContainer.onclick = function(e) {
+      if (e.target.tagName !== 'BUTTON') {
+        dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+      }
+    };
+    
+  } catch (err) {
+    console.error("Could not load notifications:", err);
+  }
+}
+
+window.markNotifRead = async function(id) {
+  try {
+    await fetch(`/api/notifications/${id}/read`, { method: "PUT" });
+    loadNotifications();
+  } catch (err) {}
 }
 
 document.addEventListener("DOMContentLoaded", initNavAuth);

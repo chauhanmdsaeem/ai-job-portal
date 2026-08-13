@@ -15,6 +15,7 @@ from models import job as job_model
 from models import application as application_model
 from utils.auth_utils import role_required
 from utils.ai_analyzer import mock_ai_analyze_resume
+from routes.notifications import create_notification
 
 applications_bp = Blueprint("applications", __name__, url_prefix="/api")
 
@@ -39,6 +40,9 @@ def apply_to_job(job_id):
     except sqlite3.IntegrityError:
         # UNIQUE(job_id, candidate_id) in schema.sql caught a duplicate.
         return jsonify({"error": "you've already applied to this job"}), 409
+
+    candidate = session["user_id"]
+    create_notification(job["created_by"], f"New application received for {job['title']} from Candidate ID {candidate}.")
 
     return jsonify(application), 201
 
@@ -81,6 +85,10 @@ def update_application(application_id):
         return jsonify({"error": f"status must be one of {application_model.VALID_STATUSES}"}), 400
 
     updated = application_model.update_status(application_id, status)
+    
+    # Notify candidate
+    create_notification(application["candidate_id"], f"Your application for '{job['title']}' was updated to: {status}.")
+    
     return jsonify(updated)
 
 

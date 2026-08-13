@@ -50,6 +50,22 @@ CREATE TABLE IF NOT EXISTS applications (
     UNIQUE (job_id, candidate_id)       -- one application per candidate per job
 );
 
+CREATE TABLE IF NOT EXISTS saved_jobs (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    job_id     INTEGER NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
+    saved_at   TEXT NOT NULL DEFAULT (datetime('now')),
+    UNIQUE (user_id, job_id)
+);
+
+CREATE TABLE IF NOT EXISTS notifications (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    message    TEXT NOT NULL,
+    is_read    INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE INDEX IF NOT EXISTS idx_jobs_location ON jobs(location);
 CREATE INDEX IF NOT EXISTS idx_jobs_job_type ON jobs(job_type);
 CREATE INDEX IF NOT EXISTS idx_applications_job ON applications(job_id);

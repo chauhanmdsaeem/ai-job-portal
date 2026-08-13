@@ -152,3 +152,24 @@ def get_job_match(job_id):
     resume_text = user["resume"] if user and user["resume"] else ""
     result = ai_candidate_match(resume_text, job)
     return jsonify(result)
+
+@jobs_bp.route("/jobs/<int:job_id>/save", methods=["POST"])
+@role_required("candidate")
+def save_job_endpoint(job_id):
+    if not job_model.get_job_by_id(job_id):
+        return jsonify({"error": "Job not found"}), 404
+    
+    job_model.save_job(session["user_id"], job_id)
+    return jsonify({"message": "Job saved"})
+
+@jobs_bp.route("/jobs/<int:job_id>/save", methods=["DELETE"])
+@role_required("candidate")
+def unsave_job_endpoint(job_id):
+    job_model.unsave_job(session["user_id"], job_id)
+    return jsonify({"message": "Job unsaved"})
+
+@jobs_bp.route("/jobs/saved", methods=["GET"])
+@role_required("candidate")
+def get_saved_jobs_endpoint():
+    jobs = job_model.get_saved_jobs(session["user_id"])
+    return jsonify(jobs)

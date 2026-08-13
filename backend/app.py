@@ -25,6 +25,7 @@ import db
 from routes.auth import auth_bp
 from routes.jobs import jobs_bp
 from routes.applications import applications_bp
+from routes.notifications import notifications_bp
 
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -49,6 +50,7 @@ db.init_app(app)
 app.register_blueprint(auth_bp)
 app.register_blueprint(jobs_bp)
 app.register_blueprint(applications_bp)
+app.register_blueprint(notifications_bp)
 
 # Set up Rate Limiting
 limiter = Limiter(

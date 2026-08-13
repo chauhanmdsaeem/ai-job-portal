@@ -16,7 +16,9 @@ session cookie only carries id + role, not the full record.
 """
 import sqlite3
 
+import io
 from flask import Blueprint, request, jsonify, session
+from PyPDF2 import PdfReader
 
 from models.user import create_user, get_user_by_email, get_user_by_id, verify_password, to_public_dict, update_user_resume
 
@@ -127,3 +129,35 @@ def update_profile():
     
     update_user_resume(user_id, resume_text)
     return jsonify({"message": "Profile updated successfully"})
+
+@auth_bp.route("/me/resume/upload", methods=["POST"])
+def upload_resume():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "unauthorized"}), 401
+        
+    user = get_user_by_id(user_id)
+    if not user or user["role"] != "candidate":
+        return jsonify({"error": "forbidden"}), 403
+        
+    if "resume" not in request.files:
+        return jsonify({"error": "no file uploaded"}), 400
+        
+    file = request.files["resume"]
+    if file.filename == "":
+        return jsonify({"error": "no file selected"}), 400
+        
+    if not file.filename.lower().endswith(".pdf"):
+        return jsonify({"error": "only PDF files are supported"}), 400
+        
+    try:
+        reader = PdfReader(io.BytesIO(file.read()))
+        resume_text = ""
+        for page in reader.pages:
+            resume_text += page.extract_text() + "\n"
+            
+        update_user_resume(user_id, resume_text.strip())
+        return jsonify({"message": "Resume uploaded successfully", "resume": resume_text.strip()})
+    except Exception as e:
+        print(f"PDF Parse Error: {e}")
+        return jsonify({"error": "failed to parse PDF"}), 500
