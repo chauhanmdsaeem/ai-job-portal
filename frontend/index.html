@@ -89,19 +89,43 @@
       <p id="modal-job-company" class="modal-subtitle">Company Name</p>
       
       <form id="apply-form" class="auth-form" style="margin-top: 20px;">
-        <label for="resume-input">Resume / Cover Letter</label>
+        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+          <label for="resume-input">Resume / Cover Letter</label>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" id="btn-tailor-resume" class="ghost-btn" style="padding: 4px 8px; font-size: 12px; margin: 0;">✨ Auto-Tailor</button>
+            <button type="button" id="btn-generate-ats" class="ghost-btn" style="padding: 4px 8px; font-size: 12px; margin: 0;">✨ Generate ATS</button>
+          </div>
+        </div>
         <textarea 
           id="resume-input" 
           name="resume" 
-          rows="5" 
-          placeholder="Paste your resume text or a link to your portfolio/resume here..." 
+          rows="10" 
+          placeholder="Your tailored resume or cover letter..." 
           required
         ></textarea>
-        <p class="field-hint">For this milestone, please use text or a URL instead of a file upload.</p>
+        
+        <label for="experience-input">Years of Experience</label>
+        <input type="number" id="experience-input" min="0" max="50" placeholder="e.g. 5" required />
+        
+        <label for="salary-input">Expected Salary (Optional)</label>
+        <input type="text" id="salary-input" placeholder="e.g. $100k or 15 LPA" />
+        
+        <label for="notice-input">Notice Period</label>
+        <select id="notice-input" required>
+          <option value="">Select notice period</option>
+          <option value="Immediate">Immediate / Not working</option>
+          <option value="15 days">15 Days</option>
+          <option value="1 month">1 Month</option>
+          <option value="2 months">2 Months</option>
+          <option value="3+ months">3+ Months</option>
+        </select>
+        
+        <label for="portfolio-input">Portfolio / LinkedIn URL (Optional)</label>
+        <input type="url" id="portfolio-input" placeholder="https://..." />
         
         <p id="apply-error" class="form-error" hidden></p>
         
-        <button type="submit" id="submit-application-btn">Submit Application</button>
+        <button type="submit" id="submit-application-btn" style="margin-top: 16px;">Submit Application</button>
       </form>
     </div>
   </dialog>

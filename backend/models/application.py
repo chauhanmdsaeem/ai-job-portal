@@ -28,17 +28,22 @@ def _row_to_dict(row):
         "job_id": row["job_id"],
         "candidate_id": row["candidate_id"],
         "resume": row["resume"],
+        "experience": row["experience"] if "experience" in row.keys() else None,
+        "expected_salary": row["expected_salary"] if "expected_salary" in row.keys() else None,
+        "notice_period": row["notice_period"] if "notice_period" in row.keys() else None,
+        "portfolio_url": row["portfolio_url"] if "portfolio_url" in row.keys() else None,
         "status": row["status"],
         "applied_at": row["applied_at"],
         "ai_analysis": json.loads(row["ai_analysis"]) if "ai_analysis" in row.keys() and row["ai_analysis"] else None,
     }
 
 
-def create_application(job_id, candidate_id, resume=None):
+def create_application(job_id, candidate_id, resume=None, experience=None, expected_salary=None, notice_period=None, portfolio_url=None):
     db = get_db()
     cursor = db.execute(
-        "INSERT INTO applications (job_id, candidate_id, resume) VALUES (?, ?, ?)",
-        (job_id, candidate_id, resume),
+        """INSERT INTO applications (job_id, candidate_id, resume, experience, expected_salary, notice_period, portfolio_url) 
+           VALUES (?, ?, ?, ?, ?, ?, ?)""",
+        (job_id, candidate_id, resume, experience, expected_salary, notice_period, portfolio_url),
     )
     db.commit()
     return get_application_by_id(cursor.lastrowid)

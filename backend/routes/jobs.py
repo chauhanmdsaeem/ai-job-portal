@@ -19,7 +19,9 @@ from flask import Blueprint, request, jsonify, session
 from models import job as job_model
 from models.user import get_user_by_id
 from utils.auth_utils import role_required
-from utils.ai_analyzer import ai_recommend_jobs, ai_candidate_match
+from utils.ai_analyzer import ai_recommend_jobs, ai_candidate_match, ai_generate_job_description
+from routes.notifications import create_notification
+import threading
 
 jobs_bp = Blueprint("jobs", __name__, url_prefix="/api")
 
@@ -60,7 +62,42 @@ def create_job():
         return jsonify({"error": f"missing required field(s): {', '.join(missing)}"}), 400
 
     job = job_model.create_job(data, created_by=session["user_id"])
+    
+    # Auto-Search Agent (Run in background thread to avoid blocking)
+    from flask import current_app
+    app = current_app._get_current_object()
+    
+    def auto_search(job_data, app_obj):
+        with app_obj.app_context():
+            from db import get_db
+            db = get_db()
+            # Get all candidates
+            candidates = db.execute("SELECT id, resume FROM users WHERE role = 'candidate'").fetchall()
+            for cand in candidates:
+                if not cand["resume"]: continue
+                match = ai_candidate_match(cand["resume"], job_data)
+                if match.get("score", 0) >= 90:
+                    # Save the job for them
+                    job_model.save_job(cand["id"], job_data["id"])
+                    # Notify them
+                    create_notification(cand["id"], f"Auto-Search Agent: We found a perfect >90% match for you! '{job_data['title']}' at {job_data['company']} was just posted and automatically saved to your profile.")
+                    
+    threading.Thread(target=auto_search, args=(job, app)).start()
+
     return jsonify(job), 201
+
+@jobs_bp.route("/jobs/generate_jd", methods=["POST"])
+@role_required("recruiter", "admin")
+def generate_jd():
+    data = request.get_json(silent=True) or {}
+    title = data.get("title")
+    skills = data.get("skills")
+    
+    if not title or not skills:
+        return jsonify({"error": "title and skills required"}), 400
+        
+    result = ai_generate_job_description(title, skills)
+    return jsonify(result)
 
 
 def _check_ownership(job):

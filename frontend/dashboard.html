@@ -59,8 +59,11 @@
           <label for="salary">Salary (optional)</label>
           <input type="text" id="salary" placeholder="e.g. 6-9 LPA" />
 
-          <label for="description">Description</label>
-          <textarea id="description" rows="3"></textarea>
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <label for="description">Description</label>
+            <button type="button" id="btn-generate-jd" class="ghost-btn" style="padding: 4px 8px; font-size: 12px; margin: 0;">✨ Generate JD</button>
+          </div>
+          <textarea id="description" rows="5"></textarea>
 
           <p id="form-error" class="form-error" role="alert" hidden></p>
 

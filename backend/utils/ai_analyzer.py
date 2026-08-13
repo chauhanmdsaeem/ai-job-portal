@@ -22,6 +22,12 @@ class AIJobMatchResult(BaseModel):
     score: int = Field(description="Compatibility score from 0 to 100")
     summary: str = Field(description="A brief summary evaluating the fit")
 
+class AIJobDescriptionResult(BaseModel):
+    description: str = Field(description="The fully generated job description")
+
+class AIResumeResult(BaseModel):
+    resume: str = Field(description="The generated or tailored resume")
+
 def mock_ai_analyze_resume(job_description, job_skills, resume_text):
     """
     Uses Google Gemini AI to evaluate a resume against job requirements.
@@ -159,3 +165,112 @@ def ai_recommend_jobs(resume_text, open_jobs):
     except Exception as e:
         print(f"Gemini API Error: {e}")
         return {"recommendations": []}
+
+def ai_generate_job_description(title, skills):
+    """
+    Generates a professional job description from a title and skills list.
+    """
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        return {"description": "Error: GEMINI_API_KEY environment variable is not set."}
+        
+    client = genai.Client(api_key=api_key)
+    
+    prompt = f"""
+    You are an expert technical recruiter and copywriter.
+    Write a highly professional, engaging job description for the following position:
+    
+    Job Title: {title}
+    Required Skills: {skills}
+    
+    The description should include a brief introduction about the role, what the candidate will do, and qualifications.
+    Format as clean markdown text. Do not include the title itself in the generated text, just the body of the description.
+    """
+    
+    try:
+        response = client.models.generate_content(
+            model='gemini-3.5-flash',
+            contents=prompt,
+            config=genai.types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=AIJobDescriptionResult,
+                temperature=0.7
+            ),
+        )
+        return json.loads(response.text)
+    except Exception as e:
+        print(f"Gemini API Error: {e}")
+        return {"description": f"Failed to generate JD: {str(e)}"}
+
+def ai_tailor_resume(resume_text, job_title, job_description, job_skills):
+    """
+    Tailors a master resume to perfectly match a specific job posting.
+    """
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        return {"resume": resume_text}
+        
+    client = genai.Client(api_key=api_key)
+    
+    prompt = f"""
+    You are an expert career coach. Tailor the candidate's master resume to be a perfect fit for the specific job description below.
+    Highlight the most relevant experiences, align the terminology with the job description, and add a brief customized professional summary at the top.
+    Do not invent or fabricate experience, just emphasize what's most relevant.
+    
+    Job Title: {job_title}
+    Job Description: {job_description}
+    Required Skills: {job_skills}
+    
+    Candidate's Master Resume:
+    {resume_text}
+    """
+    
+    try:
+        response = client.models.generate_content(
+            model='gemini-3.5-flash',
+            contents=prompt,
+            config=genai.types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=AIResumeResult,
+                temperature=0.5
+            ),
+        )
+        return json.loads(response.text)
+    except Exception as e:
+        print(f"Gemini API Error: {e}")
+        return {"resume": resume_text}
+
+def ai_generate_ats_resume(raw_notes):
+    """
+    Generates a full ATS-friendly resume from raw bullet points or notes.
+    """
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        return {"resume": raw_notes}
+        
+    client = genai.Client(api_key=api_key)
+    
+    prompt = f"""
+    You are an expert resume writer. The candidate has provided some rough notes about their background.
+    Expand these notes into a highly professional, ATS-friendly resume. 
+    Use strong action verbs, quantify achievements where possible (or suggest placeholders), and format it cleanly using Markdown.
+    Include standard sections: Professional Summary, Skills, Experience, and Education (if mentioned).
+    
+    Candidate's Notes:
+    {raw_notes}
+    """
+    
+    try:
+        response = client.models.generate_content(
+            model='gemini-3.5-flash',
+            contents=prompt,
+            config=genai.types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=AIResumeResult,
+                temperature=0.5
+            ),
+        )
+        return json.loads(response.text)
+    except Exception as e:
+        print(f"Gemini API Error: {e}")
+        return {"resume": raw_notes}

@@ -32,10 +32,20 @@ def apply_to_job(job_id):
 
     data = request.get_json(silent=True) or {}
     resume = data.get("resume")  # plain text/URL for now — file upload is a later milestone
+    experience = data.get("experience")
+    expected_salary = data.get("expected_salary")
+    notice_period = data.get("notice_period")
+    portfolio_url = data.get("portfolio_url")
 
     try:
         application = application_model.create_application(
-            job_id=job_id, candidate_id=session["user_id"], resume=resume
+            job_id=job_id, 
+            candidate_id=session["user_id"], 
+            resume=resume,
+            experience=experience,
+            expected_salary=expected_salary,
+            notice_period=notice_period,
+            portfolio_url=portfolio_url
         )
     except sqlite3.IntegrityError:
         # UNIQUE(job_id, candidate_id) in schema.sql caught a duplicate.
@@ -43,6 +53,22 @@ def apply_to_job(job_id):
 
     candidate = session["user_id"]
     create_notification(job["created_by"], f"New application received for {job['title']} from Candidate ID {candidate}.")
+
+    # Auto-Screening Agent
+    # We analyze the resume and automatically update the status based on score
+    analysis = mock_ai_analyze_resume(job["description"], job["skills"], resume)
+    application_model.save_ai_analysis(application["id"], json.dumps(analysis))
+    
+    new_status = "Applied"
+    if analysis["score"] >= 80:
+        new_status = "Shortlisted"
+    elif analysis["score"] < 40:
+        new_status = "Rejected"
+        
+    if new_status != "Applied":
+        application_model.update_status(application["id"], new_status)
+        application["status"] = new_status
+        create_notification(candidate, f"Your application for '{job['title']}' was auto-screened and updated to: {new_status}.")
 
     return jsonify(application), 201
 

@@ -21,6 +21,8 @@ from flask import Blueprint, request, jsonify, session
 from PyPDF2 import PdfReader
 
 from models.user import create_user, get_user_by_email, get_user_by_id, verify_password, to_public_dict, update_user_resume
+from models.job import get_job_by_id
+from utils.ai_analyzer import ai_tailor_resume, ai_generate_ats_resume
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api")
 
@@ -161,3 +163,36 @@ def upload_resume():
     except Exception as e:
         print(f"PDF Parse Error: {e}")
         return jsonify({"error": "failed to parse PDF"}), 500
+
+@auth_bp.route("/me/resume/tailor", methods=["POST"])
+def tailor_resume():
+    user_id = session.get("user_id")
+    if not user_id: return jsonify({"error": "unauthorized"}), 401
+    
+    data = request.get_json(silent=True) or {}
+    job_id = data.get("job_id")
+    master_resume = data.get("master_resume")
+    
+    if not job_id or not master_resume:
+        return jsonify({"error": "job_id and master_resume required"}), 400
+        
+    job = get_job_by_id(job_id)
+    if not job:
+        return jsonify({"error": "job not found"}), 404
+        
+    result = ai_tailor_resume(master_resume, job["title"], job["description"], job["skills"])
+    return jsonify(result)
+
+@auth_bp.route("/me/resume/generate", methods=["POST"])
+def generate_ats_resume():
+    user_id = session.get("user_id")
+    if not user_id: return jsonify({"error": "unauthorized"}), 401
+    
+    data = request.get_json(silent=True) or {}
+    raw_notes = data.get("raw_notes")
+    
+    if not raw_notes:
+        return jsonify({"error": "raw_notes required"}), 400
+        
+    result = ai_generate_ats_resume(raw_notes)
+    return jsonify(result)

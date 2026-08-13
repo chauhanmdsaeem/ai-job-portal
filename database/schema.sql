@@ -43,6 +43,10 @@ CREATE TABLE IF NOT EXISTS applications (
     job_id       INTEGER NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
     candidate_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     resume       TEXT,
+    experience   TEXT,
+    expected_salary TEXT,
+    notice_period TEXT,
+    portfolio_url TEXT,
     ai_analysis  TEXT,
     status       TEXT NOT NULL DEFAULT 'Applied'
                  CHECK (status IN ('Applied','Under Review','Shortlisted','Interview','Rejected','Selected')),

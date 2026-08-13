@@ -124,6 +124,18 @@ function createApplicantsPanel(job) {
       const applied = document.createElement("p");
       applied.className = "applicant-date";
       applied.textContent = `Applied ${dateStr}`;
+      
+      const extraInfo = document.createElement("div");
+      extraInfo.style.fontSize = "13px";
+      extraInfo.style.color = "#666";
+      extraInfo.style.marginTop = "8px";
+      
+      let extrasHTML = "";
+      if (app.experience) extrasHTML += `<strong>Exp:</strong> ${app.experience} yrs &nbsp;|&nbsp; `;
+      if (app.expected_salary) extrasHTML += `<strong>Salary:</strong> ${app.expected_salary} &nbsp;|&nbsp; `;
+      if (app.notice_period) extrasHTML += `<strong>Notice:</strong> ${app.notice_period}<br>`;
+      if (app.portfolio_url) extrasHTML += `<strong>Portfolio:</strong> <a href="${app.portfolio_url}" target="_blank">${app.portfolio_url}</a>`;
+      extraInfo.innerHTML = extrasHTML;
 
       const toggleResumeBtn = document.createElement("button");
       toggleResumeBtn.className = "toggle-resume-btn";
@@ -133,8 +145,10 @@ function createApplicantsPanel(job) {
       analyzeBtn.className = "analyze-btn";
       analyzeBtn.textContent = "✨ Analyze with AI";
       analyzeBtn.type = "button";
+      // Hide analyzeBtn since Auto-Screening does it automatically now, but we keep it for legacy ones that don't have analysis.
+      if (app.ai_analysis) analyzeBtn.hidden = true;
 
-      info.append(name, email, applied, toggleResumeBtn, analyzeBtn);
+      info.append(name, email, applied, extraInfo, toggleResumeBtn, analyzeBtn);
 
       const select = document.createElement("select");
       select.className = "status-select " + statusClass(app.status);
@@ -399,6 +413,46 @@ postJobForm.addEventListener("submit", async (event) => {
     formErrorEl.hidden = false;
   }
 });
+
+const btnGenerateJd = document.getElementById("btn-generate-jd");
+if (btnGenerateJd) {
+  btnGenerateJd.addEventListener("click", async () => {
+    const title = document.getElementById("title").value.trim();
+    const skills = document.getElementById("skills").value.trim();
+    
+    if (!title || !skills) {
+      formErrorEl.textContent = "Please enter a Title and Skills first to generate a JD.";
+      formErrorEl.hidden = false;
+      return;
+    }
+    
+    btnGenerateJd.disabled = true;
+    btnGenerateJd.textContent = "Generating...";
+    formErrorEl.hidden = true;
+    
+    try {
+      const res = await fetch("/api/jobs/generate_jd", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, skills })
+      });
+      const data = await res.json();
+      
+      if (res.ok) {
+        document.getElementById("description").value = data.description;
+      } else {
+        formErrorEl.textContent = data.error || "Failed to generate JD.";
+        formErrorEl.hidden = false;
+      }
+    } catch (err) {
+      formErrorEl.textContent = "Error connecting to AI.";
+      formErrorEl.hidden = false;
+    } finally {
+      btnGenerateJd.disabled = false;
+      btnGenerateJd.textContent = "✨ Generate JD";
+    }
+  });
+}
 
 async function initDashboard() {
   const user = await fetchCurrentUser(); // from auth.js

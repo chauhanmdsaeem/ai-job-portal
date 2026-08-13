@@ -191,6 +191,9 @@ function openApplyModal(job, buttonEl) {
   modalJobTitle.textContent = job.title;
   modalJobCompany.textContent = job.company;
   
+  const resumeInput = document.getElementById("resume-input");
+  resumeInput.value = candidateProfile && candidateProfile.resume ? candidateProfile.resume : "";
+  
   applyForm.reset();
   applyError.hidden = true;
   submitAppBtn.disabled = false;
@@ -214,6 +217,10 @@ if (applyModal) {
     if (!currentApplyingJob) return;
     
     const resumeVal = document.getElementById("resume-input").value.trim();
+    const expVal = document.getElementById("experience-input").value.trim();
+    const salaryVal = document.getElementById("salary-input").value.trim();
+    const noticeVal = document.getElementById("notice-input").value;
+    const portfolioVal = document.getElementById("portfolio-input").value.trim();
     
     submitAppBtn.disabled = true;
     submitAppBtn.textContent = "Submitting…";
@@ -223,7 +230,13 @@ if (applyModal) {
       const response = await fetch(`/api/jobs/${currentApplyingJob.id}/apply`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resume: resumeVal }),
+        body: JSON.stringify({ 
+          resume: resumeVal,
+          experience: expVal,
+          expected_salary: salaryVal,
+          notice_period: noticeVal,
+          portfolio_url: portfolioVal
+        }),
       });
       const data = await response.json().catch(() => ({}));
 
@@ -253,6 +266,79 @@ if (applyModal) {
       applyError.hidden = false;
     }
   });
+
+  const btnTailor = document.getElementById("btn-tailor-resume");
+  const btnGenerateAts = document.getElementById("btn-generate-ats");
+  
+  if (btnTailor) {
+    btnTailor.addEventListener("click", async () => {
+      if (!currentApplyingJob) return;
+      const resumeInput = document.getElementById("resume-input");
+      
+      const originalText = resumeInput.value.trim();
+      if (!originalText) {
+        alert("Please paste your master resume or some notes first!");
+        return;
+      }
+      
+      btnTailor.disabled = true;
+      btnTailor.textContent = "Tailoring...";
+      try {
+        const res = await fetch("/api/me/resume/tailor", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            job_id: currentApplyingJob.id,
+            master_resume: originalText
+          })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          resumeInput.value = data.resume;
+        } else {
+          alert("Failed to tailor resume.");
+        }
+      } catch (err) {
+        alert("Error connecting to AI.");
+      } finally {
+        btnTailor.disabled = false;
+        btnTailor.textContent = "✨ Auto-Tailor";
+      }
+    });
+  }
+
+  if (btnGenerateAts) {
+    btnGenerateAts.addEventListener("click", async () => {
+      const resumeInput = document.getElementById("resume-input");
+      
+      const rawNotes = resumeInput.value.trim();
+      if (!rawNotes || rawNotes.length < 20) {
+        alert("Please paste some rough notes, skills, or bullet points about your experience first (at least 20 chars).");
+        return;
+      }
+      
+      btnGenerateAts.disabled = true;
+      btnGenerateAts.textContent = "Generating...";
+      try {
+        const res = await fetch("/api/me/resume/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ raw_notes: rawNotes })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          resumeInput.value = data.resume;
+        } else {
+          alert("Failed to generate ATS resume.");
+        }
+      } catch (err) {
+        alert("Error connecting to AI.");
+      } finally {
+        btnGenerateAts.disabled = false;
+        btnGenerateAts.textContent = "✨ Generate ATS";
+      }
+    });
+  }
 }
 
 /**
