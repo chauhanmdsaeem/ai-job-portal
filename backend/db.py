@@ -15,7 +15,7 @@ app.teardown_appcontext.
 import sqlite3
 from pathlib import Path
 
-from flask import g
+from flask import g, current_app
 
 BASE_DIR = Path(__file__).resolve().parent          # .../ai-job-portal/backend
 PROJECT_ROOT = BASE_DIR.parent                        # .../ai-job-portal
@@ -26,7 +26,8 @@ SCHEMA_PATH = PROJECT_ROOT / "database" / "schema.sql"
 def get_db():
     """Return the request-scoped SQLite connection, opening one if needed."""
     if "db" not in g:
-        g.db = sqlite3.connect(DB_PATH)
+        db_path = current_app.config.get("DATABASE", DB_PATH) if current_app else DB_PATH
+        g.db = sqlite3.connect(db_path)
         # Row objects behave like dicts (row["title"]) instead of
         # plain tuples (row[0]) — much easier to read and to turn
         # into JSON.
