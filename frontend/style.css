@@ -12,9 +12,14 @@
   --line-main: #111111;
   --line-light: #DDDDDD;
   
+  /* Bauhaus / Editorial Accent Palette */
   --accent-primary: #B33900; /* Deep Burnt Orange */
+  --accent-secondary: #0047FF; /* Royal Blue */
+  --accent-tertiary: #FFC000; /* Marigold Yellow */
+  --accent-quaternary: #00994D; /* Emerald Green */
+  --accent-pink: #E6007E; /* Magenta */
   
-  --success: #059669;
+  --success: #00994D;
   --danger: #DC2626;
 
   --font-display: 'Playfair Display', Georgia, serif;
@@ -33,11 +38,26 @@ html { scroll-behavior: smooth; }
 body {
   margin: 0;
   background-color: var(--bg-base);
+  /* Designer dot-grid background for the 'Fieldnote' aesthetic */
+  background-image: radial-gradient(var(--line-light) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
   color: var(--ink-main);
   font-family: var(--font-body);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+}
+
+/* Custom Blocky Scrollbar */
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track { background: var(--bg-base); border-left: var(--border-thin); }
+::-webkit-scrollbar-thumb { background: var(--ink-main); border: 2px solid var(--bg-base); }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
+
+/* Custom Text Selection */
+::selection {
+  background: var(--accent-primary);
+  color: var(--bg-surface);
 }
 
 /* 
@@ -205,6 +225,15 @@ a:hover { color: var(--accent-primary); }
 }
 .hero h1 i {
   color: var(--accent-primary);
+  animation: textColorCycle 6s infinite alternate;
+}
+
+@keyframes textColorCycle {
+  0% { color: var(--accent-primary); }
+  25% { color: var(--accent-secondary); }
+  50% { color: var(--accent-tertiary); }
+  75% { color: var(--accent-quaternary); }
+  100% { color: var(--accent-pink); }
 }
 
 .hero-sub {
@@ -305,13 +334,25 @@ main.container-body {
   padding: 32px;
   display: flex;
   flex-direction: column;
-  transition: background 0.2s;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   position: relative;
+  z-index: 1;
 }
 
 .job-card:hover {
-  background: var(--bg-base);
+  background: var(--bg-surface);
+  transform: translate(-4px, -4px);
+  z-index: 10;
+  margin-top: -1px;
+  margin-left: -1px;
+  border-top: var(--border-thin);
+  border-left: var(--border-thin);
+  box-shadow: 8px 8px 0 var(--accent-primary);
 }
+.job-card:nth-child(2n):hover { box-shadow: 8px 8px 0 var(--accent-secondary); }
+.job-card:nth-child(3n):hover { box-shadow: 8px 8px 0 var(--accent-tertiary); }
+.job-card:nth-child(4n):hover { box-shadow: 8px 8px 0 var(--accent-quaternary); }
+.job-card:nth-child(5n):hover { box-shadow: 8px 8px 0 var(--accent-pink); }
 
 .job-card-top {
   display: flex;
@@ -339,9 +380,9 @@ main.container-body {
   white-space: nowrap;
 }
 
-.job-card[data-type="Internship"] .job-type-tag { background: #FDE047; }
-.job-card[data-type="Part-time"] .job-type-tag { background: #D8B4E2; }
-.job-card[data-type="Full-time"] .job-type-tag { background: #E2E8F0; }
+.job-card[data-type="Internship"] .job-type-tag { background: var(--accent-tertiary); color: var(--ink-main); font-weight: 600; border-color: var(--ink-main); }
+.job-card[data-type="Part-time"] .job-type-tag { background: var(--accent-pink); color: var(--bg-surface); font-weight: 600; border-color: var(--ink-main); }
+.job-card[data-type="Full-time"] .job-type-tag { background: var(--accent-secondary); color: var(--bg-surface); font-weight: 600; border-color: var(--ink-main); }
 
 .job-company { 
   font-weight: 600;
@@ -405,7 +446,8 @@ main.container-body {
 }
 .apply-link:hover, .apply-button:hover { 
   transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 var(--accent-primary);
+  box-shadow: 2px 2px 0 var(--accent-secondary);
+  background: var(--ink-light);
 }
 .apply-button:disabled { 
   opacity: 0.5; 
