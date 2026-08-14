@@ -418,10 +418,12 @@ const btnGenerateJd = document.getElementById("btn-generate-jd");
 if (btnGenerateJd) {
   btnGenerateJd.addEventListener("click", async () => {
     const title = document.getElementById("title").value.trim();
+    const company = document.getElementById("company").value.trim();
+    const location = document.getElementById("location").value.trim();
     const skills = document.getElementById("skills").value.trim();
     
-    if (!title || !skills) {
-      formErrorEl.textContent = "Please enter a Title and Skills first to generate a JD.";
+    if (!title || !company) {
+      formErrorEl.textContent = "Please enter a Title and Company first to generate a JD.";
       formErrorEl.hidden = false;
       return;
     }
@@ -431,10 +433,10 @@ if (btnGenerateJd) {
     formErrorEl.hidden = true;
     
     try {
-      const res = await fetch("/api/jobs/generate_jd", {
+      const res = await fetch("/api/jobs/generate-jd", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, skills })
+        body: JSON.stringify({ title, company, location, skills })
       });
       const data = await res.json();
       

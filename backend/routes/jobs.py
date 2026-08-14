@@ -86,18 +86,23 @@ def create_job():
 
     return jsonify(job), 201
 
-@jobs_bp.route("/jobs/generate_jd", methods=["POST"])
+@jobs_bp.route("/jobs/generate-jd", methods=["POST"])
 @role_required("recruiter", "admin")
 def generate_jd():
     data = request.get_json(silent=True) or {}
-    title = data.get("title")
-    skills = data.get("skills")
+    title = data.get("title", "")
+    company = data.get("company", "")
+    location = data.get("location", "")
+    skills = data.get("skills", "")
     
-    if not title or not skills:
-        return jsonify({"error": "title and skills required"}), 400
+    if not title or not company:
+        return jsonify({"error": "title and company are required"}), 400
         
-    result = ai_generate_job_description(title, skills)
+    from utils.ai_analyzer import ai_generate_job_description
+    
+    result = ai_generate_job_description(title, company, location, skills)
     return jsonify(result)
+
 
 
 def _check_ownership(job):

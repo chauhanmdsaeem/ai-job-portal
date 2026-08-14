@@ -166,13 +166,16 @@ def ai_recommend_jobs(resume_text, open_jobs):
         print(f"Gemini API Error: {e}")
         return {"recommendations": []}
 
-def ai_generate_job_description(title, skills):
+def ai_generate_job_description(title, company, location, skills):
     """
     Generates a professional job description from a title and skills list.
     """
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
-        return {"description": "Error: GEMINI_API_KEY environment variable is not set."}
+        import sys
+        sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+        from services.ai_service import generate_job_description
+        return {"description": generate_job_description(title, company, location, skills)}
         
     client = genai.Client(api_key=api_key)
     
@@ -181,6 +184,8 @@ def ai_generate_job_description(title, skills):
     Write a highly professional, engaging job description for the following position:
     
     Job Title: {title}
+    Company: {company}
+    Location: {location}
     Required Skills: {skills}
     
     The description should include a brief introduction about the role, what the candidate will do, and qualifications.
@@ -208,7 +213,10 @@ def ai_tailor_resume(resume_text, job_title, job_description, job_skills):
     """
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
-        return {"resume": resume_text}
+        import sys
+        sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+        from services.ai_service import tailor_resume as simulate_tailor_resume
+        return {"resume": simulate_tailor_resume(resume_text, job_description)}
         
     client = genai.Client(api_key=api_key)
     
