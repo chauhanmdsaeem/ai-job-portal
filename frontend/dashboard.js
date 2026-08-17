@@ -296,7 +296,7 @@ function createMyJobCard(job) {
 
   const title = document.createElement("h3");
   title.className = "job-title";
-  title.textContent = job.title;
+  title.textContent = `Job #${job.id} — ${job.title}`;
 
   const statusBadge = document.createElement("span");
   statusBadge.className = "job-status-badge job-status-" + job.status;
@@ -350,7 +350,34 @@ function createMyJobCard(job) {
     }
   });
 
-  actions.append(toggleApplicantsBtn, toggleStatusBtn);
+  const deleteBtn = document.createElement("button");
+  deleteBtn.type = "button";
+  deleteBtn.className = "ghost-btn";
+  deleteBtn.style.color = "var(--danger)";
+  deleteBtn.style.borderColor = "var(--danger)";
+  deleteBtn.textContent = "Delete";
+
+  deleteBtn.addEventListener("click", async () => {
+    if (!confirm("Are you sure you want to permanently delete this job posting?")) return;
+    deleteBtn.disabled = true;
+    try {
+      const res = await fetch(`/api/jobs/${job.id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("failed");
+      card.remove(); // Remove from UI
+      // Update count
+      const myJobsListEl = document.getElementById("my-jobs-list");
+      const myJobsCountEl = document.getElementById("my-jobs-count");
+      if (myJobsListEl && myJobsCountEl) {
+        const count = myJobsListEl.children.length;
+        myJobsCountEl.textContent = count + (count === 1 ? " posting" : " postings");
+      }
+    } catch (err) {
+      alert("Could not delete the posting — please try again.");
+      deleteBtn.disabled = false;
+    }
+  });
+
+  actions.append(toggleApplicantsBtn, toggleStatusBtn, deleteBtn);
   card.append(top, meta, actions, panel);
   return card;
 }
