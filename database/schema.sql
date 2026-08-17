@@ -1,45 +1,34 @@
 -- =========================================================
 -- schema.sql
--- Phase 3 — Database
--- ---------------------------------------------------------
--- Three tables, matching the design in the project README:
---   users        candidates, recruiters and admins
---   jobs         job postings, owned by a recruiter
---   applications candidate applications to a job (Phase 5 uses
---                this table; it's created now so the design is
---                in place, even though no routes touch it yet)
---
--- Safe to re-run: CREATE TABLE IF NOT EXISTS won't wipe data.
+-- PostgreSQL Version
 -- =========================================================
 
-PRAGMA foreign_keys = ON;
-
 CREATE TABLE IF NOT EXISTS users (
-    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    id            SERIAL PRIMARY KEY,
     name          TEXT NOT NULL,
     email         TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     role          TEXT NOT NULL CHECK (role IN ('candidate', 'recruiter', 'admin')),
     resume        TEXT,
-    created_at    TEXT NOT NULL DEFAULT (datetime('now'))
+    created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS jobs (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    id          SERIAL PRIMARY KEY,
     title       TEXT NOT NULL,
     company     TEXT NOT NULL,
     location    TEXT NOT NULL,
     description TEXT,
-    skills      TEXT,                  -- comma-separated, e.g. "Python,SQL,Git"
+    skills      TEXT,
     salary      TEXT,
     job_type    TEXT NOT NULL DEFAULT 'Full-time',
     status      TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'closed')),
     created_by  INTEGER REFERENCES users(id) ON DELETE SET NULL,
-    created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+    created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS applications (
-    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    id           SERIAL PRIMARY KEY,
     job_id       INTEGER NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
     candidate_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     resume       TEXT,
@@ -50,24 +39,24 @@ CREATE TABLE IF NOT EXISTS applications (
     ai_analysis  TEXT,
     status       TEXT NOT NULL DEFAULT 'Applied'
                  CHECK (status IN ('Applied','Under Review','Shortlisted','Interview','Rejected','Selected')),
-    applied_at   TEXT NOT NULL DEFAULT (datetime('now')),
-    UNIQUE (job_id, candidate_id)       -- one application per candidate per job
+    applied_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (job_id, candidate_id)
 );
 
 CREATE TABLE IF NOT EXISTS saved_jobs (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    id         SERIAL PRIMARY KEY,
     user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     job_id     INTEGER NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
-    saved_at   TEXT NOT NULL DEFAULT (datetime('now')),
+    saved_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (user_id, job_id)
 );
 
 CREATE TABLE IF NOT EXISTS notifications (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    id         SERIAL PRIMARY KEY,
     user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     message    TEXT NOT NULL,
     is_read    INTEGER NOT NULL DEFAULT 0,
-    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_jobs_location ON jobs(location);

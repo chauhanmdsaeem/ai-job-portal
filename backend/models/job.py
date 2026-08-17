@@ -37,11 +37,11 @@ def get_all_jobs(location=None, job_type=None, q=None):
     params = []
 
     if location:
-        query += " AND location = ?"
+        query += " AND location = %s"
         params.append(location)
 
     if job_type:
-        query += " AND job_type = ?"
+        query += " AND job_type = %s"
         params.append(job_type)
 
     if q:
@@ -49,7 +49,7 @@ def get_all_jobs(location=None, job_type=None, q=None):
         # Parameterised with ? placeholders throughout — never
         # string-format user input directly into SQL, or you open
         # the door to SQL injection.
-        query += " AND (title LIKE ? OR company LIKE ? OR skills LIKE ?)"
+        query += " AND (title LIKE %s OR company LIKE %s OR skills LIKE %s)"
         like_term = f"%{q}%"
         params += [like_term, like_term, like_term]
 
@@ -62,7 +62,7 @@ def get_all_jobs(location=None, job_type=None, q=None):
 def get_jobs_by_recruiter(recruiter_id):
     db = get_db()
     rows = db.execute(
-        "SELECT * FROM jobs WHERE created_by = ? ORDER BY created_at DESC", 
+        "SELECT * FROM jobs WHERE created_by = %s ORDER BY created_at DESC", 
         (recruiter_id,)
     ).fetchall()
     return [_row_to_dict(row) for row in rows]
@@ -70,7 +70,7 @@ def get_jobs_by_recruiter(recruiter_id):
 
 def get_job_by_id(job_id):
     db = get_db()
-    row = db.execute("SELECT * FROM jobs WHERE id = ?", (job_id,)).fetchone()
+    row = db.execute("SELECT * FROM jobs WHERE id = %s", (job_id,)).fetchone()
     return _row_to_dict(row) if row else None
 
 
@@ -79,7 +79,7 @@ def create_job(data, created_by):
     skills = ",".join(data.get("skills", []))
     cursor = db.execute(
         """INSERT INTO jobs (title, company, location, description, skills, salary, job_type, status, created_by)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+           VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
         (
             data["title"],
             data["company"],
@@ -93,7 +93,7 @@ def create_job(data, created_by):
         ),
     )
     db.commit()
-    return get_job_by_id(cursor.lastrowid)
+    return get_job_by_id(cursor.fetchone()['id'])
 
 
 def update_job(job_id, data):
@@ -108,9 +108,9 @@ def update_job(job_id, data):
 
     db.execute(
         """UPDATE jobs
-           SET title = ?, company = ?, location = ?, description = ?,
+           SET title = %s, company = %s, location = %s, description = %s,
                skills = ?, salary = ?, job_type = ?, status = ?
-           WHERE id = ?""",
+           WHERE id = %s""",
         (
             data.get("title", existing["title"]),
             data.get("company", existing["company"]),
@@ -129,14 +129,14 @@ def update_job(job_id, data):
 
 def delete_job(job_id):
     db = get_db()
-    cursor = db.execute("DELETE FROM jobs WHERE id = ?", (job_id,))
+    cursor = db.execute("DELETE FROM jobs WHERE id = %s", (job_id,))
     db.commit()
     return cursor.rowcount > 0
 
 
 def set_job_status(job_id, status):
     db = get_db()
-    db.execute("UPDATE jobs SET status = ? WHERE id = ?", (status, job_id))
+    db.execute("UPDATE jobs SET status = %s WHERE id = %s", (status, job_id))
     db.commit()
     return get_job_by_id(job_id)
 
@@ -146,7 +146,7 @@ def save_job(user_id, job_id):
     db = get_db()
     try:
         db.execute(
-            "INSERT INTO saved_jobs (user_id, job_id) VALUES (?, ?)",
+            "INSERT INTO saved_jobs (user_id, job_id) VALUES (%s, %s)",
             (user_id, job_id)
         )
         db.commit()
@@ -157,7 +157,7 @@ def save_job(user_id, job_id):
 
 def unsave_job(user_id, job_id):
     db = get_db()
-    db.execute("DELETE FROM saved_jobs WHERE user_id = ? AND job_id = ?", (user_id, job_id))
+    db.execute("DELETE FROM saved_jobs WHERE user_id = %s AND job_id = %s", (user_id, job_id))
     db.commit()
 
 
@@ -166,7 +166,7 @@ def get_saved_jobs(user_id):
     rows = db.execute(
         """SELECT j.* FROM jobs j 
            JOIN saved_jobs sj ON j.id = sj.job_id 
-           WHERE sj.user_id = ? 
+           WHERE sj.user_id = %s 
            ORDER BY sj.saved_at DESC""", 
         (user_id,)
     ).fetchall()

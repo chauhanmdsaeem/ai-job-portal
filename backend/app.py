@@ -103,6 +103,4 @@ def serve_frontend_file(filename):
 
 
 if __name__ == "__main__":
-    if not db.DB_PATH.exists():
-        print("Note: no jobs will show up until you run `python database/seed.py`.")
     app.run(debug=True, port=5000)

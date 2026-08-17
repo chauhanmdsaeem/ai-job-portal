@@ -25,24 +25,24 @@ def create_user(name, email, password, role):
     db = get_db()
     password_hash = generate_password_hash(password)
     cursor = db.execute(
-        "INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)",
+        "INSERT INTO users (name, email, password_hash, role) VALUES (%s, %s, %s, %s) RETURNING id",
         (name, email, password_hash, role),
     )
     db.commit()
-    return cursor.lastrowid
+    return cursor.fetchone()['id']
 
 
 def get_user_by_email(email):
     db = get_db()
     return db.execute(
-        "SELECT * FROM users WHERE email = ?", (email,)
+        "SELECT * FROM users WHERE email = %s", (email,)
     ).fetchone()
 
 
 def get_user_by_id(user_id):
     db = get_db()
     return db.execute(
-        "SELECT * FROM users WHERE id = ?", (user_id,)
+        "SELECT * FROM users WHERE id = %s", (user_id,)
     ).fetchone()
 
 
@@ -63,6 +63,6 @@ def to_public_dict(user_row):
 def update_user_resume(user_id, resume_text):
     db = get_db()
     db.execute(
-        "UPDATE users SET resume = ? WHERE id = ?", (resume_text, user_id)
+        "UPDATE users SET resume = %s WHERE id = %s", (resume_text, user_id)
     )
     db.commit()

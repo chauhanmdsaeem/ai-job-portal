@@ -42,17 +42,17 @@ def create_application(job_id, candidate_id, resume=None, experience=None, expec
     db = get_db()
     cursor = db.execute(
         """INSERT INTO applications (job_id, candidate_id, resume, experience, expected_salary, notice_period, portfolio_url) 
-           VALUES (?, ?, ?, ?, ?, ?, ?)""",
+           VALUES (%s, %s, %s, %s, %s, %s, %s)""",
         (job_id, candidate_id, resume, experience, expected_salary, notice_period, portfolio_url),
     )
     db.commit()
-    return get_application_by_id(cursor.lastrowid)
+    return get_application_by_id(cursor.fetchone()['id'])
 
 
 def get_application_by_id(application_id):
     db = get_db()
     row = db.execute(
-        "SELECT * FROM applications WHERE id = ?", (application_id,)
+        "SELECT * FROM applications WHERE id = %s", (application_id,)
     ).fetchone()
     return _row_to_dict(row) if row else None
 
@@ -60,7 +60,7 @@ def get_application_by_id(application_id):
 def has_applied(job_id, candidate_id):
     db = get_db()
     row = db.execute(
-        "SELECT id FROM applications WHERE job_id = ? AND candidate_id = ?",
+        "SELECT id FROM applications WHERE job_id = %s AND candidate_id = %s",
         (job_id, candidate_id),
     ).fetchone()
     return row is not None
@@ -79,7 +79,7 @@ def get_applications_for_candidate(candidate_id):
                   jobs.status AS job_status
            FROM applications
            JOIN jobs ON jobs.id = applications.job_id
-           WHERE applications.candidate_id = ?
+           WHERE applications.candidate_id = %s
            ORDER BY applications.applied_at DESC""",
         (candidate_id,),
     ).fetchall()
@@ -106,7 +106,7 @@ def get_applications_for_job(job_id):
                   users.email AS candidate_email
            FROM applications
            JOIN users ON users.id = applications.candidate_id
-           WHERE applications.job_id = ?
+           WHERE applications.job_id = %s
            ORDER BY applications.applied_at ASC""",
         (job_id,),
     ).fetchall()
@@ -124,7 +124,7 @@ def get_applications_for_job(job_id):
 def update_status(application_id, status):
     db = get_db()
     db.execute(
-        "UPDATE applications SET status = ? WHERE id = ?",
+        "UPDATE applications SET status = %s WHERE id = %s",
         (status, application_id),
     )
     db.commit()
@@ -133,7 +133,7 @@ def update_status(application_id, status):
 def save_ai_analysis(application_id, analysis_json_str):
     db = get_db()
     db.execute(
-        "UPDATE applications SET ai_analysis = ? WHERE id = ?",
+        "UPDATE applications SET ai_analysis = %s WHERE id = %s",
         (analysis_json_str, application_id),
     )
     db.commit()

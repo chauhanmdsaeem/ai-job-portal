@@ -1,8 +1,8 @@
 #!/bin/bash
 # Initialize the database schema if it doesn't exist (no mock data)
 echo "Initializing database schema..."
-cd database
-sqlite3 job_portal.db < schema.sql
+cd backend
+python -c "from db import init_db; init_db()"
 cd ..
 
 # Start the gunicorn server
