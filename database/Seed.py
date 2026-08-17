@@ -16,10 +16,10 @@ DB_PATH = PROJECT_ROOT / "database" / "job_portal.db"
 SCHEMA_PATH = PROJECT_ROOT / "database" / "schema.sql"
 
 CANDIDATES = [
+    {"name": "Saeem Chauhan", "email": "candidate@example.com", "password": "password123", "role": "candidate", "resume": "Software Engineering graduate (BCA 9.31 CGPA) with a strong foundation in Python, Java, C, and Backend Development. Hands-on experience building Python-based applications using FastAPI, PostgreSQL, WebSockets, and Docker. Strong background in Data & ML including Pandas, NumPy, Scikit-Learn, NLP, TF-IDF, and LangChain. Engineered 'Smart Factory Digital Twin' integrating Groq AI and 'AI Resume Screening System' using TF-IDF & cosine similarity."},
     {"name": "Alice Developer", "email": "alice@example.com", "password": "password123", "role": "candidate", "resume": "Experienced Python Developer with 5 years in Django and Flask. Expert in building scalable APIs and deploying to AWS."},
     {"name": "Bob Frontend", "email": "bob@example.com", "password": "password123", "role": "candidate", "resume": "Frontend Engineer focused on React, Vue, and modern JavaScript. I build responsive and accessible web applications."},
     {"name": "Charlie Data", "email": "charlie@example.com", "password": "password123", "role": "candidate", "resume": "Data Scientist with a background in machine learning and statistics. Proficient in Python, Pandas, TensorFlow, and PyTorch."},
-    {"name": "Diana Designer", "email": "diana@example.com", "password": "password123", "role": "candidate", "resume": "UI/UX Designer with a passion for user-centered design. Skilled in Figma, Adobe Creative Suite, and HTML/CSS."},
     {"name": "Eve Ops", "email": "eve@example.com", "password": "password123", "role": "candidate", "resume": "DevOps Engineer specializing in CI/CD pipelines, Docker, Kubernetes, and infrastructure as code using Terraform."}
 ]
 
@@ -32,26 +32,20 @@ RECRUITERS = [
 ]
 
 JOBS = [
-    {"title": "Senior Python Backend Developer", "company": "TechCorp", "location": "Bengaluru", "description": "Build robust scalable systems using Python and Django. Must have AWS experience.", "skills": "Python, Django, AWS, SQL", "job_type": "Full-time"},
-    {"title": "React Frontend Engineer", "company": "Webify", "location": "Remote", "description": "Create amazing user interfaces with React and Redux.", "skills": "JavaScript, React, CSS, HTML", "job_type": "Full-time"},
-    {"title": "Machine Learning Engineer", "company": "AI Solutions", "location": "Hyderabad", "description": "Develop and deploy machine learning models in production.", "skills": "Python, TensorFlow, PyTorch, Pandas", "job_type": "Full-time"},
-    {"title": "UI/UX Product Designer", "company": "DesignHub", "location": "Pune", "description": "Lead the design of our flagship product. Expert in Figma required.", "skills": "Figma, Sketch, UI, UX", "job_type": "Full-time"},
-    {"title": "DevOps Platform Engineer", "company": "CloudNative", "location": "Bengaluru", "description": "Manage our Kubernetes clusters and CI/CD pipelines.", "skills": "Kubernetes, Docker, Terraform, CI/CD", "job_type": "Full-time"},
-    {"title": "Junior Web Developer", "company": "StartupX", "location": "Remote", "description": "Great opportunity for a junior developer to learn full-stack.", "skills": "HTML, CSS, JavaScript", "job_type": "Internship"},
-    {"title": "Data Analyst", "company": "DataInsights", "location": "Mumbai", "description": "Analyze large datasets to find business insights.", "skills": "SQL, Excel, Python", "job_type": "Full-time"},
-    {"title": "Vue.js Developer", "company": "Webify", "location": "Remote", "description": "Join our frontend team building single-page applications.", "skills": "Vue, JavaScript, HTML, CSS", "job_type": "Contract"},
-    {"title": "Cloud Architect", "company": "TechCorp", "location": "Bengaluru", "description": "Design cloud infrastructure on AWS and GCP.", "skills": "AWS, GCP, Architecture", "job_type": "Full-time"},
-    {"title": "Python Scripting Engineer", "company": "AutoCorp", "location": "Pune", "description": "Write Python scripts for automation tasks.", "skills": "Python, Bash, Linux", "job_type": "Part-time"},
-    {"title": "Senior React Developer", "company": "FinTech Inc", "location": "Mumbai", "description": "Lead frontend development for our banking application.", "skills": "React, TypeScript, Redux", "job_type": "Full-time"},
-    {"title": "NLP Data Scientist", "company": "AI Solutions", "location": "Hyderabad", "description": "Work on natural language processing models.", "skills": "Python, NLP, PyTorch", "job_type": "Full-time"},
-    {"title": "Site Reliability Engineer", "company": "CloudNative", "location": "Remote", "description": "Ensure our systems are always up and running.", "skills": "Linux, Kubernetes, Monitoring", "job_type": "Full-time"},
-    {"title": "Graphic Designer", "company": "DesignHub", "location": "Pune", "description": "Create marketing materials and brand assets.", "skills": "Photoshop, Illustrator, Branding", "job_type": "Full-time"},
-    {"title": "Full Stack Django Developer", "company": "TechCorp", "location": "Bengaluru", "description": "Work on both frontend and backend of our Django application.", "skills": "Python, Django, JavaScript, HTML", "job_type": "Full-time"},
-    {"title": "JavaScript Engineer", "company": "StartupX", "location": "Remote", "description": "Build fast and scalable Node.js backend services.", "skills": "Node.js, JavaScript, Express", "job_type": "Full-time"},
-    {"title": "Database Administrator", "company": "DataInsights", "location": "Mumbai", "description": "Manage and optimize our PostgreSQL databases.", "skills": "PostgreSQL, SQL, Tuning", "job_type": "Full-time"},
-    {"title": "Cloud Security Engineer", "company": "TechCorp", "location": "Bengaluru", "description": "Secure our cloud infrastructure against threats.", "skills": "AWS Security, CyberSecurity, Python", "job_type": "Full-time"},
-    {"title": "Mobile App Developer", "company": "AppMakers", "location": "Hyderabad", "description": "Develop iOS and Android apps using React Native.", "skills": "React Native, Mobile, JavaScript", "job_type": "Full-time"},
-    {"title": "Technical Writer", "company": "CloudNative", "location": "Remote", "description": "Write clear documentation for our developer tools.", "skills": "Writing, Markdown, API Documentation", "job_type": "Part-time"}
+    {"title": "Python Gen AI Engineer", "company": "Google", "location": "Bengaluru", "description": "Design and integrate scalable LLM applications using Python and LangChain. Must have experience with FastAPI and Prompt Engineering.", "skills": "Python, LangChain, FastAPI, Gen AI", "job_type": "Full-time"},
+    {"title": "Backend Developer (Python/AI)", "company": "TechCorp", "location": "Remote", "description": "Build robust scalable systems using Python to support AI model inference. Experience with Docker and PostgreSQL required.", "skills": "Python, FastAPI, Docker, PostgreSQL", "job_type": "Full-time"},
+    {"title": "Machine Learning Engineer (NLP)", "company": "AI Solutions", "location": "Hyderabad", "description": "Develop and deploy NLP models in production. Experience with TF-IDF, Scikit-Learn, and Python is essential.", "skills": "Python, NLP, Scikit-Learn, Pandas", "job_type": "Full-time"},
+    {"title": "RAG Systems Architect", "company": "Cognizant", "location": "Bengaluru", "description": "Lead the design of our Retrieval-Augmented Generation systems. Need deep knowledge of Python backends and Vector DBs.", "skills": "Python, RAG, LLMs, Vector DB", "job_type": "Full-time"},
+    {"title": "Junior Python Developer", "company": "StartupX", "location": "Remote", "description": "Great opportunity for a junior developer to learn full-stack AI integration using Flask and APIs.", "skills": "Python, Flask, API, WebSockets", "job_type": "Full-time"},
+    {"title": "AI Integration Specialist", "company": "DataInsights", "location": "Mumbai", "description": "Integrate third-party LLMs (OpenAI, Gemini, Groq) into existing enterprise systems.", "skills": "Python, Groq API, Gemini, LLMs", "job_type": "Full-time"},
+    {"title": "Prompt Engineer", "company": "Webify", "location": "Remote", "description": "Craft highly optimized prompts for various LLM agents. Python scripting required for automated testing.", "skills": "Prompt Engineering, Python, AI", "job_type": "Contract"},
+    {"title": "Cloud Architect (AI Workloads)", "company": "TechCorp", "location": "Bengaluru", "description": "Design cloud infrastructure on AWS for heavy AI workloads.", "skills": "AWS, Docker, Architecture", "job_type": "Full-time"},
+    {"title": "Python Scripting & Automation Engineer", "company": "AutoCorp", "location": "Pune", "description": "Write Python scripts for automation tasks involving AI parsing.", "skills": "Python, Automation, Scripting", "job_type": "Part-time"},
+    {"title": "Senior Backend AI Engineer", "company": "FinTech Inc", "location": "Mumbai", "description": "Lead backend development for our AI-driven banking application using Python.", "skills": "Python, Backend, System Design", "job_type": "Full-time"},
+    {"title": "NLP Data Scientist", "company": "AI Solutions", "location": "Hyderabad", "description": "Work on natural language processing models and fine-tuning.", "skills": "Python, NLP, PyTorch", "job_type": "Full-time"},
+    {"title": "AI MLOps Engineer", "company": "CloudNative", "location": "Remote", "description": "Ensure our LLM inference systems are highly available and scalable.", "skills": "Docker, Kubernetes, Python, MLOps", "job_type": "Full-time"},
+    {"title": "Software Engineer (Java/Python)", "company": "DesignHub", "location": "Pune", "description": "Develop multi-lingual enterprise software leveraging both Java and Python.", "skills": "Java, Python, OOP", "job_type": "Full-time"},
+    {"title": "Data Engineer (ML Pipelines)", "company": "TechCorp", "location": "Bengaluru", "description": "Build robust data pipelines for ML model training using Pandas and NumPy.", "skills": "Python, Pandas, NumPy, SQL", "job_type": "Full-time"}
 ]
 
 def main():

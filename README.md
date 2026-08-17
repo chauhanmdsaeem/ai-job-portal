@@ -1,13 +1,16 @@
-# 🤖 Fieldnote: Career Edition
+# 🤖 Fieldnote: AI Job Portal Architecture
+**A Python & Generative AI Technical Showcase by Saeem Chauhan**
 
-A high-end, editorial-style job portal connecting candidates with opportunities and helping recruiters manage applications. Designed with a strict Bauhaus-inspired 1px grid aesthetic.
+Fieldnote is a high-performance, full-stack job portal designed to demonstrate advanced **Python Backend Engineering** and **Generative AI Integration**. Built with a strict Bauhaus-inspired 1px grid aesthetic, it acts as a sandbox for evaluating LLM orchestration, custom AI wrappers, and rapid API development.
 
-**Current Status:** ✅ **Fully Functional** (9/11 Phases Complete)  
-**Latest Features:** Editorial "Magazine" UI Overhaul, Explainable AI Match Scores, Role-Based Dashboards
+### 🧠 Core Tech Stack
+- **Backend**: Python 3, Flask, REST APIs, WebSockets
+- **Generative AI**: Google Gemini API, Custom LLM Wrappers, Prompt Engineering
+- **Data & Storage**: SQLite, PostgreSQL-ready schemas
+- **Frontend**: Vanilla JavaScript, CSS Grid, HTML5
+- **Deployment**: Docker-ready containerization
 
-This is a **practical learning project** demonstrating full-stack development: frontend (HTML/CSS/JS), backend (Python/Flask), database (SQLite), and authentication.
-
-**For detailed progress:** See [PROJECT_STATUS_REPORT.md](PROJECT_STATUS_REPORT.md)
+This repository serves as a **technical portfolio piece** showcasing my ability to build intelligent, scalable software systems from scratch.
 
 ---
 
