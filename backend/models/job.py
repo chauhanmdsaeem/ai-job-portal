@@ -79,7 +79,7 @@ def create_job(data, created_by):
     skills = ",".join(data.get("skills", []))
     cursor = db.execute(
         """INSERT INTO jobs (title, company, location, description, skills, salary, job_type, status, created_by)
-           VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+           VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id""",
         (
             data["title"],
             data["company"],
@@ -109,7 +109,7 @@ def update_job(job_id, data):
     db.execute(
         """UPDATE jobs
            SET title = %s, company = %s, location = %s, description = %s,
-               skills = ?, salary = ?, job_type = ?, status = ?
+               skills = %s, salary = %s, job_type = %s, status = %s
            WHERE id = %s""",
         (
             data.get("title", existing["title"]),
