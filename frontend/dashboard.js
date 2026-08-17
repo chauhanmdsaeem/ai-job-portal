@@ -377,7 +377,25 @@ function createMyJobCard(job) {
     }
   });
 
-  actions.append(toggleApplicantsBtn, toggleStatusBtn, deleteBtn);
+  const editBtn = document.createElement("button");
+  editBtn.type = "button";
+  editBtn.className = "ghost-btn";
+  editBtn.textContent = "Edit";
+
+  editBtn.addEventListener("click", () => {
+    document.getElementById("edit-job-id").value = job.id;
+    document.getElementById("edit-title").value = job.title;
+    document.getElementById("edit-company").value = job.company;
+    document.getElementById("edit-location").value = job.location;
+    document.getElementById("edit-job_type").value = job.job_type;
+    document.getElementById("edit-skills").value = job.skills ? job.skills.join(", ") : "";
+    document.getElementById("edit-salary").value = job.salary || "";
+    document.getElementById("edit-description").value = job.description || "";
+    document.getElementById("edit-form-error").hidden = true;
+    document.getElementById("edit-job-modal").showModal();
+  });
+
+  actions.append(toggleApplicantsBtn, toggleStatusBtn, editBtn, deleteBtn);
   card.append(top, meta, actions, panel);
   return card;
 }
@@ -501,3 +519,73 @@ async function initDashboard() {
 }
 
 document.addEventListener("DOMContentLoaded", initDashboard);
+
+// ===== Edit Job Modal =====
+const editModal = document.getElementById("edit-job-modal");
+const closeEditBtn = document.getElementById("close-edit-modal");
+const editForm = document.getElementById("edit-job-form");
+const editErrorEl = document.getElementById("edit-form-error");
+
+if (closeEditBtn) {
+  closeEditBtn.addEventListener("click", () => {
+    editModal.close();
+  });
+}
+
+if (editForm) {
+  editForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    editErrorEl.hidden = true;
+
+    const id = document.getElementById("edit-job-id").value;
+    const title = document.getElementById("edit-title").value.trim();
+    const company = document.getElementById("edit-company").value.trim();
+    const location = document.getElementById("edit-location").value.trim();
+    const job_type = document.getElementById("edit-job_type").value;
+    const skillsStr = document.getElementById("edit-skills").value.trim();
+    const salary = document.getElementById("edit-salary").value.trim();
+    const description = document.getElementById("edit-description").value.trim();
+
+    if (!title || !company || !location) {
+      editErrorEl.textContent = "Title, Company, and Location are required.";
+      editErrorEl.hidden = false;
+      return;
+    }
+
+    const skills = skillsStr
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const submitBtn = editForm.querySelector("button[type='submit']");
+    submitBtn.disabled = true;
+
+    try {
+      const res = await fetch(`/api/jobs/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          company,
+          location,
+          job_type,
+          skills,
+          salary,
+          description,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update job.");
+
+      editForm.reset();
+      editModal.close();
+      loadMyJobs(); // Re-render the list
+    } catch (err) {
+      editErrorEl.textContent = err.message;
+      editErrorEl.hidden = false;
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+}

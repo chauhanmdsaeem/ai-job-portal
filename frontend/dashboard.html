@@ -99,6 +99,47 @@
   </footer>
 </div>
 
+  <!-- ===== Edit Job Modal ===== -->
+  <dialog id="edit-job-modal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+      <button id="close-edit-modal" class="modal-close" aria-label="Close modal">&times;</button>
+      <h2 class="modal-title" style="font-family: var(--font-display); font-size: 2rem; margin-bottom: 24px;">Edit Job Posting</h2>
+      
+      <form id="edit-job-form" class="auth-form post-job-form" novalidate style="margin: 0;">
+        <input type="hidden" id="edit-job-id" />
+        
+        <label for="edit-title" style="font-size: 0.8rem;">Title</label>
+        <input type="text" id="edit-title" required style="margin-bottom: 16px;" />
+
+        <label for="edit-company" style="font-size: 0.8rem;">Company</label>
+        <input type="text" id="edit-company" required style="margin-bottom: 16px;" />
+
+        <label for="edit-location" style="font-size: 0.8rem;">Location</label>
+        <input type="text" id="edit-location" required style="margin-bottom: 16px;" />
+
+        <label for="edit-job_type" style="font-size: 0.8rem;">Job type</label>
+        <select id="edit-job_type" style="margin-bottom: 16px;">
+          <option value="Full-time">Full-time</option>
+          <option value="Part-time">Part-time</option>
+          <option value="Internship">Internship</option>
+        </select>
+
+        <label for="edit-skills" style="font-size: 0.8rem;">Skills (comma-separated)</label>
+        <input type="text" id="edit-skills" style="margin-bottom: 16px;" />
+
+        <label for="edit-salary" style="font-size: 0.8rem;">Salary (optional)</label>
+        <input type="text" id="edit-salary" style="margin-bottom: 16px;" />
+
+        <label for="edit-description" style="font-size: 0.8rem; margin: 0;">Description</label>
+        <textarea id="edit-description" rows="5" style="margin-bottom: 16px;"></textarea>
+
+        <p id="edit-form-error" class="form-error" role="alert" hidden></p>
+
+        <button type="submit" id="btn-save-edit" style="width: 100%; padding: 12px; font-size: 1rem;">Save Changes</button>
+      </form>
+    </div>
+  </dialog>
+
   <script src="auth.js"></script>
   <script src="dashboard.js"></script>
 </body>
