@@ -446,6 +446,19 @@ async function loadJobs() {
   // fetchCurrentUser() comes from auth.js, loaded before this file.
   currentUser = await fetchCurrentUser();
 
+  if (currentUser && (currentUser.role === "recruiter" || currentUser.role === "admin")) {
+    const heroH1 = document.querySelector(".hero h1");
+    if (heroH1) heroH1.innerHTML = "Find candidates that fit<br><i>what your company actually needs.</i>";
+    
+    const heroBtn = document.querySelector(".hero button[type='submit']");
+    if (heroBtn) heroBtn.textContent = "SEARCH THE PLATFORM →";
+
+    const madlibsLabel = document.querySelector(".madlibs-line");
+    if (madlibsLabel && madlibsLabel.firstChild) {
+      madlibsLabel.firstChild.textContent = "SEARCH ROLES: ";
+    }
+  }
+
   if (currentUser && currentUser.role === "candidate") {
     try {
       const res = await fetch("/api/applications");
