@@ -483,7 +483,7 @@ async function loadJobs() {
   }
 
   try {
-    const response = await fetch("/api/jobs");
+    const response = await fetch("/api/jobs", { cache: "no-store" });
     if (!response.ok) throw new Error(`API responded with ${response.status}`);
     allJobs = await response.json();
     dataSourceEl.textContent = "Flask API (/api/jobs)";
