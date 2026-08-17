@@ -327,49 +327,39 @@ function createJobCard(job, index = 1) {
   
   const formattedIndex = index.toString().padStart(2, '0');
   
-  let matchScoreHtml = "";
   let whyMatchBtnHtml = "";
-  let explainBoxHtml = "";
   
-  // Only show AI logic if the user is a candidate
   if (currentUser && currentUser.role === "candidate") {
-    const mockMatchScore = 80 + (job.id * 7 % 19); 
-    matchScoreHtml = `<span style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700; color: var(--accent-primary); border: 1px solid var(--accent-primary); padding: 4px 8px;">${mockMatchScore}% AI MATCH</span>`;
-    whyMatchBtnHtml = `<button class="why-match-btn" style="background: transparent; border: none; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: var(--ink-main); cursor: pointer; padding: 0; text-decoration: underline;">WHY THIS MATCH?</button>`;
-    explainBoxHtml = `
-      <div class="ai-explain-box" style="display: none; margin-top: 16px; padding: 16px; background: var(--bg-base); border: 1px solid var(--ink-main);">
-        <p style="font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; margin: 0 0 8px; color: var(--accent-primary);">AI MATCH ANALYSIS</p>
-        <ul style="list-style: none; padding: 0; margin: 0; font-family: var(--font-mono); font-size: 0.8rem;">
-          ${job.skills.slice(0,2).map(s => `<li style="color: var(--success); margin-bottom: 4px;">✓ ${s} — Strong Match</li>`).join('')}
-          ${job.skills.slice(2).map(s => `<li style="color: var(--ink-light); margin-bottom: 4px;">⚠ ${s} — Missing from profile</li>`).join('')}
-        </ul>
-        <p style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-light); margin: 12px 0 0; padding-top: 12px; border-top: 1px dashed var(--line-light);">Based on your recent projects</p>
-      </div>
-    `;
+    // We will add real AI matching logic here later.
+    // For now, do not show fake match data.
+    whyMatchBtnHtml = "";
   }
 
   card.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
-      <span style="font-family: var(--font-mono); font-size: 1rem; color: var(--ink-light);">${formattedIndex}</span>
-      ${matchScoreHtml}
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+      <h3 style="font-family: var(--font-display); font-size: 1.5rem; letter-spacing: -0.02em; margin: 0; line-height: 1.1;">
+        ${job.title}
+      </h3>
     </div>
     
-    <h3 class="job-title" style="margin-bottom: 8px;">${job.title}</h3>
-    <div style="margin-bottom: 16px; border-bottom: 1px dashed var(--line-light); padding-bottom: 16px;">
-      <p class="job-company" style="margin: 0; font-weight: 600;">${job.company}</p>
-      <p style="font-family: var(--font-mono); font-size: 0.8rem; text-transform: uppercase; color: var(--ink-light); margin: 4px 0 0;">${job.location} · ${job.job_type}</p>
+    <div style="font-family: var(--font-mono); font-size: 0.85rem; margin-bottom: 16px; border-bottom: 1px solid var(--line-light); padding-bottom: 16px;">
+      <strong style="color: var(--ink-main); display: block; margin-bottom: 8px;">${job.company}</strong>
+      <span style="color: var(--ink-light); margin-right: 16px;">📍 ${job.location}</span>
+      <span style="color: var(--ink-light); margin-right: 16px;">🕒 ${job.job_type}</span>
+      ${job.salary ? `<span style="color: var(--ink-light);">💰 ${job.salary}</span>` : ''}
     </div>
-    
-    <ul class="job-skills">
-      ${job.skills.map(s => `<li>${s}</li>`).join('')}
-    </ul>
-    
-    <div style="margin-top: 24px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--line-light); padding-top: 16px;">
-      ${whyMatchBtnHtml}
-      <div class="apply-control-slot" style="${whyMatchBtnHtml ? '' : 'width: 100%; text-align: right;'}"></div>
+
+    <p style="font-size: 0.95rem; color: var(--ink-light); margin-bottom: 24px; line-height: 1.5; flex-grow: 1;">
+      ${job.description ? job.description.substring(0, 150) + "..." : "No description provided."}
+    </p>
+
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px;">
+      ${job.skills.map(skill => `<span style="background: var(--bg-surface); padding: 4px 8px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-main); border: 1px solid var(--line-light);">${skill}</span>`).join('')}
     </div>
-    
-    ${explainBoxHtml}
+
+    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--line-main); padding-top: 16px;">
+      <div class="apply-control-slot" style="width: 100%; text-align: right;"></div>
+    </div>
   `;
 
   // Inject apply controls

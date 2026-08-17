@@ -38,7 +38,7 @@
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
       <!-- Profile Col -->
       <div style="padding: 32px; border-right: var(--border-thin);">
-        <h3 style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink-light); margin-bottom: 24px; text-transform: uppercase;">Your Profile <span style="color: var(--success); float: right; font-weight: 700;">87% COMPLETE</span></h3>
+        <h3 style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink-light); margin-bottom: 24px; text-transform: uppercase;">Your Profile</h3>
         
         <p style="margin-bottom: 24px; font-size: 0.9rem;">Save your master resume here. We will use this to automatically match you with jobs and give you personalized recommendations!</p>
         
@@ -90,25 +90,19 @@
       <!-- Intelligence Col -->
       <div style="padding: 32px; background: var(--bg-surface);">
         <h3 style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink-light); margin-bottom: 24px; text-transform: uppercase;">AI Career Signal</h3>
-        <p style="font-size: 0.9rem; margin-bottom: 16px;">Your profile is strongest in:</p>
-        <ul style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--ink-main); list-style: none; padding: 0; margin: 0 0 32px 0;">
-          <li style="margin-bottom: 8px;">PYTHON</li>
-          <li style="margin-bottom: 8px;">DATA ANALYTICS</li>
-          <li style="margin-bottom: 8px;">MACHINE LEARNING</li>
-        </ul>
         
-        <div style="border-top: 1px dashed var(--line-light); padding-top: 32px; margin-bottom: 32px;">
-           <h3 style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink-light); margin-bottom: 16px; text-transform: uppercase;">Next Action</h3>
-           <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 16px;">Improve your SQL projects to unlock 23 more positions.</p>
-           <button class="ghost-btn" style="color: var(--accent-secondary); border-color: var(--accent-secondary); padding: 8px 16px;">→ VIEW RECOMMENDATION</button>
+        <div id="ai-signal-content">
+          <p style="font-size: 0.9rem; margin-bottom: 16px; color: var(--ink-light);">
+            Upload your resume and start applying to jobs to unlock your personalized AI career signal, top skill analysis, and recommended actions.
+          </p>
         </div>
-
+        
         <div style="border-top: 1px dashed var(--line-light); padding-top: 32px;">
            <h3 style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink-light); margin-bottom: 24px; text-transform: uppercase;">Applications</h3>
            <div style="display: flex; gap: 48px; font-family: var(--font-display); font-size: 2.5rem; font-weight: 700;">
-             <div>03 <span style="display: block; font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-light); font-weight: 400; text-transform: uppercase; margin-top: 4px;">Active</span></div>
-             <div>07 <span style="display: block; font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-light); font-weight: 400; text-transform: uppercase; margin-top: 4px;">Saved</span></div>
-             <div>02 <span style="display: block; font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-light); font-weight: 400; text-transform: uppercase; margin-top: 4px;">Interviews</span></div>
+             <div>0 <span style="display: block; font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-light); font-weight: 400; text-transform: uppercase; margin-top: 4px;">Active</span></div>
+             <div>0 <span style="display: block; font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-light); font-weight: 400; text-transform: uppercase; margin-top: 4px;">Saved</span></div>
+             <div>0 <span style="display: block; font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-light); font-weight: 400; text-transform: uppercase; margin-top: 4px;">Interviews</span></div>
            </div>
         </div>
       </div>
