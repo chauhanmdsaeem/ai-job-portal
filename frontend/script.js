@@ -486,13 +486,13 @@ async function loadJobs() {
     const response = await fetch("/api/jobs", { cache: "no-store" });
     if (!response.ok) throw new Error(`API responded with ${response.status}`);
     allJobs = await response.json();
-    dataSourceEl.textContent = "Flask API (/api/jobs)";
+    if (dataSourceEl) dataSourceEl.textContent = "Flask API (/api/jobs)";
   } catch (err) {
     // Backend not running, or page opened directly as a file —
     // fall back so the UI still demonstrates itself.
     console.warn("Could not load /api/jobs, using fallback data:", err.message);
     allJobs = FALLBACK_JOBS;
-    dataSourceEl.textContent = "static fallback data";
+    if (dataSourceEl) dataSourceEl.textContent = "static fallback data";
   }
 
   populateFilters(allJobs);
