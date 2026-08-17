@@ -24,7 +24,7 @@ def _row_to_dict(row):
         "skills": row["skills"].split(",") if row["skills"] else [],
         "salary": row["salary"],
         "job_type": row["job_type"],
-        "status": row.keys().count("status") > 0 and row["status"] or "open",  # Handle missing status gracefully just in case
+        "status": row.get("status", "open") if hasattr(row, "get") else (row["status"] if "status" in row else "open"),
         "created_by": row["created_by"],
         "created_at": row["created_at"],
     }
