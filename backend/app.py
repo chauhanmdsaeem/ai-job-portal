@@ -84,9 +84,7 @@ def serve_index():
 def serve_about():
     return send_from_directory(FRONTEND_DIR, "about.html")
 
-@app.route("/pricing")
-def serve_pricing():
-    return send_from_directory(FRONTEND_DIR, "pricing.html")
+
 
 @app.route("/companies")
 def serve_companies():
