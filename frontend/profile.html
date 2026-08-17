@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Profile — Fieldnote</title>
   <link rel="stylesheet" href="style.css" />
-</head><body>
+</head>
+<body>
 <div class="container">
   <header class="site-header">
     <div class="header-inner" style="padding: 0;">
@@ -42,19 +43,43 @@
         
         <p style="margin-bottom: 24px; font-size: 0.9rem;">Save your master resume here. We will use this to automatically match you with jobs and give you personalized recommendations!</p>
         
+        <div class="profile-tabs" style="display: flex; gap: 16px; margin-bottom: 24px; border-bottom: var(--border-thin); padding-bottom: 8px;">
+          <button type="button" id="tab-paste" style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: bold; background: none; border: none; cursor: pointer; color: var(--ink-main); padding: 0; text-transform: uppercase;">Upload / Paste Resume</button>
+          <button type="button" id="tab-manual" style="font-family: var(--font-mono); font-size: 0.8rem; background: none; border: none; cursor: pointer; color: var(--ink-light); padding: 0; text-transform: uppercase;">Enter Manually</button>
+        </div>
+
         <form id="profile-form" class="auth-form" style="margin: 0;">
-          <div style="margin-bottom: 16px;">
-            <label style="font-size: 0.8rem; margin-bottom: 8px; display: block;">Upload PDF Resume</label>
-            <input type="file" id="resume-upload" accept=".pdf" style="margin-bottom: 8px;" />
-            <button type="button" id="upload-pdf-btn" class="ghost-btn">Extract from PDF</button>
-            <span id="upload-status" style="margin-left: 12px; font-size: 14px;"></span>
+          
+          <!-- TAB 1: PASTE / UPLOAD -->
+          <div id="section-paste">
+            <div style="margin-bottom: 16px;">
+              <label style="font-size: 0.8rem; margin-bottom: 8px; display: block;">Upload PDF Resume</label>
+              <input type="file" id="resume-upload" accept=".pdf" style="margin-bottom: 8px;" />
+              <button type="button" id="upload-pdf-btn" class="ghost-btn">Extract from PDF</button>
+              <span id="upload-status" style="margin-left: 12px; font-size: 14px;"></span>
+            </div>
+            <textarea 
+              id="profile-resume" 
+              name="resume" 
+              rows="12" 
+              placeholder="Paste your full resume, skills, and experience here..."
+            ></textarea>
           </div>
-          <textarea 
-            id="profile-resume" 
-            name="resume" 
-            rows="12" 
-            placeholder="Paste your full resume, skills, and experience here..."
-          ></textarea>
+
+          <!-- TAB 2: ENTER MANUALLY -->
+          <div id="section-manual" style="display: none;">
+            <label style="font-size: 0.8rem; margin-bottom: 4px; display: block;">Technical Skills (comma separated)</label>
+            <input type="text" id="manual-skills" placeholder="e.g. Python, SQL, Docker, Machine Learning" style="width: 100%; margin-bottom: 16px;" />
+            
+            <label style="font-size: 0.8rem; margin-bottom: 4px; display: block;">Work Experience</label>
+            <textarea id="manual-experience" rows="5" placeholder="Company Name - Role&#10;- Key achievement&#10;- Key achievement" style="margin-bottom: 16px;"></textarea>
+
+            <label style="font-size: 0.8rem; margin-bottom: 4px; display: block;">Education & Certifications</label>
+            <textarea id="manual-education" rows="3" placeholder="University Name - Degree (Year)&#10;AWS Certified Solutions Architect" style="margin-bottom: 16px;"></textarea>
+
+            <label style="font-size: 0.8rem; margin-bottom: 4px; display: block;">Projects (Optional)</label>
+            <textarea id="manual-projects" rows="3" placeholder="Project Name: Description of what you built and technologies used."></textarea>
+          </div>
           
           <p id="profile-error" class="form-error" hidden></p>
           <p id="profile-success" class="form-error" style="color: var(--success); border: 1px solid var(--success); background: transparent;" hidden>Profile saved successfully!</p>
@@ -91,9 +116,14 @@
     </div>
   </main>
 
-  <footer class="site-footer">
-    <div style="padding: 24px 32px; border-top: var(--border-thick);">
-      <p>AI Job Portal — learning project.</p>
+    <footer class="site-footer">
+    <div style="padding: 24px 32px; border-top: 1px solid var(--line-main); display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface);">
+      <p style="color: var(--ink-light); font-size: 14px;">© 2026 Fieldnote Careers. All rights reserved.</p>
+      <div style="display: flex; gap: 24px;">
+        <a href="about.html" style="color: var(--ink-light); font-size: 14px; text-decoration: none;">About</a>
+        <a href="privacy.html" style="color: var(--ink-light); font-size: 14px; text-decoration: none;">Privacy Policy</a>
+        <a href="terms.html" style="color: var(--ink-light); font-size: 14px; text-decoration: none;">Terms of Service</a>
+      </div>
     </div>
   </footer>
 </div>

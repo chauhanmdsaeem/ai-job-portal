@@ -71,6 +71,35 @@ if (uploadBtn) {
   });
 }
 
+const tabPaste = document.getElementById("tab-paste");
+const tabManual = document.getElementById("tab-manual");
+const sectionPaste = document.getElementById("section-paste");
+const sectionManual = document.getElementById("section-manual");
+
+let activeTab = "paste";
+
+if (tabPaste && tabManual) {
+  tabPaste.addEventListener("click", () => {
+    activeTab = "paste";
+    sectionPaste.style.display = "block";
+    sectionManual.style.display = "none";
+    tabPaste.style.fontWeight = "bold";
+    tabPaste.style.color = "var(--ink-main)";
+    tabManual.style.fontWeight = "normal";
+    tabManual.style.color = "var(--ink-light)";
+  });
+
+  tabManual.addEventListener("click", () => {
+    activeTab = "manual";
+    sectionManual.style.display = "block";
+    sectionPaste.style.display = "none";
+    tabManual.style.fontWeight = "bold";
+    tabManual.style.color = "var(--ink-main)";
+    tabPaste.style.fontWeight = "normal";
+    tabPaste.style.color = "var(--ink-light)";
+  });
+}
+
 profileForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   errorEl.hidden = true;
@@ -80,11 +109,29 @@ profileForm.addEventListener("submit", async (e) => {
   submitBtn.disabled = true;
   submitBtn.textContent = "Saving...";
   
+  let finalResumeText = resumeInput.value;
+  if (activeTab === "manual") {
+    const manualSkills = document.getElementById("manual-skills").value.trim();
+    const manualExp = document.getElementById("manual-experience").value.trim();
+    const manualEdu = document.getElementById("manual-education").value.trim();
+    const manualProj = document.getElementById("manual-projects").value.trim();
+    
+    let parts = [];
+    if (manualSkills) parts.push(`## Technical Skills\n${manualSkills}`);
+    if (manualExp) parts.push(`## Work Experience\n${manualExp}`);
+    if (manualEdu) parts.push(`## Education & Certifications\n${manualEdu}`);
+    if (manualProj) parts.push(`## Projects\n${manualProj}`);
+    
+    finalResumeText = parts.join("\n\n");
+    // Optionally backfill the paste textarea so if they switch tabs, it's there
+    resumeInput.value = finalResumeText;
+  }
+
   try {
     const res = await fetch("/api/me/profile", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ resume: resumeInput.value })
+      body: JSON.stringify({ resume: finalResumeText })
     });
     
     if (!res.ok) throw new Error("Failed to save profile");

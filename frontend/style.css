@@ -1,35 +1,39 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&family=Roboto+Mono&display=swap');
 
 /* =========================================================
    Design tokens - High-End Editorial
    ========================================================= */
 :root {
-  --bg-base: #FAF9F6; /* Warm Alabaster */
-  --bg-surface: #FFFFFF;
+  --bg-base: #f8f9fa;
+  --bg-surface: #ffffff;
   
-  --ink-main: #111111;
-  --ink-light: #555555;
-  --line-main: #111111;
-  --line-light: #DDDDDD;
+  --ink-main: #202124;
+  --ink-light: #5f6368;
+  --line-main: #dadce0;
+  --line-light: #e8eaed;
   
-  /* Bauhaus / Editorial Accent Palette */
-  --accent-primary: #B33900; /* Deep Burnt Orange */
-  --accent-secondary: #0047FF; /* Royal Blue */
-  --accent-tertiary: #FFC000; /* Marigold Yellow */
-  --accent-quaternary: #00994D; /* Emerald Green */
-  --accent-pink: #E6007E; /* Magenta */
+  --accent-primary: #1a73e8;
+  --accent-secondary: #1967d2;
+  --accent-tertiary: #fbbc04;
+  --accent-quaternary: #34a853;
+  --accent-pink: #ea4335;
   
-  --success: #00994D;
-  --danger: #DC2626;
+  --success: #1e8e3e;
+  --danger: #d93025;
 
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: 'Inter', -apple-system, sans-serif;
-  --font-mono: 'SFMono-Regular', Consolas, monospace;
+  --font-display: 'Google Sans', 'Roboto', sans-serif;
+  --font-body: 'Roboto', sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
 
-  /* No soft radius or blur in Editorial/Brutalism */
-  --radius-none: 0px;
-  --border-thick: 2px solid var(--ink-main);
-  --border-thin: 1px solid var(--ink-main);
+  --radius-none: 8px; /* Override to add slight rounding to legacy classes */
+  --radius-btn: 24px;
+  --radius-card: 12px;
+  
+  --border-thick: 1px solid var(--line-main);
+  --border-thin: 1px solid var(--line-main);
+  
+  --shadow-sm: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+  --shadow-hover: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
 }
 
 * { box-sizing: border-box; }
@@ -39,7 +43,7 @@ body {
   margin: 0;
   background-color: var(--bg-base);
   /* Subtle designer dot-grid background */
-  background-image: radial-gradient(rgba(17,17,17,0.05) 1.5px, transparent 1.5px);
+  
   background-size: 24px 24px;
   color: var(--ink-main);
   font-family: var(--font-body);
@@ -50,7 +54,7 @@ body {
 
 /* Custom Blocky Scrollbar */
 ::-webkit-scrollbar { width: 12px; }
-::-webkit-scrollbar-track { background: var(--bg-base); border-left: var(--border-thin); }
+::-webkit-scrollbar-track { background: var(--bg-base); border-left: none; }
 ::-webkit-scrollbar-thumb { background: var(--ink-main); border: 2px solid var(--bg-base); }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
 
@@ -66,8 +70,12 @@ body {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  border-left: var(--border-thin);
-  border-right: var(--border-thin);
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-card);
+  margin-top: 20px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  border: 1px solid var(--line-main);
   background: var(--bg-surface);
 }
 
@@ -82,7 +90,7 @@ a:hover { color: var(--accent-primary); }
   top: 0;
   z-index: 100;
   background: var(--bg-surface);
-  border-bottom: var(--border-thick);
+  border-bottom: 1px solid var(--line-main);
 }
 
 .header-inner {
@@ -99,10 +107,10 @@ a:hover { color: var(--accent-primary); }
   font-family: var(--font-mono);
   font-size: 0.65rem;
   letter-spacing: 0.1em;
-  text-transform: uppercase;
+  
   color: var(--ink-light);
   padding: 0 32px;
-  border-right: var(--border-thin);
+  border-right: none;
   line-height: 1.2;
   text-decoration: none;
 }
@@ -126,15 +134,16 @@ a:hover { color: var(--accent-primary); }
   text-decoration: none; 
   font-size: 0.85rem; 
   font-weight: 500; 
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  
+  
   color: var(--ink-main); 
   padding: 0 24px;
-  border-right: var(--border-thin);
+  border-right: none;
 }
 .main-nav a:hover { 
-  background: var(--ink-main);
-  color: var(--bg-surface);
+  color: var(--accent-primary);
+  background: #f4f8fe;
+  border-radius: var(--radius-btn);
 }
 
 .nav-auth { 
@@ -147,15 +156,16 @@ a:hover { color: var(--accent-primary); }
   text-decoration: none; 
   font-size: 0.85rem; 
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  
+  
   color: var(--ink-main); 
   padding: 0 24px;
-  border-left: var(--border-thin);
+  border-left: none;
 }
 .nav-auth > a:hover { 
-  background: var(--ink-main);
-  color: var(--bg-surface);
+  color: var(--accent-primary);
+  background: #f4f8fe;
+  border-radius: var(--radius-btn);
 }
 
 .nav-auth .nav-register {
@@ -173,20 +183,20 @@ a:hover { color: var(--accent-primary); }
   font-family: var(--font-mono); 
   font-size: 0.85rem; 
   padding: 0 24px;
-  border-left: var(--border-thin);
+  border-left: none;
 }
 .nav-logout {
   background: transparent;
   border: none;
-  border-left: var(--border-thin);
+  border-left: none;
   color: var(--ink-main);
   padding: 0 24px;
   cursor: pointer;
   font-family: inherit;
   font-size: 0.85rem;
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  
+  
 }
 .nav-logout:hover { background: var(--ink-main); color: var(--bg-surface); }
 
@@ -194,16 +204,10 @@ a:hover { color: var(--accent-primary); }
    Hero
    ========================================================= */
 .hero {
-  padding: 100px 32px;
+  padding: 80px 32px;
   text-align: center;
-  border-bottom: var(--border-thick);
-  background: repeating-linear-gradient(
-    45deg,
-    var(--bg-base),
-    var(--bg-base) 10px,
-    var(--bg-surface) 10px,
-    var(--bg-surface) 20px
-  );
+  border-bottom: 1px solid var(--line-main);
+  background: var(--bg-surface);
 }
 
 .eyebrow {
@@ -211,7 +215,7 @@ a:hover { color: var(--accent-primary); }
   font-family: var(--font-mono);
   font-size: 0.8rem;
   letter-spacing: 0.1em;
-  text-transform: uppercase;
+  
   color: var(--accent-primary);
   border: var(--border-thin);
   background: var(--bg-surface);
@@ -221,12 +225,11 @@ a:hover { color: var(--accent-primary); }
 
 .hero h1 {
   font-family: var(--font-display);
-  font-size: clamp(3rem, 6vw, 5rem);
-  font-weight: 600;
-  line-height: 1;
-  margin: 0 auto 24px;
-  max-width: 900px;
-  letter-spacing: -0.02em;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--ink-main);
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
 }
 .hero h1 i {
   color: var(--accent-primary);
@@ -281,13 +284,14 @@ a:hover { color: var(--accent-primary); }
 .search-bar button {
   flex: 0 0 auto;
   padding: 20px 32px;
-  background: var(--ink-main);
-  color: var(--bg-surface);
+  color: var(--accent-primary);
+  background: #f4f8fe;
+  border-radius: var(--radius-btn);
   border: none;
   font-size: 1rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  
+  
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -320,7 +324,7 @@ main.container-body {
   font-size: 2.5rem;
   font-weight: 600;
   margin: 0;
-  text-transform: uppercase;
+  
   letter-spacing: -0.02em;
 }
 
@@ -342,7 +346,7 @@ main.container-body {
 .results-count { 
   font-family: var(--font-mono); 
   color: var(--ink-light); 
-  text-transform: uppercase;
+  
   font-size: 0.85rem;
 }
 
@@ -354,26 +358,14 @@ main.container-body {
 
 /* Job Card */
 .job-card {
+  padding: 24px;
+  border-bottom: 1px solid var(--line-light);
   background: var(--bg-surface);
-  border-bottom: var(--border-thin);
-  border-right: var(--border-thin);
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  position: relative;
-  z-index: 1;
+  transition: box-shadow 0.2s, background 0.2s;
+  cursor: pointer;
 }
-
 .job-card:hover {
-  background: var(--bg-surface);
-  transform: translate(-4px, -4px);
-  z-index: 10;
-  margin-top: -1px;
-  margin-left: -1px;
-  border-top: var(--border-thin);
-  border-left: var(--border-thin);
-  box-shadow: 8px 8px 0 var(--accent-primary);
+  background: #f8f9fa;
 }
 .job-card:nth-child(2n):hover { box-shadow: 8px 8px 0 var(--accent-secondary); }
 .job-card:nth-child(3n):hover { box-shadow: 8px 8px 0 var(--accent-tertiary); }
@@ -399,7 +391,7 @@ main.container-body {
 .job-type-tag {
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  text-transform: uppercase;
+  
   color: var(--ink-main);
   border: var(--border-thin);
   padding: 4px 8px;
@@ -414,8 +406,8 @@ main.container-body {
   font-weight: 600;
   font-size: 0.95rem; 
   margin: 0 0 4px; 
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  
+  
 }
 .job-location { 
   font-family: var(--font-mono); 
@@ -460,8 +452,8 @@ main.container-body {
   font-family: var(--font-mono);
   font-weight: 600;
   font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  
+  
   color: var(--bg-surface);
   background: var(--ink-main);
   padding: 12px 24px;
@@ -487,7 +479,7 @@ main.container-body {
   font-family: var(--font-mono);
   font-weight: 600;
   color: var(--success);
-  text-transform: uppercase;
+  
 }
 .apply-note {
   display: block;
@@ -506,7 +498,7 @@ main.container-body {
   cursor: pointer;
   font-family: var(--font-mono);
   font-size: 0.8rem;
-  text-transform: uppercase;
+  
   transition: all 0.2s;
   box-shadow: 2px 2px 0 var(--ink-main);
 }
@@ -560,7 +552,7 @@ main.container-body {
   font-family: var(--font-mono);
   font-size: 0.8rem; 
   font-weight: 600; 
-  text-transform: uppercase;
+  
   color: var(--ink-main); 
   margin-bottom: -16px; 
 }
@@ -596,13 +588,14 @@ main.container-body {
 .auth-form button[type="submit"] {
   margin-top: 16px;
   padding: 16px;
-  background: var(--ink-main);
-  color: var(--bg-surface);
+  color: var(--accent-primary);
+  background: #f4f8fe;
+  border-radius: var(--radius-btn);
   border: var(--border-thin);
   font-family: var(--font-mono);
   font-size: 1rem;
   font-weight: 600;
-  text-transform: uppercase;
+  
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: 6px 6px 0 var(--accent-primary);
@@ -670,7 +663,7 @@ dialog::backdrop {
 .status-pill {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  text-transform: uppercase;
+  
   padding: 4px 8px;
   border: var(--border-thin);
   background: var(--bg-surface);
@@ -706,7 +699,7 @@ dialog::backdrop {
   border: var(--border-thin);
   padding: 8px 12px;
   font-size: 0.85rem;
-  text-transform: uppercase;
+  
   font-family: var(--font-mono);
 }
 
@@ -746,7 +739,7 @@ dialog::backdrop {
   font-size: 0.75rem;
   padding: 4px 8px;
   border: var(--border-thin);
-  text-transform: uppercase;
+  
 }
 .skill-tag.matched { background: var(--success); color: var(--bg-surface); }
 .skill-tag.missing { background: var(--danger); color: var(--bg-surface); text-decoration: line-through; }
@@ -755,7 +748,7 @@ dialog::backdrop {
    Footer
    ========================================================= */
 .site-footer {
-  border-top: var(--border-thick);
+  border-top: 1px solid var(--line-main);
   padding: 48px 32px;
   background: var(--bg-surface);
   display: flex;
@@ -775,15 +768,22 @@ dialog::backdrop {
 .footer-links a {
   font-family: var(--font-mono);
   font-size: 0.8rem;
-  text-transform: uppercase;
+  
   text-decoration: none;
   color: var(--ink-main);
 }
 
 @media (max-width: 768px) {
-  .hero h1 { font-size: 2.5rem; }
+  .hero h1 {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--ink-main);
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
   .search-bar { flex-direction: column; }
-  .search-bar input, .search-bar select, .search-bar button { width: 100%; border-right: none; border-bottom: var(--border-thick); }
+  .search-bar input, .search-bar select, .search-bar button { width: 100%; border-right: none; border-bottom: 1px solid var(--line-main); }
   .search-bar button { border-bottom: none; }
   .site-footer { flex-direction: column; gap: 24px; text-align: center; }
 }
@@ -798,14 +798,15 @@ dialog::backdrop {
   cursor: pointer;
   font-family: var(--font-mono);
   font-weight: 600;
-  text-transform: uppercase;
+  
   font-size: 0.8rem;
   transition: all 0.2s;
   box-shadow: 4px 4px 0 var(--ink-main);
 }
 .btn-ai-generate:hover {
-  background: var(--ink-main);
-  color: var(--bg-surface);
+  color: var(--accent-primary);
+  background: #f4f8fe;
+  border-radius: var(--radius-btn);
   box-shadow: 2px 2px 0 var(--ink-main);
   transform: translate(2px, 2px);
 }

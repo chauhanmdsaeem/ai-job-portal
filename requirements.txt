@@ -1,0 +1,7 @@
+Flask==3.0.0
+python-dotenv==1.0.0
+Flask-Limiter==3.5.0
+google-genai==0.3.0
+pydantic==2.5.3
+PyPDF2==3.0.1
+gunicorn==21.2.0
