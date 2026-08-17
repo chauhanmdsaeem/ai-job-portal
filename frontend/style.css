@@ -481,6 +481,33 @@ main.container-body {
   border-top: 1px solid var(--line-light);
   gap: 12px;
 }
+
+.chatbot-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 16px;
+  background: white;
+  border-top: 1px solid var(--line-light);
+}
+
+.chat-chip {
+  background: var(--bg-base);
+  border: 1px solid var(--line-main);
+  border-radius: 16px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-family: var(--font-body);
+  color: var(--ink-light);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chat-chip:hover {
+  background: var(--accent-primary);
+  color: white;
+  border-color: var(--accent-primary);
+}
 .chatbot-input-area input {
   flex-grow: 1;
   border: 1px solid var(--line-main);

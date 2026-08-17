@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div id="chatbot-messages" class="chatbot-messages">
                     <div class="chat-message ai">Hi! I'm Fieldnote AI. How can I help you navigate the platform today?</div>
                 </div>
+                <div id="chatbot-chips" class="chatbot-chips"></div>
                 <div class="chatbot-input-area">
                     <input type="text" id="chatbot-input" placeholder="Ask me anything..." />
                     <button id="chatbot-send">➤</button>
@@ -29,8 +30,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendBtn = document.getElementById('chatbot-send');
     const inputEl = document.getElementById('chatbot-input');
     const messagesEl = document.getElementById('chatbot-messages');
+    const chipsContainer = document.getElementById('chatbot-chips');
     
     let chatHistory = [];
+    let userRole = 'guest';
+
+    // Fetch user role dynamically
+    fetch('/api/me').then(r => r.json()).then(data => {
+        if (data.user && data.user.role) {
+            userRole = data.user.role;
+        }
+        
+        if (userRole === 'candidate') {
+            inputEl.placeholder = "Ask about jobs, salaries, or resume tips...";
+            chipsContainer.innerHTML = `
+                <button class="chat-chip">Find remote React jobs</button>
+                <button class="chat-chip">Review my resume</button>
+                <button class="chat-chip">Interview tips</button>
+            `;
+        } else if (userRole === 'recruiter') {
+            inputEl.placeholder = "Ask about pipelines, sourcing, or job drafts...";
+            chipsContainer.innerHTML = `
+                <button class="chat-chip">Draft a Job Description</button>
+                <button class="chat-chip">Screen recent applicants</button>
+                <button class="chat-chip">Summarize top candidates</button>
+            `;
+        } else {
+            inputEl.placeholder = "Ask me anything...";
+            chipsContainer.innerHTML = `
+                <button class="chat-chip">What is Fieldnote Careers?</button>
+                <button class="chat-chip">How do I create an account?</button>
+            `;
+        }
+        
+        document.querySelectorAll('.chat-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                inputEl.value = chip.textContent;
+                sendMessage();
+            });
+        });
+    }).catch(err => console.error(err));
     
     // Toggle window
     toggleBtn.addEventListener('click', () => {

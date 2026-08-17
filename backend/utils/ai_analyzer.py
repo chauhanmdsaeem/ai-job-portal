@@ -66,7 +66,7 @@ def mock_ai_analyze_resume(job_description, job_skills, resume_text):
     
     try:
         response = client.models.generate_content(
-            model='gemini-3.5-flash',
+            model='gemini-1.5-flash',
             contents=prompt,
             config=genai.types.GenerateContentConfig(
                 response_mime_type="application/json",
@@ -110,7 +110,7 @@ def ai_candidate_match(resume_text, job):
     
     try:
         response = client.models.generate_content(
-            model='gemini-3.5-flash',
+            model='gemini-1.5-flash',
             contents=prompt,
             config=genai.types.GenerateContentConfig(
                 response_mime_type="application/json",
@@ -153,7 +153,7 @@ def ai_recommend_jobs(resume_text, open_jobs):
     
     try:
         response = client.models.generate_content(
-            model='gemini-3.5-flash',
+            model='gemini-1.5-flash',
             contents=prompt,
             config=genai.types.GenerateContentConfig(
                 response_mime_type="application/json",
@@ -194,7 +194,7 @@ def ai_generate_job_description(title, company, location, skills):
     
     try:
         response = client.models.generate_content(
-            model='gemini-3.5-flash',
+            model='gemini-1.5-flash',
             contents=prompt,
             config=genai.types.GenerateContentConfig(
                 response_mime_type="application/json",
@@ -235,7 +235,7 @@ def ai_tailor_resume(resume_text, job_title, job_description, job_skills):
     
     try:
         response = client.models.generate_content(
-            model='gemini-3.5-flash',
+            model='gemini-1.5-flash',
             contents=prompt,
             config=genai.types.GenerateContentConfig(
                 response_mime_type="application/json",
@@ -270,7 +270,7 @@ def ai_generate_ats_resume(raw_notes):
     
     try:
         response = client.models.generate_content(
-            model='gemini-3.5-flash',
+            model='gemini-1.5-flash',
             contents=prompt,
             config=genai.types.GenerateContentConfig(
                 response_mime_type="application/json",
@@ -286,7 +286,7 @@ def ai_generate_ats_resume(raw_notes):
 class AIChatResponse(BaseModel):
     reply: str = Field(description="The conversational reply from the AI assistant")
 
-def ai_site_assistant(message, history=""):
+def ai_site_assistant(message, history="", role="guest", context_data=""):
     """
     A general purpose AI assistant for the website.
     """
@@ -295,28 +295,36 @@ def ai_site_assistant(message, history=""):
         return {"reply": "Sorry, the AI assistant is currently unavailable (API key missing)."}
 
     client = genai.Client(api_key=api_key)
-    
+
+    if role == "candidate":
+        base_prompt = "You are a Career Assistant for Fieldnote Careers. Your goal is to help job seekers find roles, optimize resumes, and prepare for interviews. Tone: Encouraging, supportive, professional. You have access to public job listings provided in the Context Data below."
+    elif role == "recruiter":
+        base_prompt = "You are a Talent Acquisition Copilot for Fieldnote Careers. Your goal is to help recruiters draft job descriptions, screen applicants, and match talent. Tone: Analytical, efficient, corporate. You have access to applicants applied to your jobs provided in the Context Data below."
+    else:
+        base_prompt = "You are 'Fieldnote AI', the helpful virtual assistant for the Fieldnote Careers job portal. Your goal is to help users navigate the platform and showcase your LLM capabilities. Tone: concise, friendly, and professional."
+
     system_prompt = f"""
-    You are 'Fieldnote AI', the helpful virtual assistant for the Fieldnote Careers job portal.
-    Your goal is to help candidates and recruiters navigate the platform and showcase your LLM capabilities.
-    Keep your answers concise, friendly, and professional. 
-    
-    Capabilities of the platform you can mention:
-    - Smart Job Matching (>90% accuracy)
-    - Auto-tailoring resumes to specific job descriptions
-    - Automated ATS resume generation from rough notes
-    - Recruiter tools to instantly generate job descriptions
-    
-    Conversation History:
-    {history}
-    
-    User Message:
-    {message}
-    """
+{base_prompt}
+
+Capabilities of the platform you can mention:
+- Smart Job Matching (>90% accuracy)
+- Auto-tailoring resumes to specific job descriptions
+- Automated ATS resume generation from rough notes
+- Recruiter tools to instantly generate job descriptions
+
+--- Context Data (from database) ---
+{context_data}
+
+--- Conversation History ---
+{history}
+
+--- User Message ---
+{message}
+"""
     
     try:
         response = client.models.generate_content(
-            model='gemini-3.5-flash',
+            model='gemini-1.5-flash',
             contents=system_prompt,
             config=genai.types.GenerateContentConfig(
                 response_mime_type="application/json",
