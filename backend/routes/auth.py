@@ -14,8 +14,6 @@ alone. We DO still look the user up by id in get_current_user-
 style code where we need fresh data (e.g. /api/me), since the
 session cookie only carries id + role, not the full record.
 """
-import sqlite3
-
 import io
 from flask import Blueprint, request, jsonify, session
 from PyPDF2 import PdfReader
@@ -49,9 +47,10 @@ def register():
     if get_user_by_email(email) is not None:
         return jsonify({"error": "an account with that email already exists"}), 409
 
+    import psycopg2
     try:
         user_id = create_user(name, email, password, role)
-    except sqlite3.IntegrityError:
+    except psycopg2.errors.UniqueViolation:
         # Backstop in case of a race between the check above and the
         # insert — the UNIQUE constraint on users.email catches it.
         return jsonify({"error": "an account with that email already exists"}), 409
