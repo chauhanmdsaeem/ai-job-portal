@@ -135,7 +135,7 @@ async function loadNotifications(userRole) {
              onclick="if(event.target.tagName !== 'BUTTON') { window.location.href = '${targetPage}'; }">
           <p style="font-size: 13px; margin: 0; color: #333;">${n.message}</p>
           <small style="color: #999; font-size: 10px;">${n.created_at}</small>
-          ${!n.is_read ? `<button onclick="markNotifRead(${n.id}, '${userRole}')" style="font-size: 10px; margin-top: 4px; padding: 2px 6px;">Mark read</button>` : ''}
+          ${!n.is_read ? `<button onclick="markNotifRead(${n.id}, '${userRole}', this)" style="font-size: 10px; margin-top: 4px; padding: 2px 6px;">Mark read</button>` : ''}
         </div>
       `).join("");
     }
@@ -152,10 +152,28 @@ async function loadNotifications(userRole) {
   }
 }
 
-window.markNotifRead = async function(id, userRole) {
+window.markNotifRead = async function(id, userRole, btn) {
+  // Optimistic UI Update for instant feedback
+  if (btn) {
+    btn.textContent = "✓";
+    btn.disabled = true;
+    btn.parentElement.style.opacity = "0.6";
+    btn.parentElement.style.fontWeight = "normal";
+    
+    const badge = document.getElementById("notif-badge");
+    if (badge && badge.style.display !== "none") {
+      const current = parseInt(badge.textContent) || 0;
+      if (current > 1) {
+        badge.textContent = current - 1;
+      } else {
+        badge.style.display = "none";
+      }
+    }
+  }
+  
   try {
-    await fetch(`/api/notifications/${id}/read`, { method: "PUT" });
-    loadNotifications(userRole);
+    // Send request in background
+    fetch(`/api/notifications/${id}/read`, { method: "PUT" });
   } catch (err) {}
 }
 
