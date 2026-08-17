@@ -1,8 +1,8 @@
 #!/bin/bash
-# Rebuild and seed the database on every startup
-echo "Initializing database..."
+# Initialize the database schema if it doesn't exist (no mock data)
+echo "Initializing database schema..."
 cd database
-python seed.py
+sqlite3 job_portal.db < schema.sql
 cd ..
 
 # Start the gunicorn server
