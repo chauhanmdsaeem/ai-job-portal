@@ -76,7 +76,7 @@ function renderNavAuth(user) {
     const notifDiv = document.getElementById("nav-notifications");
     if (notifDiv) {
       notifDiv.style.display = "inline-block";
-      loadNotifications();
+      loadNotifications(user.role);
     }
 
   } else {
@@ -109,7 +109,7 @@ async function logoutUser() {
   window.location.reload();
 }
 
-async function loadNotifications() {
+async function loadNotifications(userRole) {
   try {
     const res = await fetch("/api/notifications");
     if (!res.ok) return;
@@ -124,14 +124,18 @@ async function loadNotifications() {
     if (unreadCount > 0) {
       badge.textContent = unreadCount;
       badge.style.display = "inline-block";
+    } else {
+      badge.style.display = "none";
     }
     
     if (notifs.length > 0) {
+      const targetPage = userRole === "recruiter" ? "dashboard.html" : "applications.html";
       dropdown.innerHTML = notifs.map(n => `
-        <div style="padding: 8px; border-bottom: 1px solid #eee; ${n.is_read ? 'opacity: 0.6;' : 'font-weight: bold;'}">
+        <div style="padding: 8px; border-bottom: 1px solid #eee; cursor: pointer; ${n.is_read ? 'opacity: 0.6;' : 'font-weight: bold;'}"
+             onclick="if(event.target.tagName !== 'BUTTON') { window.location.href = '${targetPage}'; }">
           <p style="font-size: 13px; margin: 0; color: #333;">${n.message}</p>
           <small style="color: #999; font-size: 10px;">${n.created_at}</small>
-          ${!n.is_read ? `<button onclick="markNotifRead(${n.id})" style="font-size: 10px; margin-top: 4px;">Mark read</button>` : ''}
+          ${!n.is_read ? `<button onclick="markNotifRead(${n.id}, '${userRole}')" style="font-size: 10px; margin-top: 4px; padding: 2px 6px;">Mark read</button>` : ''}
         </div>
       `).join("");
     }
@@ -148,10 +152,10 @@ async function loadNotifications() {
   }
 }
 
-window.markNotifRead = async function(id) {
+window.markNotifRead = async function(id, userRole) {
   try {
     await fetch(`/api/notifications/${id}/read`, { method: "PUT" });
-    loadNotifications();
+    loadNotifications(userRole);
   } catch (err) {}
 }
 

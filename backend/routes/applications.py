@@ -70,7 +70,7 @@ def apply_to_job(job_id):
         application["status"] = new_status
         create_notification(candidate, f"Your application for '{job['title']}' was auto-screened and updated to: {new_status}.")
 
-    return jsonify(application), 201
+    return jsonify({"message": "application submitted successfully", "application_id": application["id"]}), 201
 
 
 @applications_bp.route("/applications", methods=["GET"])

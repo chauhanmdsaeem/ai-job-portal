@@ -518,10 +518,10 @@ async function loadRecommendations() {
       return;
     }
     
-    data.recommendations.forEach(rec => {
+    data.recommendations.forEach((rec, index) => {
       const job = allJobs.find(j => j.id === rec.job_id);
       if (job) {
-        const card = createJobCard(job);
+        const card = createJobCard(job, index + 1);
         
         const insight = document.createElement("div");
         insight.className = "ai-insights";
