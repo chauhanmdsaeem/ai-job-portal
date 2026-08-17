@@ -282,3 +282,49 @@ def ai_generate_ats_resume(raw_notes):
     except Exception as e:
         print(f"Gemini API Error: {e}")
         return {"resume": raw_notes}
+
+class AIChatResponse(BaseModel):
+    reply: str = Field(description="The conversational reply from the AI assistant")
+
+def ai_site_assistant(message, history=""):
+    """
+    A general purpose AI assistant for the website.
+    """
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        return {"reply": "Sorry, the AI assistant is currently unavailable (API key missing)."}
+
+    client = genai.Client(api_key=api_key)
+    
+    system_prompt = f"""
+    You are 'Fieldnote AI', the helpful virtual assistant for the Fieldnote Careers job portal.
+    Your goal is to help candidates and recruiters navigate the platform and showcase your LLM capabilities.
+    Keep your answers concise, friendly, and professional. 
+    
+    Capabilities of the platform you can mention:
+    - Smart Job Matching (>90% accuracy)
+    - Auto-tailoring resumes to specific job descriptions
+    - Automated ATS resume generation from rough notes
+    - Recruiter tools to instantly generate job descriptions
+    
+    Conversation History:
+    {history}
+    
+    User Message:
+    {message}
+    """
+    
+    try:
+        response = client.models.generate_content(
+            model='gemini-3.5-flash',
+            contents=system_prompt,
+            config=genai.types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=AIChatResponse,
+                temperature=0.7
+            ),
+        )
+        return json.loads(response.text)
+    except Exception as e:
+        print(f"Gemini API Error: {e}")
+        return {"reply": "I'm having trouble connecting to my brain right now. Please try again later!"}
