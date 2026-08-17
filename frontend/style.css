@@ -367,10 +367,11 @@ main.container-body {
 .job-card:hover {
   background: #f8f9fa;
 }
-.job-card:nth-child(2n):hover { box-shadow: 8px 8px 0 var(--accent-secondary); }
-.job-card:nth-child(3n):hover { box-shadow: 8px 8px 0 var(--accent-tertiary); }
-.job-card:nth-child(4n):hover { box-shadow: 8px 8px 0 var(--accent-quaternary); }
-.job-card:nth-child(5n):hover { box-shadow: 8px 8px 0 var(--accent-pink); }
+.job-card:nth-child(5n + 1):hover { box-shadow: 8px 8px 0 var(--accent-primary); z-index: 1; position: relative; }
+.job-card:nth-child(5n + 2):hover { box-shadow: 8px 8px 0 var(--accent-secondary); z-index: 1; position: relative; }
+.job-card:nth-child(5n + 3):hover { box-shadow: 8px 8px 0 var(--accent-tertiary); z-index: 1; position: relative; }
+.job-card:nth-child(5n + 4):hover { box-shadow: 8px 8px 0 var(--accent-quaternary); z-index: 1; position: relative; }
+.job-card:nth-child(5n + 5):hover { box-shadow: 8px 8px 0 var(--accent-pink); z-index: 1; position: relative; }
 
 .job-card-top {
   display: flex;
