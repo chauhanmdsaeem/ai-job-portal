@@ -29,61 +29,82 @@
     </div>
   </header>
 
-  <main class="container-body">
-    <div class="section-header">
-      <span class="section-header-num">RECRUITER DESK</span>
-      <h2 class="section-header-title">Recruiter Dashboard</h2>
-    </div>
-
+  <main class="container-body" style="padding: 0; background: var(--bg-base);">
+    
     <p id="access-denied" class="empty-state" hidden style="margin: 32px;">
       This page is for recruiters. <a href="index.html">Back to job listings</a>
     </p>
 
-    <div id="dashboard-content" hidden style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
-      <!-- Post a new job -->
-      <section class="dashboard-section" style="padding: 32px; border-right: var(--border-thin);">
-        <h3 style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink-light); margin-bottom: 24px; text-transform: uppercase;">Post a new job</h3>
-        <form id="post-job-form" class="auth-form post-job-form" novalidate style="margin: 0;">
-          <label for="title" style="font-size: 0.8rem;">Title</label>
-          <input type="text" id="title" required style="margin-bottom: 16px;" />
+    <div id="dashboard-content" class="dashboard-overview" hidden>
+      
+      <div class="dashboard-welcome">
+        <div>
+          <h1>Good evening, <span id="recruiter-name">Saeem</span></h1>
+          <p>Manage your hiring process and find the right candidates.</p>
+        </div>
+        <button id="btn-open-post-job" style="padding: 12px 24px; font-size: 1rem;">+ Post a Job</button>
+      </div>
 
-          <label for="company" style="font-size: 0.8rem;">Company</label>
-          <input type="text" id="company" required style="margin-bottom: 16px;" />
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-card-title">Active Jobs</span>
+          <p class="stat-card-value" id="stat-active-jobs">0</p>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-title">Applications</span>
+          <p class="stat-card-value" id="stat-applications">0</p>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-title">Shortlisted</span>
+          <p class="stat-card-value" id="stat-shortlisted">0</p>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-title">Interviews</span>
+          <p class="stat-card-value" id="stat-interviews">0</p>
+        </div>
+      </div>
 
-          <label for="location" style="font-size: 0.8rem;">Location</label>
-          <input type="text" id="location" required style="margin-bottom: 16px;" />
-
-          <label for="job_type" style="font-size: 0.8rem;">Job type</label>
-          <select id="job_type" style="margin-bottom: 16px;">
-            <option value="Full-time">Full-time</option>
-            <option value="Part-time">Part-time</option>
-            <option value="Internship">Internship</option>
-          </select>
-
-          <label for="skills" style="font-size: 0.8rem;">Skills (comma-separated)</label>
-          <input type="text" id="skills" placeholder="Python, SQL, Git" style="margin-bottom: 16px;" />
-
-          <label for="salary" style="font-size: 0.8rem;">Salary (optional)</label>
-          <input type="text" id="salary" placeholder="e.g. 6-9 LPA" style="margin-bottom: 16px;" />
-
-          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
-            <label for="description" style="font-size: 0.8rem; margin: 0;">Description</label>
-            <button type="button" id="btn-generate-jd" class="ghost-btn" style="padding: 4px 8px; font-size: 12px; margin: 0;">✨ Generate JD</button>
+      <div class="dashboard-main-grid">
+        <!-- Left Column -->
+        <div>
+          <div class="dashboard-card">
+            <h3>Recent Applications</h3>
+            <table class="table-modern">
+              <thead>
+                <tr>
+                  <th>Candidate</th>
+                  <th>Applied For</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="recent-applications-list">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
           </div>
-          <textarea id="description" rows="5" style="margin-bottom: 16px;"></textarea>
+        </div>
 
-          <p id="form-error" class="form-error" role="alert" hidden></p>
+        <!-- Right Column -->
+        <div>
+          <div class="dashboard-card">
+            <h3>My Active Jobs</h3>
+            <p id="my-jobs-count" class="results-count" style="margin-bottom: 16px; font-size: 0.85rem; color: var(--ink-light);"></p>
+            <div id="my-jobs-list" class="my-jobs-list" style="display: grid; gap: 16px;">
+              <!-- Dynamically populated by existing logic -->
+            </div>
+          </div>
 
-          <button type="submit" style="width: 100%; padding: 12px; font-size: 1rem;">Post job</button>
-        </form>
-      </section>
+          <div class="dashboard-card">
+            <h3>Pending Actions</h3>
+            <ul class="list-unstyled" id="pending-actions-list">
+              <!-- Dynamically populated -->
+            </ul>
+          </div>
+        </div>
+      </div>
 
-      <!-- Your postings -->
-      <section class="dashboard-section" style="padding: 32px; background: var(--bg-surface);">
-        <h3 style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink-light); margin-bottom: 24px; text-transform: uppercase;">Your postings</h3>
-        <p id="my-jobs-count" class="results-count" style="margin-bottom: 24px;"></p>
-        <div id="my-jobs-list" class="my-jobs-list" style="display: grid; gap: 16px;"></div>
-      </section>
     </div>
   </main>
 
@@ -99,6 +120,48 @@
     </div>
   </footer>
 </div>
+
+  <!-- ===== Post Job Modal ===== -->
+  <dialog id="post-job-modal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+      <button id="close-post-modal" class="modal-close" aria-label="Close modal">&times;</button>
+      <h2 class="modal-title" style="font-family: var(--font-display); font-size: 2rem; margin-bottom: 24px;">Post a New Job</h2>
+      
+      <form id="post-job-form" class="auth-form post-job-form" novalidate style="margin: 0;">
+        <label for="title" style="font-size: 0.8rem;">Title</label>
+        <input type="text" id="title" required style="margin-bottom: 16px;" />
+
+        <label for="company" style="font-size: 0.8rem;">Company</label>
+        <input type="text" id="company" required style="margin-bottom: 16px;" />
+
+        <label for="location" style="font-size: 0.8rem;">Location</label>
+        <input type="text" id="location" required style="margin-bottom: 16px;" />
+
+        <label for="job_type" style="font-size: 0.8rem;">Job type</label>
+        <select id="job_type" style="margin-bottom: 16px;">
+          <option value="Full-time">Full-time</option>
+          <option value="Part-time">Part-time</option>
+          <option value="Internship">Internship</option>
+        </select>
+
+        <label for="skills" style="font-size: 0.8rem;">Skills (comma-separated)</label>
+        <input type="text" id="skills" placeholder="Python, SQL, Git" style="margin-bottom: 16px;" />
+
+        <label for="salary" style="font-size: 0.8rem;">Salary (optional)</label>
+        <input type="text" id="salary" placeholder="e.g. 6-9 LPA" style="margin-bottom: 16px;" />
+
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+          <label for="description" style="font-size: 0.8rem; margin: 0;">Description</label>
+          <button type="button" id="btn-generate-jd" class="ghost-btn" style="padding: 4px 8px; font-size: 12px; margin: 0;">✨ Generate JD</button>
+        </div>
+        <textarea id="description" rows="5" style="margin-bottom: 16px;"></textarea>
+
+        <p id="form-error" class="form-error" role="alert" hidden></p>
+
+        <button type="submit" style="width: 100%; padding: 12px; font-size: 1rem;">Post job</button>
+      </form>
+    </div>
+  </dialog>
 
   <!-- ===== Edit Job Modal ===== -->
   <dialog id="edit-job-modal" class="modal">

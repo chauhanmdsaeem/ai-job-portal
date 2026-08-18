@@ -422,6 +422,22 @@ async function loadMyJobs() {
   }
 }
 
+const postJobModal = document.getElementById("post-job-modal");
+const btnOpenPostJob = document.getElementById("btn-open-post-job");
+const btnClosePostJob = document.getElementById("close-post-modal");
+
+if (btnOpenPostJob && postJobModal) {
+  btnOpenPostJob.addEventListener("click", () => {
+    postJobModal.showModal();
+  });
+}
+if (btnClosePostJob && postJobModal) {
+  btnClosePostJob.addEventListener("click", () => {
+    postJobModal.close();
+  });
+}
+
+// Override post form success to also close modal and reload stats
 postJobForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   formErrorEl.hidden = true;
@@ -452,7 +468,9 @@ postJobForm.addEventListener("submit", async (event) => {
     }
 
     postJobForm.reset();
+    if (postJobModal) postJobModal.close();
     await loadMyJobs();
+    await loadDashboardStats();
   } catch (err) {
     formErrorEl.textContent = "Network error — please try again.";
     formErrorEl.hidden = false;
@@ -501,6 +519,48 @@ if (btnGenerateJd) {
   });
 }
 
+async function loadDashboardStats() {
+  try {
+    const res = await fetch("/api/dashboard/stats");
+    if (!res.ok) return;
+    const data = await res.json();
+    
+    document.getElementById("stat-active-jobs").textContent = data.stats.active_jobs;
+    document.getElementById("stat-applications").textContent = data.stats.total_applications;
+    document.getElementById("stat-shortlisted").textContent = data.stats.shortlisted;
+    document.getElementById("stat-interviews").textContent = data.stats.interviews;
+    
+    const recentTable = document.getElementById("recent-applications-list");
+    recentTable.innerHTML = "";
+    if (data.recent_applications.length === 0) {
+      recentTable.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--ink-light);">No applications yet.</td></tr>';
+    } else {
+      data.recent_applications.forEach(app => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${app.candidate_name}</strong></td>
+          <td>${app.job_title}</td>
+          <td>${app.date}</td>
+          <td><span class="status-badge ${app.status.toLowerCase()}">${app.status}</span></td>
+          <td><a href="#active-jobs-list" class="action-link" onclick="setTimeout(() => window.scrollBy(0, 300), 100)">View</a></td>
+        `;
+        recentTable.appendChild(tr);
+      });
+    }
+    
+    const pendingList = document.getElementById("pending-actions-list");
+    pendingList.innerHTML = "";
+    data.pending_actions.forEach(action => {
+      const li = document.createElement("li");
+      li.textContent = action;
+      pendingList.appendChild(li);
+    });
+    
+  } catch(err) {
+    console.error("Failed to load dashboard stats", err);
+  }
+}
+
 async function initDashboard() {
   const user = await fetchCurrentUser(); // from auth.js
 
@@ -514,8 +574,14 @@ async function initDashboard() {
     return;
   }
 
+  const nameEl = document.getElementById("recruiter-name");
+  if (nameEl && user.name) {
+    nameEl.textContent = user.name;
+  }
+
   dashboardContentEl.hidden = false;
   await loadMyJobs();
+  await loadDashboardStats();
 }
 
 document.addEventListener("DOMContentLoaded", initDashboard);
