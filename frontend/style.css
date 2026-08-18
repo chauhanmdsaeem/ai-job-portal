@@ -1394,3 +1394,23 @@ dialog::backdrop {
   font-family: var(--font-mono);
   color: transparent;
 }
+
+/* Specific sizing for chatbot toggle with magic button */
+.chatbot-toggle-magic {
+  padding: 14px 20px !important;
+  box-shadow: 0 10px 20px rgba(26, 115, 232, 0.2);
+  border-radius: 50px !important;
+}
+.chatbot-toggle-magic::before,
+.chatbot-toggle-magic::after,
+.chatbot-toggle-magic .dots_border {
+  border-radius: 50px !important;
+}
+.chatbot-toggle-magic .text_button {
+  font-size: 1.1rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+.chatbot-toggle-magic .sparkle {
+  width: 1.4rem;
+}
