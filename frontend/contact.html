@@ -51,7 +51,7 @@
     </div>
 
     <div style="flex: 1; padding: 100px 64px; display: flex; flex-direction: column; justify-content: center;">
-      <form class="auth-form" onsubmit="event.preventDefault(); alert('Message sent successfully!'); this.reset();">
+      <form id="contact-form" class="auth-form">
         <h2 style="font-family: var(--font-display); font-size: 2rem; margin: 0 0 32px;">Send a Message</h2>
         
         <label for="name">Full Name</label>
@@ -66,6 +66,7 @@
           <option value="sales">Sales & Pricing</option>
           <option value="support">Technical Support</option>
           <option value="press">Press & Media</option>
+          <option value="feedback">Feedback & Suggestions</option>
         </select>
         
         <label for="message">Message</label>
@@ -82,6 +83,7 @@
       <p style="color: var(--ink-light); font-size: 14px;">© 2026 Fieldnote Careers. All rights reserved.</p>
       <div style="display: flex; gap: 24px;">
         <a href="about.html" style="color: var(--ink-light); font-size: 14px; text-decoration: none;">About</a>
+        <a href="contact.html" style="color: var(--ink-light); font-size: 14px; text-decoration: none;">Contact Us</a>
         <a href="privacy.html" style="color: var(--ink-light); font-size: 14px; text-decoration: none;">Privacy Policy</a>
         <a href="terms.html" style="color: var(--ink-light); font-size: 14px; text-decoration: none;">Terms of Service</a>
       </div>
@@ -91,5 +93,6 @@
 
 <script src="auth.js"></script>
 <script src="chatbot.js"></script>
+<script src="contact.js"></script>
 </body>
 </html>
