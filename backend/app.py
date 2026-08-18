@@ -45,6 +45,7 @@ app = Flask(__name__, static_folder=None)
 # environment variable instead of hardcoding it in source —
 # anyone who saw this value could forge login sessions.
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key-change-me")
+app.config["SESSION_COOKIE_SAMESITE"] = "Strict"
 
 # Creates database/job_portal.db + tables if they don't exist yet,
 # and makes sure the connection closes cleanly after each request.
@@ -78,6 +79,20 @@ def add_security_headers(response):
     # Strict-Transport-Security is useful for production (HTTPS)
     # response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     return response
+
+from flask import request, session, jsonify
+
+@app.before_request
+def csrf_protect():
+    if request.method in ["POST", "PUT", "DELETE"]:
+        # Exempt specific auth routes that establish the session/CSRF token
+        exempt_routes = ["/api/login", "/api/register", "/api/verify-2fa", "/api/logout"]
+        if request.path in exempt_routes:
+            return
+            
+        token = session.get("csrf_token")
+        if not token or token != request.headers.get("X-CSRF-Token"):
+            return jsonify({"error": "CSRF token missing or invalid"}), 403
 
 # ---------------------------------------------------------
 # Frontend routes (unchanged from Phase 2)

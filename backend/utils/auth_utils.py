@@ -14,9 +14,28 @@ app.config['SECRET_KEY']), the browser can't forge or edit
 it undetected — it can only send back exactly what the
 server gave it.
 """
+import time
 from functools import wraps
 
-from flask import session, jsonify
+from flask import session, jsonify, request
+
+_brute_force_ips = {}
+
+def brute_force_limit(max_requests=5, window_seconds=60):
+    def decorator(view):
+        @wraps(view)
+        def wrapped(*args, **kwargs):
+            ip = request.remote_addr
+            now = time.time()
+            if ip not in _brute_force_ips:
+                _brute_force_ips[ip] = []
+            _brute_force_ips[ip] = [t for t in _brute_force_ips[ip] if now - t < window_seconds]
+            if len(_brute_force_ips[ip]) >= max_requests:
+                return jsonify({"error": "Too many requests. Please try again later."}), 429
+            _brute_force_ips[ip].append(now)
+            return view(*args, **kwargs)
+        return wrapped
+    return decorator
 
 
 def login_required(view):

@@ -12,11 +12,36 @@
    or writes that cookie directly, it just asks the server.
    ========================================================= */
 
+let csrfToken = null;
+
+// Fetch interceptor to inject CSRF token into all POST/PUT/DELETE requests
+const originalFetch = window.fetch;
+window.fetch = async function() {
+    let [resource, config] = arguments;
+    if (!config) config = {};
+    const method = (config.method || 'GET').toUpperCase();
+    
+    if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
+        if (!config.headers) config.headers = {};
+        if (csrfToken) {
+            config.headers['X-CSRF-Token'] = csrfToken;
+        }
+    }
+    return originalFetch(resource, config);
+};
+
 async function fetchCurrentUser() {
   try {
-    const response = await fetch("/api/me");
+    const response = await originalFetch("/api/me");
     const data = await response.json();
-    return data.user; // null when nobody is logged in
+    if (data.user) {
+        const csrfRes = await originalFetch("/api/csrf-token");
+        if (csrfRes.ok) {
+            const csrfData = await csrfRes.json();
+            csrfToken = csrfData.csrf_token;
+        }
+    }
+    return data.user || null;
   } catch (err) {
     console.warn("Could not reach /api/me:", err.message);
     return null;

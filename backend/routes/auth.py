@@ -22,6 +22,8 @@ from PyPDF2 import PdfReader
 from models.user import create_user, get_user_by_email, get_user_by_id, verify_password, to_public_dict, update_user_resume
 from models.job import get_job_by_id
 from utils.ai_analyzer import ai_tailor_resume, ai_generate_ats_resume
+from utils.auth_utils import brute_force_limit
+import secrets
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api")
 
@@ -29,6 +31,7 @@ VALID_ROLES = ("candidate", "recruiter")
 
 
 @auth_bp.route("/register", methods=["POST"])
+@brute_force_limit(max_requests=5, window_seconds=60)
 def register():
     data = request.get_json(silent=True) or {}
     name = (data.get("name") or "").strip()
@@ -69,6 +72,7 @@ def register():
 
 
 @auth_bp.route("/login", methods=["POST"])
+@brute_force_limit(max_requests=5, window_seconds=60)
 def login():
     data = request.get_json(silent=True) or {}
     email = (data.get("email") or "").strip().lower()
@@ -94,6 +98,7 @@ def login():
     return jsonify({"require_2fa": True, "email": email})
 
 @auth_bp.route("/verify-2fa", methods=["POST"])
+@brute_force_limit(max_requests=5, window_seconds=60)
 def verify_2fa():
     data = request.get_json(silent=True) or {}
     otp = str(data.get("otp", "")).strip()
@@ -120,6 +125,11 @@ def logout():
     session.clear()
     return jsonify({"message": "logged out"})
 
+@auth_bp.route("/csrf-token", methods=["GET"])
+def get_csrf_token():
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_hex(32)
+    return jsonify({"csrf_token": session["csrf_token"]})
 
 @auth_bp.route("/me", methods=["GET"])
 def me():
