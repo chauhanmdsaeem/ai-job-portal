@@ -561,6 +561,123 @@ async function loadDashboardStats() {
   }
 }
 
+async function loadCandidateStats() {
+  try {
+    const res = await fetch("/api/dashboard/candidate-stats");
+    if (!res.ok) return;
+    const data = await res.json();
+    
+    document.getElementById("cand-stat-apps").textContent = data.stats.applications;
+    document.getElementById("cand-stat-saved").textContent = data.stats.saved_jobs;
+    document.getElementById("cand-stat-interviews").textContent = data.stats.interviews;
+    document.getElementById("cand-stat-views").textContent = data.stats.profile_views;
+    
+    // Recommended Jobs
+    const recommendedList = document.getElementById("cand-recommended-jobs");
+    recommendedList.innerHTML = "";
+    if (data.recommended_jobs.length === 0) {
+      recommendedList.innerHTML = '<p class="empty-state" style="margin:0;">No matching jobs right now.</p>';
+    } else {
+      data.recommended_jobs.forEach(job => {
+        const div = document.createElement("div");
+        div.style.border = "var(--border-thin)";
+        div.style.padding = "16px";
+        div.style.borderRadius = "8px";
+        div.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+            <div>
+              <h4 style="margin: 0; font-size: 1.1rem;">${job.title}</h4>
+              <p style="margin: 4px 0 0; color: var(--ink-light); font-size: 0.9rem;">${job.company} · ${job.location}</p>
+            </div>
+            <span style="font-weight: 600; color: var(--success); font-family: var(--font-mono); font-size: 0.85rem;">${job.match}% Match</span>
+          </div>
+          <p style="margin: 8px 0; font-size: 0.85rem; color: var(--ink-light);">${job.skills.join(" · ")}</p>
+          <div style="text-align: right; margin-top: 12px;">
+            <a href="index.html#job-${job.id}" class="ghost-btn" style="padding: 6px 12px; font-size: 0.8rem; text-decoration: none;">View Job</a>
+          </div>
+        `;
+        recommendedList.appendChild(div);
+      });
+    }
+
+    // Recent Applications
+    const recentAppsList = document.getElementById("cand-recent-apps");
+    recentAppsList.innerHTML = "";
+    if (data.recent_applications.length === 0) {
+      recentAppsList.innerHTML = '<p class="empty-state" style="margin:0;">You haven\'t applied to any jobs yet.</p>';
+    } else {
+      data.recent_applications.forEach(app => {
+        const div = document.createElement("div");
+        div.style.display = "flex";
+        div.style.justifyContent = "space-between";
+        div.style.alignItems = "center";
+        div.style.padding = "12px 0";
+        div.style.borderBottom = "var(--border-thin)";
+        
+        let pipelinestep = 1;
+        if (app.status === 'Under Review') pipelinestep = 2;
+        if (app.status === 'Shortlisted') pipelinestep = 3;
+        if (app.status === 'Interview') pipelinestep = 4;
+        if (app.status === 'Selected') pipelinestep = 5;
+        if (app.status === 'Rejected') pipelinestep = 0;
+        
+        let pipelineHTML = '';
+        if (pipelinestep > 0) {
+           pipelineHTML = `
+           <div style="display: flex; gap: 4px; margin-top: 8px;">
+             <div style="height: 4px; flex: 1; background: ${pipelinestep >= 1 ? 'var(--accent-primary)' : 'var(--line-light)'}; border-radius: 2px;"></div>
+             <div style="height: 4px; flex: 1; background: ${pipelinestep >= 2 ? 'var(--accent-primary)' : 'var(--line-light)'}; border-radius: 2px;"></div>
+             <div style="height: 4px; flex: 1; background: ${pipelinestep >= 3 ? 'var(--accent-primary)' : 'var(--line-light)'}; border-radius: 2px;"></div>
+             <div style="height: 4px; flex: 1; background: ${pipelinestep >= 4 ? 'var(--accent-primary)' : 'var(--line-light)'}; border-radius: 2px;"></div>
+             <div style="height: 4px; flex: 1; background: ${pipelinestep >= 5 ? 'var(--success)' : 'var(--line-light)'}; border-radius: 2px;"></div>
+           </div>
+           `;
+        } else {
+           pipelineHTML = `<p style="color: var(--danger); font-size: 0.8rem; margin: 4px 0 0;">Application Rejected</p>`;
+        }
+
+        div.innerHTML = `
+          <div style="flex: 1;">
+            <p style="margin: 0; font-weight: 600;">${app.job_title}</p>
+            <p style="margin: 2px 0 0; font-size: 0.85rem; color: var(--ink-light);">${app.company} · Applied: ${app.date}</p>
+            ${pipelineHTML}
+          </div>
+          <div style="margin-left: 16px;">
+            <span class="status-badge ${app.status.toLowerCase().replace(/\s+/g, '-')}">${app.status}</span>
+          </div>
+        `;
+        recentAppsList.appendChild(div);
+      });
+    }
+
+    // Upcoming Interviews
+    const interviewsList = document.getElementById("cand-upcoming-interviews");
+    if (data.upcoming_interviews.length > 0) {
+      interviewsList.innerHTML = "";
+      data.upcoming_interviews.forEach(interview => {
+        const div = document.createElement("div");
+        div.style.padding = "16px";
+        div.style.background = "#f8f9fa";
+        div.style.borderLeft = "4px solid var(--accent-primary)";
+        div.style.marginBottom = "12px";
+        div.innerHTML = `
+          <p style="margin: 0 0 4px; font-weight: 600;">${interview.job_title}</p>
+          <p style="margin: 0 0 8px; font-size: 0.85rem; color: var(--ink-light);">${interview.company}</p>
+          <p style="margin: 0; font-family: var(--font-mono); font-size: 0.85rem; color: var(--ink-main);">📅 ${interview.date} · ⏰ ${interview.time}</p>
+          <div style="margin-top: 12px; display: flex; gap: 8px;">
+            <button class="ghost-btn" style="padding: 4px 12px; font-size: 0.8rem;">Details</button>
+            <button style="padding: 4px 12px; font-size: 0.8rem;">Join</button>
+          </div>
+        `;
+        interviewsList.appendChild(div);
+      });
+    }
+
+  } catch(err) {
+    console.error("Failed to load candidate stats", err);
+  }
+}
+
 async function initDashboard() {
   const user = await fetchCurrentUser(); // from auth.js
 
@@ -569,19 +686,39 @@ async function initDashboard() {
     return;
   }
 
-  if (user.role !== "recruiter" && user.role !== "admin") {
-    accessDeniedEl.hidden = false;
-    return;
+  // Adjust Top Nav dynamically if candidate
+  if (user.role === "candidate") {
+    const mainNav = document.querySelector(".main-nav");
+    if (mainNav) {
+      // Add Dashboard and My Applications if not present
+      if (!document.getElementById("nav-dashboard-link")) {
+        const dashLink = document.createElement("a");
+        dashLink.id = "nav-dashboard-link";
+        dashLink.href = "dashboard.html";
+        dashLink.textContent = "Dashboard";
+        dashLink.style.fontWeight = "600";
+        mainNav.insertBefore(dashLink, mainNav.firstChild);
+      }
+    }
+    
+    accessDeniedEl.hidden = true;
+    document.getElementById("candidate-dashboard-content").hidden = false;
+    const nameEl = document.getElementById("candidate-name");
+    if (nameEl && user.name) {
+      nameEl.textContent = user.name.split(" ")[0]; // First name
+    }
+    await loadCandidateStats();
+  } 
+  else if (user.role === "recruiter" || user.role === "admin") {
+    accessDeniedEl.hidden = true;
+    dashboardContentEl.hidden = false;
+    const nameEl = document.getElementById("recruiter-name");
+    if (nameEl && user.name) {
+      nameEl.textContent = user.name.split(" ")[0]; // First name
+    }
+    await loadMyJobs();
+    await loadDashboardStats();
   }
-
-  const nameEl = document.getElementById("recruiter-name");
-  if (nameEl && user.name) {
-    nameEl.textContent = user.name;
-  }
-
-  dashboardContentEl.hidden = false;
-  await loadMyJobs();
-  await loadDashboardStats();
 }
 
 document.addEventListener("DOMContentLoaded", initDashboard);

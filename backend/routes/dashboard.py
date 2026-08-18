@@ -110,3 +110,73 @@ def get_dashboard_stats():
         "active_jobs_list": active_jobs_list,
         "pending_actions": pending_actions
     })
+
+
+@dashboard_bp.route("/candidate-stats", methods=["GET"])
+@role_required("candidate")
+def get_candidate_stats():
+    user_id = session["user_id"]
+    db = get_db()
+    
+    # 1. Stats
+    # Applications
+    cur = db.execute("SELECT COUNT(*) as count FROM applications WHERE candidate_id = %s", (user_id,))
+    total_applications = cur.fetchone()["count"]
+    
+    # Interviews
+    cur = db.execute("SELECT COUNT(*) as count FROM applications WHERE candidate_id = %s AND status = 'Interview'", (user_id,))
+    interviews = cur.fetchone()["count"]
+    
+    # Mocks for now until features are fully built
+    saved_jobs_count = 0
+    profile_views = 27
+    profile_completion = 80
+    
+    # 2. Recent Applications
+    cur = db.execute("""
+        SELECT a.id, a.status, a.applied_at, 
+               j.title as job_title, j.company as company, j.id as job_id
+        FROM applications a
+        JOIN jobs j ON a.job_id = j.id
+        WHERE a.candidate_id = %s
+        ORDER BY a.applied_at DESC
+        LIMIT 3
+    """, (user_id,))
+    recent_applications = cur.fetchall()
+    for app in recent_applications:
+        app["date"] = app["applied_at"].strftime("%b %d") if hasattr(app["applied_at"], "strftime") else str(app["applied_at"])
+        
+    # 3. Upcoming Interviews
+    upcoming_interviews = []
+    # Mock for demonstration if they have interviews
+    if interviews > 0:
+        upcoming_interviews = [
+            {"job_title": "Python Developer", "company": "ABC Technologies", "date": "Aug 20, 2026", "time": "11:00 AM"}
+        ]
+        
+    # 4. Recommended Jobs (Basic mock matching)
+    cur = db.execute("""
+        SELECT id, title, company, location, skills, salary
+        FROM jobs 
+        WHERE status = 'open'
+        ORDER BY created_at DESC
+        LIMIT 2
+    """)
+    recommended_jobs = cur.fetchall()
+    for i, job in enumerate(recommended_jobs):
+        job["match"] = 94 - (i * 7) # Mock match percentage 94%, 87%, etc.
+        job["skills"] = job["skills"] if job["skills"] else []
+        
+    return jsonify({
+        "stats": {
+            "applications": total_applications,
+            "saved_jobs": saved_jobs_count,
+            "interviews": interviews,
+            "profile_views": profile_views,
+            "profile_completion": profile_completion
+        },
+        "recent_applications": recent_applications,
+        "upcoming_interviews": upcoming_interviews,
+        "recommended_jobs": recommended_jobs
+    })
+

@@ -1105,8 +1105,12 @@ dialog::backdrop {
   color: var(--ink-main);
 }
 .status-badge.new { background: #e8f0fe; color: #1967d2; }
+.status-badge.applied { background: #e8eaed; color: var(--ink-main); }
+.status-badge.under-review { background: #fef7e0; color: #b06000; }
 .status-badge.shortlisted { background: #e6f4ea; color: #1e8e3e; }
-.status-badge.interview { background: #fef7e0; color: #b06000; }
+.status-badge.interview { background: #fce8e6; color: #d93025; }
+.status-badge.selected { background: #ceead6; color: #0d652d; }
+.status-badge.rejected { background: #fad2cf; color: #a50e0e; }
 .action-link {
   font-size: 0.85rem;
   font-weight: 600;

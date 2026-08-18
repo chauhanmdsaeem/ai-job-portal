@@ -106,6 +106,89 @@
       </div>
 
     </div>
+
+    <div id="candidate-dashboard-content" class="dashboard-overview" hidden>
+      <div class="dashboard-welcome">
+        <div>
+          <h1>Good evening, <span id="candidate-name">Saeem</span> 👋</h1>
+          <p>Find your next opportunity.</p>
+        </div>
+        <div style="text-align: right;">
+          <p style="margin: 0 0 4px; font-size: 0.85rem; color: var(--ink-light); font-family: var(--font-mono);">Your Profile</p>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 150px; height: 8px; background: var(--line-light); border-radius: 4px; overflow: hidden;">
+              <div id="candidate-profile-bar" style="width: 80%; height: 100%; background: var(--success);"></div>
+            </div>
+            <span id="candidate-profile-pct" style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600;">80%</span>
+          </div>
+          <a href="#" style="font-size: 0.75rem; color: var(--accent-primary); text-decoration: none; margin-top: 4px; display: inline-block;">Complete Profile</a>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-card-title">Applications</span>
+          <p class="stat-card-value" id="cand-stat-apps">0</p>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-title">Saved Jobs</span>
+          <p class="stat-card-value" id="cand-stat-saved">0</p>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-title">Interviews</span>
+          <p class="stat-card-value" id="cand-stat-interviews">0</p>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-title">Profile Views</span>
+          <p class="stat-card-value" id="cand-stat-views">0</p>
+        </div>
+      </div>
+
+      <div class="dashboard-main-grid">
+        <!-- Left Column -->
+        <div>
+          <div class="dashboard-card" style="border-top: 3px solid var(--accent-primary);">
+            <h3 style="color: var(--accent-primary);">⭐ AI Recommended Jobs</h3>
+            <div id="cand-recommended-jobs" style="display: grid; gap: 16px;">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <div class="dashboard-card">
+            <h3>Recent Applications</h3>
+            <div id="cand-recent-apps" style="display: grid; gap: 16px;">
+              <!-- Dynamically populated -->
+            </div>
+            <div style="margin-top: 16px; text-align: center;">
+              <a href="#" class="action-link">View All Applications</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div>
+          <div class="dashboard-card">
+            <h3>📅 Upcoming Interviews</h3>
+            <div id="cand-upcoming-interviews">
+              <!-- Dynamically populated -->
+              <p class="empty-state" style="margin: 0;">No upcoming interviews</p>
+            </div>
+          </div>
+
+          <div class="dashboard-card">
+            <h3>Saved Jobs</h3>
+            <ul class="list-unstyled" id="cand-saved-jobs">
+              <!-- Dynamically populated -->
+              <li style="color: var(--ink-light); font-size: 0.9rem;">No saved jobs yet.</li>
+            </ul>
+            <div style="margin-top: 12px; text-align: right;">
+              <a href="#" class="action-link">View Saved Jobs</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </main>
 
     <footer class="site-footer">
