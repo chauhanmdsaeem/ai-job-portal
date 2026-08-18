@@ -31,11 +31,17 @@ def apply_to_job(job_id):
         return jsonify({"error": "this job is no longer accepting applications"}), 400
 
     data = request.get_json(silent=True) or {}
-    resume = data.get("resume")  # plain text/URL for now — file upload is a later milestone
-    experience = data.get("experience")
-    expected_salary = data.get("expected_salary")
-    notice_period = data.get("notice_period")
-    portfolio_url = data.get("portfolio_url")
+    resume = data.get("resume") or ""
+    experience = data.get("experience") or ""
+    expected_salary = data.get("expected_salary") or ""
+    notice_period = data.get("notice_period") or ""
+    portfolio_url = data.get("portfolio_url") or ""
+    
+    if len(resume) > 50000:
+        return jsonify({"error": "Resume payload exceeds 50,000 characters limit"}), 413
+        
+    if len(portfolio_url) > 500:
+        return jsonify({"error": "Portfolio URL exceeds 500 characters limit"}), 400
 
     try:
         application = application_model.create_application(

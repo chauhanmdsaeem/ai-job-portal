@@ -183,8 +183,15 @@ def upload_resume():
     if not file.filename.lower().endswith(".pdf"):
         return jsonify({"error": "only PDF files are supported"}), 400
         
+    if file.mimetype != "application/pdf":
+        return jsonify({"error": "invalid mime type, must be application/pdf"}), 400
+        
+    file_bytes = file.read(5 * 1024 * 1024 + 1)
+    if len(file_bytes) > 5 * 1024 * 1024:
+        return jsonify({"error": "file size exceeds 5MB limit"}), 413
+        
     try:
-        reader = PdfReader(io.BytesIO(file.read()))
+        reader = PdfReader(io.BytesIO(file_bytes))
         resume_text = ""
         for page in reader.pages:
             resume_text += page.extract_text() + "\n"
