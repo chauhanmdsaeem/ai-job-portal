@@ -51,6 +51,8 @@ const dataSourceEl = document.getElementById("data-source");
 // This holds whatever job list we end up with (API or fallback).
 // Filtering never mutates this — it's always the full set.
 let allJobs = [];
+let currentPage = 1;
+let totalPages = 1;
 
 // Who's logged in (from auth.js's fetchCurrentUser), and which job
 // ids the candidate has already applied to — both set once in
@@ -419,86 +421,97 @@ function populateFilters(jobs) {
   });
 }
 
-/** Apply the current search text + filter selections to allJobs. */
+/** Apply the current search text + filter selections. */
 function applyFilters() {
-  const query = searchInput.value.trim().toLowerCase();
-  const location = locationFilter.value;
-  const type = typeFilter.value;
-
-  const filtered = allJobs.filter((job) => {
-    const matchesQuery =
-      query === "" ||
-      job.title.toLowerCase().includes(query) ||
-      job.company.toLowerCase().includes(query) ||
-      job.skills.some((s) => s.toLowerCase().includes(query));
-
-    const matchesLocation = location === "" || job.location === location;
-    const matchesType = type === "" || job.job_type === type;
-
-    return matchesQuery && matchesLocation && matchesType;
-  });
-
-  renderJobs(filtered);
+  currentPage = 1;
+  loadJobs(currentPage, false);
 }
 
-/** Load jobs from the Flask API, falling back to static data. */
-async function loadJobs() {
-  // fetchCurrentUser() comes from auth.js, loaded before this file.
-  currentUser = await fetchCurrentUser();
-
-  if (currentUser && (currentUser.role === "recruiter" || currentUser.role === "admin")) {
-    const heroH1 = document.querySelector(".hero h1");
-    if (heroH1) heroH1.innerHTML = "Find candidates that fit<br><i>what your company actually needs.</i>";
+/** Load jobs from the Flask API, optionally appending for pagination. */
+async function loadJobs(page = 1, append = false) {
+  currentPage = page;
+  
+  if (!append) {
+    currentUser = await fetchCurrentUser();
     
-    const heroBtn = document.querySelector(".hero button[type='submit']");
-    if (heroBtn) heroBtn.textContent = "SEARCH THE PLATFORM →";
-
-    const madlibsLabel = document.querySelector(".madlibs-line");
-    if (madlibsLabel && madlibsLabel.firstChild) {
-      madlibsLabel.firstChild.textContent = "SEARCH ROLES: ";
+    if (currentUser && (currentUser.role === "recruiter" || currentUser.role === "admin")) {
+      const heroH1 = document.querySelector(".hero h1");
+      if (heroH1) heroH1.innerHTML = "Find candidates that fit<br><i>what your company actually needs.</i>";
+      const heroBtn = document.querySelector(".hero button[type='submit']");
+      if (heroBtn) heroBtn.textContent = "SEARCH THE PLATFORM →";
+      const madlibsLabel = document.querySelector(".madlibs-line");
+      if (madlibsLabel && madlibsLabel.firstChild) {
+        madlibsLabel.firstChild.textContent = "SEARCH ROLES: ";
+      }
     }
-  }
-
-  if (currentUser && currentUser.role === "candidate") {
-    try {
-      const res = await fetch("/api/applications");
-      if (res.ok) {
-        const applications = await res.json();
-        appliedJobIds = new Set(applications.map((a) => a.job_id));
+    
+    if (currentUser && currentUser.role === "candidate") {
+      try {
+        const res = await fetch("/api/applications");
+        if (res.ok) {
+          const applications = await res.json();
+          appliedJobIds = new Set(applications.map((a) => a.job_id));
+        }
+        
+        const savedRes = await fetch("/api/jobs/saved");
+        if (savedRes.ok) {
+          const savedJobs = await savedRes.json();
+          savedJobIds = new Set(savedJobs.map((j) => j.id));
+        }
+        
+        const profileRes = await fetch("/api/me/profile");
+        if (profileRes.ok) {
+          candidateProfile = await profileRes.json();
+        }
+      } catch (err) {
+        console.warn("Could not load candidate data:", err.message);
       }
-      
-      const savedRes = await fetch("/api/jobs/saved");
-      if (savedRes.ok) {
-        const savedJobs = await savedRes.json();
-        savedJobIds = new Set(savedJobs.map((j) => j.id));
-      }
-      
-      const profileRes = await fetch("/api/me/profile");
-      if (profileRes.ok) {
-        candidateProfile = await profileRes.json();
-      }
-    } catch (err) {
-      console.warn("Could not load candidate data:", err.message);
     }
   }
 
   try {
-    const response = await fetch("/api/jobs", { cache: "no-store" });
+    const query = searchInput.value.trim();
+    const location = locationFilter.value;
+    const type = typeFilter.value;
+    
+    let url = `/api/jobs?page=${page}&limit=10`;
+    if (query) url += `&q=${encodeURIComponent(query)}`;
+    if (location) url += `&location=${encodeURIComponent(location)}`;
+    if (type) url += `&job_type=${encodeURIComponent(type)}`;
+
+    const response = await fetch(url, { cache: "no-store" });
     if (!response.ok) throw new Error(`API responded with ${response.status}`);
-    allJobs = await response.json();
+    
+    const data = await response.json();
+    
+    let fetchedJobs = Array.isArray(data) ? data : data.jobs;
+    totalPages = data.pages || 1;
+    
+    if (append) {
+      allJobs = allJobs.concat(fetchedJobs);
+    } else {
+      allJobs = fetchedJobs;
+    }
+    
     if (dataSourceEl) dataSourceEl.textContent = "Flask API (/api/jobs)";
   } catch (err) {
-    // Backend not running, or page opened directly as a file —
-    // fall back so the UI still demonstrates itself.
     console.warn("Could not load /api/jobs, using fallback data:", err.message);
-    allJobs = FALLBACK_JOBS;
+    if (!append) allJobs = FALLBACK_JOBS;
     if (dataSourceEl) dataSourceEl.textContent = "static fallback data";
   }
 
-  populateFilters(allJobs);
+  if (locationFilter.options.length <= 1) {
+    populateFilters(allJobs);
+  }
+  
   renderJobs(allJobs);
   
-  if (candidateProfile && candidateProfile.resume) {
+  const loadMoreBtn = document.getElementById("load-more-btn");
+  if (loadMoreBtn) {
+    loadMoreBtn.style.display = (currentPage < totalPages) ? "inline-block" : "none";
+  }
+  
+  if (!append && candidateProfile && candidateProfile.resume) {
     loadRecommendations();
   }
 }
@@ -542,15 +555,23 @@ async function loadRecommendations() {
 
 // Re-filter as the person types or changes a dropdown —
 // no need to wait for the "Search" button.
-searchInput.addEventListener("input", applyFilters);
 locationFilter.addEventListener("change", applyFilters);
 typeFilter.addEventListener("change", applyFilters);
 
-// Prevent full page reload on submit; we already filter live.
+// Handle the explicit search button click / enter key
 searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
   applyFilters();
 });
 
-// Kick things off once the DOM is ready.
+// Load jobs on page load
 document.addEventListener("DOMContentLoaded", loadJobs);
+
+document.addEventListener("DOMContentLoaded", () => {
+    const loadMoreBtn = document.getElementById("load-more-btn");
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener("click", () => {
+            loadJobs(currentPage + 1, true);
+        });
+    }
+});

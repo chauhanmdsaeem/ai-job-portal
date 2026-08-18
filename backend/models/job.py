@@ -30,33 +30,45 @@ def _row_to_dict(row):
     }
 
 
-def get_all_jobs(location=None, job_type=None, q=None):
+def get_all_jobs(location=None, job_type=None, q=None, page=1, limit=10):
     """Return jobs, optionally filtered. Filters are combined with AND."""
+    import math
     db = get_db()
-    query = "SELECT * FROM jobs WHERE 1=1"
+    
+    where_clause = " WHERE 1=1"
     params = []
 
     if location:
-        query += " AND location = %s"
+        where_clause += " AND location = %s"
         params.append(location)
 
     if job_type:
-        query += " AND job_type = %s"
+        where_clause += " AND job_type = %s"
         params.append(job_type)
 
     if q:
-        # Match the search term against title, company or skills.
-        # Parameterised with ? placeholders throughout — never
-        # string-format user input directly into SQL, or you open
-        # the door to SQL injection.
-        query += " AND (title LIKE %s OR company LIKE %s OR skills LIKE %s)"
+        where_clause += " AND (title LIKE %s OR company LIKE %s OR skills LIKE %s)"
         like_term = f"%{q}%"
         params += [like_term, like_term, like_term]
 
-    query += " ORDER BY created_at DESC"
+    # Calculate total count for pagination
+    count_query = f"SELECT COUNT(*) as c FROM jobs {where_clause}"
+    total = db.execute(count_query, params).fetchone()["c"]
+
+    # Fetch paginated rows
+    query = f"SELECT * FROM jobs {where_clause} ORDER BY created_at DESC LIMIT %s OFFSET %s"
+    offset = (page - 1) * limit
+    params += [limit, offset]
 
     rows = db.execute(query, params).fetchall()
-    return [_row_to_dict(row) for row in rows]
+    
+    return {
+        "jobs": [_row_to_dict(row) for row in rows],
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "pages": math.ceil(total / limit) if limit > 0 else 1
+    }
 
 
 def get_jobs_by_recruiter(recruiter_id):

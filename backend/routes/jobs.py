@@ -33,8 +33,10 @@ def list_jobs():
     location = request.args.get("location")
     job_type = request.args.get("job_type")
     q = request.args.get("q")
-    jobs = job_model.get_all_jobs(location=location, job_type=job_type, q=q)
-    return jsonify(jobs)
+    page = int(request.args.get("page", 1))
+    limit = int(request.args.get("limit", 10))
+    result = job_model.get_all_jobs(location=location, job_type=job_type, q=q, page=page, limit=limit)
+    return jsonify(result)
 
 
 @jobs_bp.route("/my-jobs", methods=["GET"])
