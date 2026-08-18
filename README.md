@@ -34,7 +34,7 @@ Fieldnote is a high-performance, full-stack job portal designed to demonstrate a
 - **Floating AI Chatbot:** A persistent, context-aware chatbot widget globally available to assist candidates and recruiters with navigation, job tips, and portal queries.
 
 ### 👨‍💼 For Candidates
-- Browse, search, and filter jobs with live UI updates.
+- Browse, search, and filter jobs with live UI updates (powered by true Server-Side Pagination).
 - Centralized Candidate Dashboard tracking applications, saved jobs, and AI match scores.
 - "Master Resume" profile builder.
 
@@ -42,6 +42,16 @@ Fieldnote is a high-performance, full-stack job portal designed to demonstrate a
 - Dashboard tracking active jobs, total applications, and hiring pipeline metrics.
 - Create, edit, and manage job postings.
 - Review applications, update statuses (Shortlist, Interview, Hire), and analyze resumes with AI.
+
+---
+
+## 🔒 Enterprise Security & Performance Upgrades
+Recent updates driven by a rigorous QA audit have significantly hardened the platform:
+- **Two-Factor Authentication (2FA):** OTP-based 2FA integration for all logins and registrations.
+- **CSRF Protection:** Integrated `SameSite=Strict` policies and a unified `fetch` interceptor validating dynamic `X-CSRF-Token`s.
+- **Brute-Force Rate Limiting:** Custom `@brute_force_limit` throttles authentication endpoints, protecting against credential stuffing.
+- **Strict File Upload Validation:** Enforced 5MB limits and robust MIME-type validation for resume PDF uploads, mitigating DoS & XSS vectors.
+- **Server-Side Pagination:** Replaced legacy in-memory filtering with highly scalable SQL `LIMIT/OFFSET` pagination on the job feed.
 
 ---
 
