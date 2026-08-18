@@ -15,6 +15,7 @@ style code where we need fresh data (e.g. /api/me), since the
 session cookie only carries id + role, not the full record.
 """
 import io
+import random
 from flask import Blueprint, request, jsonify, session
 from PyPDF2 import PdfReader
 
@@ -56,10 +57,15 @@ def register():
         return jsonify({"error": "an account with that email already exists"}), 409
 
     session.clear()
-    session["user_id"] = user_id
-    session["role"] = role
+    
+    # 2FA Step
+    otp = str(random.randint(100000, 999999))
+    session["pending_2fa_user_id"] = user_id
+    session["pending_2fa_role"] = role
+    session["pending_otp"] = otp
+    print(f"\\n--- 2FA OTP for {email}: {otp} ---\\n", flush=True)
 
-    return jsonify({"id": user_id, "name": name, "email": email, "role": role}), 201
+    return jsonify({"require_2fa": True, "email": email}), 200
 
 
 @auth_bp.route("/login", methods=["POST"])
@@ -77,9 +83,35 @@ def login():
         return jsonify({"error": "invalid email or password"}), 401
 
     session.clear()
+    
+    # 2FA Step
+    otp = str(random.randint(100000, 999999))
+    session["pending_2fa_user_id"] = user["id"]
+    session["pending_2fa_role"] = user["role"]
+    session["pending_otp"] = otp
+    print(f"\\n--- 2FA OTP for {email}: {otp} ---\\n", flush=True)
+
+    return jsonify({"require_2fa": True, "email": email})
+
+@auth_bp.route("/verify-2fa", methods=["POST"])
+def verify_2fa():
+    data = request.get_json(silent=True) or {}
+    otp = str(data.get("otp", "")).strip()
+    
+    pending_user_id = session.get("pending_2fa_user_id")
+    pending_otp = session.get("pending_otp")
+    
+    if not pending_user_id or not pending_otp:
+        return jsonify({"error": "Session expired or no 2FA pending"}), 400
+        
+    if otp != pending_otp:
+        return jsonify({"error": "Invalid verification code"}), 401
+        
+    user = get_user_by_id(pending_user_id)
+    session.clear()
     session["user_id"] = user["id"]
     session["role"] = user["role"]
-
+    
     return jsonify(to_public_dict(user))
 
 

@@ -58,6 +58,16 @@
         <button type="submit">Create account</button>
       </form>
 
+      <form id="two-fa-form" class="auth-form" style="display: none;" novalidate>
+        <p style="margin-bottom: 16px; color: var(--ink-light); font-size: 14px;">We've sent a 6-digit verification code to your email.<br>(Check terminal console for this demo).</p>
+        <label for="otp">Verification Code</label>
+        <input type="text" id="otp" name="otp" required autocomplete="one-time-code" placeholder="123456" />
+
+        <p id="form-error-2fa" class="form-error" role="alert" hidden></p>
+
+        <button type="submit">Verify & Log In</button>
+      </form>
+
       <p class="auth-switch">
         Already have an account? <a href="login.html">Log in</a>
       </p>

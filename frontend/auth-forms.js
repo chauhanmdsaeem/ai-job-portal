@@ -21,6 +21,20 @@ function clearFormError() {
   errorEl.textContent = "";
 }
 
+function show2faError(message) {
+  const errorEl = document.getElementById("form-error-2fa");
+  if (!errorEl) return;
+  errorEl.textContent = message;
+  errorEl.hidden = false;
+}
+
+function clear2faError() {
+  const errorEl = document.getElementById("form-error-2fa");
+  if (!errorEl) return;
+  errorEl.hidden = true;
+  errorEl.textContent = "";
+}
+
 async function postJSON(url, body) {
   const response = await fetch(url, {
     method: "POST",
@@ -29,6 +43,34 @@ async function postJSON(url, body) {
   });
   const data = await response.json().catch(() => ({}));
   return { ok: response.ok, status: response.status, data };
+}
+
+function show2faForm(mainFormId) {
+  const mainForm = document.getElementById(mainFormId);
+  const twoFaForm = document.getElementById("two-fa-form");
+  if (mainForm && twoFaForm) {
+    mainForm.style.display = "none";
+    twoFaForm.style.display = "block";
+  }
+}
+
+// ----- 2FA form -----
+const twoFaForm = document.getElementById("two-fa-form");
+if (twoFaForm) {
+  twoFaForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clear2faError();
+
+    const otp = document.getElementById("otp").value.trim();
+    const { ok, data } = await postJSON("/api/verify-2fa", { otp });
+
+    if (!ok) {
+      show2faError(data.error || "Invalid code. Please try again.");
+      return;
+    }
+
+    window.location.href = "index.html";
+  });
 }
 
 // ----- Login form -----
@@ -48,7 +90,11 @@ if (loginForm) {
       return;
     }
 
-    window.location.href = "index.html";
+    if (data.require_2fa) {
+      show2faForm("login-form");
+    } else {
+      window.location.href = "index.html";
+    }
   });
 }
 
@@ -71,9 +117,11 @@ if (registerForm) {
       return;
     }
 
-    // Registration also logs the person in (see backend/routes/auth.py),
-    // so we can go straight back to the job listing.
-    window.location.href = "index.html";
+    if (data.require_2fa) {
+      show2faForm("register-form");
+    } else {
+      window.location.href = "index.html";
+    }
   });
 }
 
