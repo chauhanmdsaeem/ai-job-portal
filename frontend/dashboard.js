@@ -495,6 +495,9 @@ if (btnGenerateJd) {
     btnGenerateJd.textContent = "Generating...";
     formErrorEl.hidden = true;
     
+    const overlay = document.getElementById("jd-loader-overlay");
+    if (overlay) overlay.classList.add("active");
+    
     try {
       const res = await fetch("/api/jobs/generate-jd", {
         method: "POST",
@@ -515,6 +518,7 @@ if (btnGenerateJd) {
     } finally {
       btnGenerateJd.disabled = false;
       btnGenerateJd.textContent = "✨ Generate JD";
+      if (overlay) overlay.classList.remove("active");
     }
   });
 }
