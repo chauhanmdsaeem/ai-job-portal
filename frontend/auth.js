@@ -105,6 +105,27 @@ function renderNavAuth(user) {
 
     slot.append(loginLink, registerLink);
   }
+
+  // Add Theme Toggle Button globally
+  const themeToggle = document.createElement("button");
+  themeToggle.className = "theme-toggle-btn";
+  themeToggle.innerHTML = "🌗";
+  themeToggle.title = "Toggle Dark Mode";
+  themeToggle.style.background = "none";
+  themeToggle.style.border = "none";
+  themeToggle.style.cursor = "pointer";
+  themeToggle.style.fontSize = "1.5rem";
+  themeToggle.style.marginLeft = "16px";
+  themeToggle.style.padding = "4px";
+  
+  themeToggle.addEventListener("click", () => {
+    const currentTheme = document.documentElement.getAttribute("data-theme");
+    const newTheme = currentTheme === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+  });
+  
+  slot.append(themeToggle);
 }
 
 /**
