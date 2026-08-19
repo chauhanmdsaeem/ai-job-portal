@@ -181,8 +181,8 @@ def get_recommendations():
     if not user or not user["resume"]:
         return jsonify({"recommendations": []})
         
-    open_jobs = job_model.get_all_jobs()
-    result = ai_recommend_jobs(user["resume"], open_jobs)
+    open_jobs = job_model.get_all_jobs(limit=100)
+    result = ai_recommend_jobs(user["resume"], open_jobs["jobs"])
     return jsonify(result)
 
 @jobs_bp.route("/jobs/<int:job_id>/match", methods=["GET"])
