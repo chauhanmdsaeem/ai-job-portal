@@ -20,6 +20,19 @@ Fieldnote is a high-performance, full-stack job portal designed to demonstrate a
 
 ---
 
+## 🚨 Current QA Status (Aug 2026)
+
+**⚠️ OVERALL STATUS: NOT SAFE TO LAUNCH (PRODUCTION DB OUTAGE)**
+
+Following the final Pre-Launch QA Audit, the system has been flagged as **broken**. 
+- **The Issue:** The backend was previously migrated to a Supabase PostgreSQL instance (`psycopg2`), but that instance is currently offline/timed out. Because the codebase was never successfully reverted to use the local SQLite fallback, all API endpoints that require database access currently return a `500 Internal Server Error` with a raw stack trace.
+- **Pending Tasks:**
+  1. Revert `backend/db.py` to use `sqlite3` so the application runs locally without external dependencies.
+  2. Implement global error handling for database failures.
+  3. Build the missing "Company Profile" pages for recruiters.
+
+---
+
 ## ✨ Key Features
 
 ### 🎨 Premium UI & Global Dark Mode
@@ -52,6 +65,8 @@ Recent updates driven by a rigorous QA audit have significantly hardened the pla
 - **Brute-Force Rate Limiting:** Custom `@brute_force_limit` throttles authentication endpoints, protecting against credential stuffing.
 - **Strict File Upload Validation:** Enforced 5MB limits and robust MIME-type validation for resume PDF uploads, mitigating DoS & XSS vectors.
 - **Server-Side Pagination:** Replaced legacy in-memory filtering with highly scalable SQL `LIMIT/OFFSET` pagination on the job feed.
+- **Client-Side Validations & UX:** Added rigorous JS-side regex form validations and a dynamic 4-tier color-coded password strength indicator.
+- **Interactive Interview Scheduling:** Seamless modal integration allowing recruiters to schedule interviews and send dynamic in-app links to candidates.
 
 ---
 
