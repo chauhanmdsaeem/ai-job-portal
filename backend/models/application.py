@@ -32,6 +32,8 @@ def _row_to_dict(row):
         "expected_salary": row["expected_salary"] if "expected_salary" in row.keys() else None,
         "notice_period": row["notice_period"] if "notice_period" in row.keys() else None,
         "portfolio_url": row["portfolio_url"] if "portfolio_url" in row.keys() else None,
+        "interview_time": row["interview_time"] if "interview_time" in row.keys() else None,
+        "interview_link": row["interview_link"] if "interview_link" in row.keys() else None,
         "status": row["status"],
         "applied_at": row["applied_at"],
         "ai_analysis": json.loads(row["ai_analysis"]) if "ai_analysis" in row.keys() and row["ai_analysis"] else None,
@@ -138,3 +140,12 @@ def save_ai_analysis(application_id, analysis_json_str):
     )
     db.commit()
     return get_application_by_id(application_id)
+
+def update_interview_details(application_id, interview_time, interview_link):
+    db = get_db()
+    db.execute(
+        "UPDATE applications SET interview_time = %s, interview_link = %s WHERE id = %s",
+        (interview_time, interview_link, application_id),
+    )
+    db.commit()
+    return get_application_by_id(application_id)

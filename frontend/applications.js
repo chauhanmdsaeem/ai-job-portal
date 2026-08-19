@@ -45,6 +45,36 @@ function createApplicationCard(app) {
 
   card.append(top, meta, dateEl);
 
+  if (app.status === "Interview" && app.interview_time) {
+    const interviewBox = document.createElement("div");
+    interviewBox.className = "interview-box";
+    interviewBox.style.marginTop = "16px";
+    interviewBox.style.padding = "16px";
+    interviewBox.style.border = "1px solid var(--accent-primary)";
+    interviewBox.style.borderRadius = "4px";
+    interviewBox.style.background = "rgba(100, 255, 218, 0.05)";
+    
+    const intTitle = document.createElement("h4");
+    intTitle.textContent = "📅 Interview Scheduled";
+    intTitle.style.margin = "0 0 8px 0";
+    intTitle.style.color = "var(--accent-primary)";
+    
+    const intTime = document.createElement("p");
+    intTime.textContent = `Time: ${new Date(app.interview_time).toLocaleString()}`;
+    intTime.style.margin = "0 0 4px 0";
+    intTime.style.fontFamily = "var(--font-mono)";
+    intTime.style.fontSize = "14px";
+    
+    const intLink = document.createElement("p");
+    intLink.style.margin = "0";
+    intLink.style.fontFamily = "var(--font-mono)";
+    intLink.style.fontSize = "14px";
+    intLink.innerHTML = `Link: <a href="${app.interview_link}" target="_blank" style="color: var(--accent-primary)">Join Meeting</a>`;
+    
+    interviewBox.append(intTitle, intTime, intLink);
+    card.append(interviewBox);
+  }
+
   if (app.job_status && app.job_status !== "open") {
     const closedNote = document.createElement("p");
     closedNote.className = "application-closed-note";

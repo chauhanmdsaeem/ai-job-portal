@@ -37,6 +37,8 @@ CREATE TABLE IF NOT EXISTS applications (
     notice_period TEXT,
     portfolio_url TEXT,
     ai_analysis  TEXT,
+    interview_time TEXT,
+    interview_link TEXT,
     status       TEXT NOT NULL DEFAULT 'Applied'
                  CHECK (status IN ('Applied','Under Review','Shortlisted','Interview','Rejected','Selected')),
     applied_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

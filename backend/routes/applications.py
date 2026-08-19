@@ -118,8 +118,21 @@ def update_application(application_id):
 
     updated = application_model.update_status(application_id, status)
     
-    # Notify candidate
-    create_notification(application["candidate_id"], f"Your application for '{job['title']}' was updated to: {status}.")
+    if status == "Interview":
+        interview_time = data.get("interview_time")
+        interview_link = data.get("interview_link")
+        if interview_time and interview_link:
+            updated = application_model.update_interview_details(application_id, interview_time, interview_link)
+            # Notify candidate with interview details
+            create_notification(
+                application["candidate_id"], 
+                f"You have been invited to an interview for '{job['title']}' on {interview_time}. Link: {interview_link}"
+            )
+        else:
+            create_notification(application["candidate_id"], f"Your application for '{job['title']}' was updated to: {status}.")
+    else:
+        # Notify candidate
+        create_notification(application["candidate_id"], f"Your application for '{job['title']}' was updated to: {status}.")
     
     return jsonify(updated)
 

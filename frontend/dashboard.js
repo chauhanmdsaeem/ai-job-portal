@@ -171,6 +171,50 @@ function createApplicantsPanel(job) {
 
       select.addEventListener("change", async () => {
         const newStatus = select.value;
+        
+        if (newStatus === "Interview") {
+          const modal = document.getElementById("interview-modal");
+          const form = document.getElementById("interview-form");
+          const closeBtn = document.getElementById("close-interview-modal");
+          
+          const closeModal = () => {
+            modal.close();
+            select.value = app.status; // Revert if cancelled
+          };
+          
+          closeBtn.onclick = closeModal;
+          
+          form.onsubmit = async (e) => {
+            e.preventDefault();
+            const time = document.getElementById("interview-time").value;
+            const link = document.getElementById("interview-link").value;
+            
+            select.disabled = true;
+            try {
+              const res = await fetch(`/api/applications/${app.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: "Interview", interview_time: time, interview_link: link }),
+              });
+              if (!res.ok) throw new Error("update failed");
+              select.className = "status-select " + statusClass(newStatus);
+              app.status = newStatus;
+              app.interview_time = time;
+              app.interview_link = link;
+              modal.close();
+            } catch (err) {
+              alert("Could not schedule interview — please try again.");
+              select.value = app.status;
+            } finally {
+              select.disabled = false;
+            }
+          };
+          
+          modal.showModal();
+          return;
+        }
+
+        // Standard status update
         select.disabled = true;
         try {
           const res = await fetch(`/api/applications/${app.id}`, {
