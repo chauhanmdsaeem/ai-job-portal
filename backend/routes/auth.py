@@ -19,7 +19,7 @@ import random
 from flask import Blueprint, request, jsonify, session
 from PyPDF2 import PdfReader
 
-from models.user import create_user, get_user_by_email, get_user_by_id, verify_password, to_public_dict, update_user_resume
+from models.user import create_user, get_user_by_email, get_user_by_id, verify_password, to_public_dict, update_user_resume, update_company_profile
 from models.job import get_job_by_id
 from utils.ai_analyzer import ai_tailor_resume, ai_generate_ats_resume
 from utils.auth_utils import brute_force_limit
@@ -51,10 +51,10 @@ def register():
     if get_user_by_email(email) is not None:
         return jsonify({"error": "an account with that email already exists"}), 409
 
-    import psycopg2
+    import sqlite3
     try:
         user_id = create_user(name, email, password, role)
-    except psycopg2.errors.UniqueViolation:
+    except sqlite3.IntegrityError:
         # Backstop in case of a race between the check above and the
         # insert — the UNIQUE constraint on users.email catches it.
         return jsonify({"error": "an account with that email already exists"}), 409
@@ -68,7 +68,7 @@ def register():
     session["pending_otp"] = otp
     print(f"\\n--- 2FA OTP for {email}: {otp} ---\\n", flush=True)
 
-    return jsonify({"require_2fa": True, "email": email}), 200
+    return jsonify({"require_2fa": True, "email": email, "dev_otp": otp}), 200
 
 
 @auth_bp.route("/login", methods=["POST"])
@@ -95,7 +95,7 @@ def login():
     session["pending_otp"] = otp
     print(f"\\n--- 2FA OTP for {email}: {otp} ---\\n", flush=True)
 
-    return jsonify({"require_2fa": True, "email": email})
+    return jsonify({"require_2fa": True, "email": email, "dev_otp": otp})
 
 @auth_bp.route("/verify-2fa", methods=["POST"])
 @brute_force_limit(max_requests=5, window_seconds=60)
@@ -172,6 +172,24 @@ def update_profile():
     
     update_user_resume(user_id, resume_text)
     return jsonify({"message": "Profile updated successfully"})
+
+@auth_bp.route("/me/company", methods=["PUT"])
+def update_company():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "unauthorized"}), 401
+        
+    user = get_user_by_id(user_id)
+    if not user or user["role"] != "recruiter":
+        return jsonify({"error": "forbidden"}), 403
+        
+    data = request.get_json(silent=True) or {}
+    company_name = data.get("company_name")
+    company_website = data.get("company_website")
+    company_desc = data.get("company_desc")
+    
+    update_company_profile(user_id, company_name, company_website, company_desc)
+    return jsonify({"message": "Company profile updated successfully"})
 
 @auth_bp.route("/me/resume/upload", methods=["POST"])
 def upload_resume():

@@ -1452,6 +1452,15 @@ dialog::backdrop {
   border: 1px solid #292929;
 }
 
+.styled-button:hover {
+  color: #000000 !important;
+  background: #ffffff !important;
+}
+
+.styled-button:hover .icon path {
+  fill: #000000 !important;
+}
+
 .styled-button::before {
   content: "";
   position: absolute;

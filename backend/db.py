@@ -1,20 +1,17 @@
 """
 db.py
 ---------------------------------------------------------
-Small wrapper around psycopg2 for use inside Flask routes.
-Mimics the SQLite wrapper to avoid breaking route logic.
+Small wrapper around sqlite3 for use inside Flask routes.
+Includes a DBWrapper to transparently convert psycopg2 style %s 
+parameters to sqlite3 ? parameters.
 """
-import os
-import psycopg2
-from psycopg2.extras import RealDictCursor
+import sqlite3
 from pathlib import Path
-from flask import g
-from dotenv import load_dotenv
+from flask import g, current_app
 
-load_dotenv()
-
-BASE_DIR = Path(__file__).resolve().parent          # .../ai-job-portal/backend
-PROJECT_ROOT = BASE_DIR.parent                        # .../ai-job-portal
+BASE_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = BASE_DIR.parent
+DB_PATH = PROJECT_ROOT / "database" / "job_portal.db"
 SCHEMA_PATH = PROJECT_ROOT / "database" / "schema.sql"
 
 class DBWrapper:
@@ -22,8 +19,15 @@ class DBWrapper:
         self.conn = conn
         
     def execute(self, query, params=None):
+        # Convert PostgreSQL style placeholders (%s) to SQLite style (?)
+        if params is not None and "%s" in query:
+            query = query.replace("%s", "?")
+            
         cursor = self.conn.cursor()
-        cursor.execute(query, params)
+        if params is not None:
+            cursor.execute(query, params)
+        else:
+            cursor.execute(query)
         return cursor
         
     def commit(self):
@@ -33,14 +37,11 @@ class DBWrapper:
         self.conn.close()
 
 def get_db():
-    """Return the request-scoped connection, opening one if needed."""
     if "db" not in g:
-        database_url = os.environ.get("DATABASE_URL")
-        if not database_url:
-            raise ValueError("DATABASE_URL environment variable is not set.")
-            
-        conn = psycopg2.connect(database_url, cursor_factory=RealDictCursor)
-        conn.autocommit = True  # Emulate sqlite3 default auto-commit for simple inserts
+        db_path = current_app.config.get("DATABASE", DB_PATH) if current_app else DB_PATH
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA foreign_keys = ON")
         g.db = DBWrapper(conn)
     return g.db
 
@@ -50,22 +51,13 @@ def close_db(exception=None):
         db.close()
 
 def init_db():
-    """Create the tables if they don't exist yet."""
-    database_url = os.environ.get("DATABASE_URL")
-    if not database_url:
-        print("DATABASE_URL not set. Skipping DB init.")
-        return
-        
-    conn = psycopg2.connect(database_url)
-    conn.autocommit = True
-    cursor = conn.cursor()
+    DB_PATH.parent.mkdir(exist_ok=True)
+    conn = sqlite3.connect(DB_PATH)
     with open(SCHEMA_PATH, "r", encoding="utf-8") as f:
-        cursor.execute(f.read())
+        conn.executescript(f.read())
+    conn.commit()
     conn.close()
     print("Database schema initialized.")
 
 def init_app(app):
-    """Wire this module into the Flask app."""
-    # We do NOT run init_db() automatically on app boot anymore to avoid issues with workers.
-    # We will rely on start.sh to run init_db().
     app.teardown_appcontext(close_db)

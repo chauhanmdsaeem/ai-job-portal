@@ -104,8 +104,9 @@ def create_job(data, created_by):
             created_by,
         ),
     )
+    row_id = cursor.fetchone()['id']
     db.commit()
-    return get_job_by_id(cursor.fetchone()['id'])
+    return get_job_by_id(row_id)
 
 
 def update_job(job_id, data):

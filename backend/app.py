@@ -94,6 +94,19 @@ def csrf_protect():
         if not token or token != request.headers.get("X-CSRF-Token"):
             return jsonify({"error": "CSRF token missing or invalid"}), 403
 
+import logging
+import traceback
+@app.errorhandler(Exception)
+def handle_exception(e):
+    # Log the full stack trace for the server admins
+    logging.error(f"Unhandled exception: {e}")
+    logging.error(traceback.format_exc())
+    
+    # Return a generic 500 error to the client
+    return jsonify({
+        "error": "An internal server error occurred. Please try again later."
+    }), 500
+
 # ---------------------------------------------------------
 # Frontend routes (unchanged from Phase 2)
 # ---------------------------------------------------------

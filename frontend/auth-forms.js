@@ -144,6 +144,10 @@ if (loginForm) {
 
     if (data.require_2fa) {
       show2faForm("login-form");
+      if (data.dev_otp) {
+        document.getElementById("otp").value = data.dev_otp;
+        document.getElementById("two-fa-form").insertAdjacentHTML('afterbegin', `<p style="color:var(--accent-primary); font-size:0.85rem; margin-bottom:1rem;">(Test Mode: Auto-filled OTP ${data.dev_otp} since email isn't configured)</p>`);
+      }
     } else {
       window.location.href = "index.html";
     }
@@ -184,6 +188,10 @@ if (registerForm) {
 
     if (data.require_2fa) {
       show2faForm("register-form");
+      if (data.dev_otp) {
+        document.getElementById("otp").value = data.dev_otp;
+        document.getElementById("two-fa-form").insertAdjacentHTML('afterbegin', `<p style="color:var(--accent-primary); font-size:0.85rem; margin-bottom:1rem;">(Test Mode: Auto-filled OTP ${data.dev_otp} since email isn't configured)</p>`);
+      }
     } else {
       window.location.href = "index.html";
     }

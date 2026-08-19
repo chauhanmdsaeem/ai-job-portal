@@ -28,8 +28,9 @@ def create_user(name, email, password, role):
         "INSERT INTO users (name, email, password_hash, role) VALUES (%s, %s, %s, %s) RETURNING id",
         (name, email, password_hash, role),
     )
+    row_id = cursor.fetchone()['id']
     db.commit()
-    return cursor.fetchone()['id']
+    return row_id
 
 
 def get_user_by_email(email):
@@ -53,16 +54,29 @@ def verify_password(user_row, password):
 
 def to_public_dict(user_row):
     """Strip password_hash before this ever reaches a JSON response."""
+    # Convert Row to dict so we can safely .get() optional fields
+    d = dict(user_row)
     return {
-        "id": user_row["id"],
-        "name": user_row["name"],
-        "email": user_row["email"],
-        "role": user_row["role"],
+        "id": d["id"],
+        "name": d["name"],
+        "email": d["email"],
+        "role": d["role"],
+        "company_name": d.get("company_name"),
+        "company_website": d.get("company_website"),
+        "company_desc": d.get("company_desc"),
     }
 
 def update_user_resume(user_id, resume_text):
     db = get_db()
     db.execute(
         "UPDATE users SET resume = %s WHERE id = %s", (resume_text, user_id)
+    )
+    db.commit()
+
+def update_company_profile(user_id, company_name, company_website, company_desc):
+    db = get_db()
+    db.execute(
+        "UPDATE users SET company_name = %s, company_website = %s, company_desc = %s WHERE id = %s",
+        (company_name, company_website, company_desc, user_id)
     )
     db.commit()
