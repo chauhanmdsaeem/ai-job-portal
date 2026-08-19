@@ -45,7 +45,13 @@
 
         <label for="password">Password</label>
         <input type="password" id="password" name="password" required minlength="8" autocomplete="new-password" />
-        <p class="field-hint" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-light); margin-top: 4px;">At least 8 characters.</p>
+        <div id="password-strength-container" style="display: flex; gap: 4px; margin-top: 8px; height: 4px; border-radius: 2px; overflow: hidden; background: var(--bg-body);">
+          <div id="strength-bar-1" style="flex: 1; background: var(--line-main); transition: background 0.3s;"></div>
+          <div id="strength-bar-2" style="flex: 1; background: var(--line-main); transition: background 0.3s;"></div>
+          <div id="strength-bar-3" style="flex: 1; background: var(--line-main); transition: background 0.3s;"></div>
+          <div id="strength-bar-4" style="flex: 1; background: var(--line-main); transition: background 0.3s;"></div>
+        </div>
+        <p id="password-strength-text" class="field-hint" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-light); margin-top: 8px;">At least 8 characters.</p>
 
         <label for="role">I am a…</label>
         <select id="role" name="role">

@@ -7,6 +7,49 @@
    before wiring a listener to it.
    ========================================================= */
 
+
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+function checkPasswordStrength(password) {
+    let score = 0;
+    if (password.length >= 8) score += 1;
+    if (/[A-Z]/.test(password)) score += 1;
+    if (/[0-9]/.test(password)) score += 1;
+    if (/[^A-Za-z0-9]/.test(password)) score += 1;
+    return score;
+}
+
+const passwordInput = document.getElementById("password");
+if (passwordInput && document.getElementById("password-strength-container")) {
+    passwordInput.addEventListener("input", (e) => {
+        const val = e.target.value;
+        const score = checkPasswordStrength(val);
+        const textEl = document.getElementById("password-strength-text");
+        
+        const colors = ["var(--line-main)", "var(--danger)", "orange", "#a3e635", "var(--success)"];
+        const labels = ["At least 8 characters.", "Weak", "Fair", "Good", "Strong"];
+        
+        for (let i = 1; i <= 4; i++) {
+            const bar = document.getElementById(`strength-bar-${i}`);
+            if (bar) {
+                bar.style.background = (i <= score) ? colors[score] : "var(--line-main)";
+            }
+        }
+        
+        if (val.length === 0) {
+            textEl.textContent = "At least 8 characters.";
+            textEl.style.color = "var(--ink-light)";
+            for (let i=1; i<=4; i++) document.getElementById(`strength-bar-${i}`).style.background = "var(--line-main)";
+        } else {
+            textEl.textContent = labels[score];
+            textEl.style.color = colors[score];
+        }
+    });
+}
+
 function showFormError(message) {
   const errorEl = document.getElementById("form-error");
   if (!errorEl) return;
@@ -83,6 +126,15 @@ if (loginForm) {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
+    if (!email || !password) {
+        showFormError("Please fill in all fields.");
+        return;
+    }
+    if (!validateEmail(email)) {
+        showFormError("Please enter a valid email address.");
+        return;
+    }
+
     const { ok, data } = await postJSON("/api/login", { email, password });
 
     if (!ok) {
@@ -109,6 +161,19 @@ if (registerForm) {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
     const role = document.getElementById("role").value;
+
+    if (!name || !email || !password) {
+        showFormError("Please fill in all fields.");
+        return;
+    }
+    if (!validateEmail(email)) {
+        showFormError("Please enter a valid email address.");
+        return;
+    }
+    if (password.length < 8) {
+        showFormError("Password must be at least 8 characters long.");
+        return;
+    }
 
     const { ok, data } = await postJSON("/api/register", { name, email, password, role });
 
