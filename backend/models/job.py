@@ -155,7 +155,7 @@ def set_job_status(job_id, status):
 
 
 def save_job(user_id, job_id):
-    import sqlite3
+    import psycopg2
     db = get_db()
     try:
         db.execute(
@@ -164,7 +164,7 @@ def save_job(user_id, job_id):
         )
         db.commit()
         return True
-    except sqlite3.IntegrityError:
+    except psycopg2.errors.UniqueViolation:
         return False  # Already saved
 
 

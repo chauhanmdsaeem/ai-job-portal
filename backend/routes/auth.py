@@ -51,10 +51,10 @@ def register():
     if get_user_by_email(email) is not None:
         return jsonify({"error": "an account with that email already exists"}), 409
 
-    import sqlite3
+    import psycopg2
     try:
         user_id = create_user(name, email, password, role)
-    except sqlite3.IntegrityError:
+    except psycopg2.errors.UniqueViolation:
         # Backstop in case of a race between the check above and the
         # insert — the UNIQUE constraint on users.email catches it.
         return jsonify({"error": "an account with that email already exists"}), 409
@@ -66,9 +66,15 @@ def register():
     session["pending_2fa_user_id"] = user_id
     session["pending_2fa_role"] = role
     session["pending_otp"] = otp
-    print(f"\\n--- 2FA OTP for {email}: {otp} ---\\n", flush=True)
+    
+    from utils.email_service import send_verification_email
+    email_res = send_verification_email(email, otp)
+    
+    response_data = {"require_2fa": True, "email": email}
+    if email_res.get("test_mode"):
+        response_data["dev_otp"] = otp
 
-    return jsonify({"require_2fa": True, "email": email, "dev_otp": otp}), 200
+    return jsonify(response_data), 200
 
 
 @auth_bp.route("/login", methods=["POST"])
@@ -93,9 +99,15 @@ def login():
     session["pending_2fa_user_id"] = user["id"]
     session["pending_2fa_role"] = user["role"]
     session["pending_otp"] = otp
-    print(f"\\n--- 2FA OTP for {email}: {otp} ---\\n", flush=True)
+    
+    from utils.email_service import send_verification_email
+    email_res = send_verification_email(email, otp)
+    
+    response_data = {"require_2fa": True, "email": email}
+    if email_res.get("test_mode"):
+        response_data["dev_otp"] = otp
 
-    return jsonify({"require_2fa": True, "email": email, "dev_otp": otp})
+    return jsonify(response_data)
 
 @auth_bp.route("/verify-2fa", methods=["POST"])
 @brute_force_limit(max_requests=5, window_seconds=60)

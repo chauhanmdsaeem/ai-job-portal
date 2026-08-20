@@ -6,7 +6,7 @@ GET  /api/applications           -> candidate's own applications (track status)
 GET  /api/jobs/<id>/applicants   -> recruiter's view of who applied
 PUT  /api/applications/<id>      -> recruiter updates an applicant's status
 """
-import sqlite3
+import psycopg2
 import json
 
 from flask import Blueprint, request, jsonify, session
@@ -53,7 +53,7 @@ def apply_to_job(job_id):
             notice_period=notice_period,
             portfolio_url=portfolio_url
         )
-    except sqlite3.IntegrityError:
+    except psycopg2.errors.UniqueViolation:
         # UNIQUE(job_id, candidate_id) in schema.sql caught a duplicate.
         return jsonify({"error": "you've already applied to this job"}), 409
 
