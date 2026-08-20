@@ -60,21 +60,10 @@ def register():
         return jsonify({"error": "an account with that email already exists"}), 409
 
     session.clear()
+    session["user_id"] = user_id
+    session["role"] = role
     
-    # 2FA Step
-    otp = str(random.randint(100000, 999999))
-    session["pending_2fa_user_id"] = user_id
-    session["pending_2fa_role"] = role
-    session["pending_otp"] = otp
-    
-    from utils.email_service import send_verification_email
-    email_res = send_verification_email(email, otp)
-    
-    response_data = {"require_2fa": True, "email": email}
-    if email_res.get("test_mode"):
-        response_data["dev_otp"] = otp
-
-    return jsonify(response_data), 200
+    return jsonify({"success": True}), 200
 
 
 @auth_bp.route("/login", methods=["POST"])
@@ -93,21 +82,10 @@ def login():
         return jsonify({"error": "invalid email or password"}), 401
 
     session.clear()
+    session["user_id"] = user["id"]
+    session["role"] = user["role"]
     
-    # 2FA Step
-    otp = str(random.randint(100000, 999999))
-    session["pending_2fa_user_id"] = user["id"]
-    session["pending_2fa_role"] = user["role"]
-    session["pending_otp"] = otp
-    
-    from utils.email_service import send_verification_email
-    email_res = send_verification_email(email, otp)
-    
-    response_data = {"require_2fa": True, "email": email}
-    if email_res.get("test_mode"):
-        response_data["dev_otp"] = otp
-
-    return jsonify(response_data)
+    return jsonify({"success": True})
 
 @auth_bp.route("/verify-2fa", methods=["POST"])
 @brute_force_limit(max_requests=5, window_seconds=60)
