@@ -47,7 +47,7 @@ Fieldnote is a high-performance, full-stack job portal designed to demonstrate a
 - **Scroll-to-Top Integration:** A sleek floating widget that dynamically appears when navigating long lists.
 
 ### 🔒 Enterprise Security & Performance
-- **Two-Factor Authentication (2FA):** OTP-based 2FA integration for all logins via Email SMTP.
+- **Seamless Authentication:** Custom session management using signed, HttpOnly cookies to protect against XSS and token hijacking.
 - **Robust Connection Pooling:** Built for scale with resilient PostgreSQL transaction pooling handling auto-reconnects.
 - **Brute-Force Rate Limiting:** Custom `@brute_force_limit` throttles authentication endpoints.
 - **Server-Side Pagination:** Highly scalable SQL `LIMIT/OFFSET` pagination on the job feed.
@@ -56,7 +56,7 @@ Fieldnote is a high-performance, full-stack job portal designed to demonstrate a
 
 ## 🧠 Core Tech Stack
 
-- **Backend**: Python 3, Flask, REST APIs, smtplib (Email)
+- **Backend**: Python 3, Flask, REST APIs
 - **Generative AI**: Groq Cloud API (Llama 3 / Qwen models)
 - **Data & Storage**: Supabase PostgreSQL
 - **Frontend**: Vanilla JavaScript, Custom CSS Variables, HTML5
@@ -100,8 +100,6 @@ Create a `.env` file in the root directory:
 ```env
 DATABASE_URL=postgresql://[user]:[password]@[pooler-host]:6543/postgres
 GROQ_API_KEY=your_groq_api_key_here
-SMTP_EMAIL=your_email@gmail.com
-SMTP_PASSWORD=your_app_password_here
 ```
 
 **5. Start the Server**
@@ -121,7 +119,7 @@ Browser (Frontend)
 Flask Backend (Python)
     ├── Routes (Auth, Jobs, Applications, AI Chat, AI Analysis)
     ├── Models (User, Job, Application)
-    └── Integrations (Groq AI & SMTP Services)
+    └── Integrations (Groq AI)
     ↓ SQL (psycopg2)
 Supabase PostgreSQL
     ├── Users (candidates, recruiters)
