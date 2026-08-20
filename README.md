@@ -4,87 +4,72 @@
 
 **A Premium Full-Stack Platform Integrating Generative AI with High-End Web Design**
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-fieldnote--ai.onrender.com-success.svg?style=for-the-badge)](https://fieldnote-ai.onrender.com/)
+
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Flask](https://img.shields.io/badge/Flask-3.0.0-lightgrey.svg)](https://flask.palletsprojects.com/)
-[![Gemini API](https://img.shields.io/badge/AI-Google_Gemini-orange.svg)](https://deepmind.google/technologies/gemini/)
-[![Vanilla JS](https://img.shields.io/badge/JavaScript-Vanilla-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![CSS](https://img.shields.io/badge/CSS3-Dark_Mode_Ready-purple.svg)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![Groq AI](https://img.shields.io/badge/AI-Groq_Cloud-orange.svg)](https://groq.com/)
+[![PostgreSQL](https://img.shields.io/badge/Database-Supabase-green.svg)](https://supabase.com/)
 
-[Features](#-key-features) • [Tech Stack](#-core-tech-stack) • [Installation](#-quick-start) • [Architecture](#-architecture)
+[Live Website](#-live-website) • [Features](#-key-features) • [Tech Stack](#-core-tech-stack) • [Installation](#-quick-start)
 
 </div>
 
 ---
 
-Fieldnote is a high-performance, full-stack job portal designed to demonstrate advanced **Python Backend Engineering**, **Generative AI Integration**, and **Premium UI/UX Design**. Built with a strict Bauhaus-inspired 1px grid aesthetic and fluid animations, it acts as a sandbox for evaluating LLM orchestration, custom AI wrappers, and rapid API development.
+Fieldnote is a high-performance, full-stack job portal designed to demonstrate advanced **Python Backend Engineering**, **Generative AI Integration**, and **Premium UI/UX Design**. Built with a strict Bauhaus-inspired 1px grid aesthetic and fluid animations, it acts as a platform for smart job matching, AI-driven resume tailoring, and instant recruiter tooling.
 
 ---
 
-## 🚨 Current QA Status (Aug 2026)
+## 🌐 Live Website
 
-**⚠️ OVERALL STATUS: NOT SAFE TO LAUNCH (PRODUCTION DB OUTAGE)**
+**[Click here to visit the live platform: fieldnote-ai.onrender.com](https://fieldnote-ai.onrender.com/)**
 
-Following the final Pre-Launch QA Audit, the system has been flagged as **broken**. 
-- **The Issue:** The backend was previously migrated to a Supabase PostgreSQL instance (`psycopg2`), but that instance is currently offline/timed out. Because the codebase was never successfully reverted to use the local SQLite fallback, all API endpoints that require database access currently return a `500 Internal Server Error` with a raw stack trace.
-- **Pending Tasks:**
-  1. Revert `backend/db.py` to use `sqlite3` so the application runs locally without external dependencies.
-  2. Implement global error handling for database failures.
-  3. Build the missing "Company Profile" pages for recruiters.
+**What is it for?**
+- **Job Seekers:** Create an account to upload your resume, get AI-driven match scores on real job listings, and use the floating AI assistant to automatically tailor your resume.
+- **Recruiters:** Register as a recruiter to create job postings with a single click using AI generation, analyze applicant resumes instantly, and manage your hiring pipeline.
+
+*(Note: The platform is currently live for demonstration purposes. Feel free to register and test the AI features!)*
 
 ---
 
 ## ✨ Key Features
+
+### 🤖 Lightning-Fast Generative AI (Powered by Groq)
+- **Magic AI Job Descriptions:** Recruiters can auto-generate highly detailed, professional Job Descriptions (JDs) with a single click.
+- **AI Resume Analysis:** Recruiters can use the "Magic AI" button on candidate profiles to instantly evaluate their resume against the job requirements and get an AI-driven compatibility summary.
+- **AI Job Matching:** Candidates receive personalized AI match scores and job recommendations based on their uploaded profile and skills.
+- **Floating AI Chatbot:** A persistent, context-aware chatbot widget globally available to assist candidates and recruiters with navigation, job tips, and portal queries.
 
 ### 🎨 Premium UI & Global Dark Mode
 - **Zero-FOUC Dark Mode:** A seamlessly integrated dark/light theme switch globally applied across all pages with zero "Flash of Unstyled Content" on load.
 - **Micro-animations & Glowing Elements:** Carefully crafted button hovers, dynamic SVG paths, and glowing UI snippets for a futuristic, high-end feel.
 - **Scroll-to-Top Integration:** A sleek floating widget that dynamically appears when navigating long lists.
 
-### 🤖 Generative AI Integrations (Powered by Google Gemini)
-- **Magic AI Job Descriptions:** Recruiters can auto-generate highly detailed, professional Job Descriptions (JDs) with a single click.
-- **AI Resume Analysis:** Recruiters can use the "Magic AI" button on candidate profiles to instantly evaluate their resume against the job requirements and get an AI-driven compatibility summary.
-- **AI Job Matching:** Candidates receive personalized AI match scores and job recommendations based on their uploaded profile and skills.
-- **Floating AI Chatbot:** A persistent, context-aware chatbot widget globally available to assist candidates and recruiters with navigation, job tips, and portal queries.
-
-### 👨‍💼 For Candidates
-- Browse, search, and filter jobs with live UI updates (powered by true Server-Side Pagination).
-- Centralized Candidate Dashboard tracking applications, saved jobs, and AI match scores.
-- "Master Resume" profile builder.
-
-### 🏢 For Recruiters
-- Dashboard tracking active jobs, total applications, and hiring pipeline metrics.
-- Create, edit, and manage job postings.
-- Review applications, update statuses (Shortlist, Interview, Hire), and analyze resumes with AI.
-
----
-
-## 🔒 Enterprise Security & Performance Upgrades
-Recent updates driven by a rigorous QA audit have significantly hardened the platform:
-- **Two-Factor Authentication (2FA):** OTP-based 2FA integration for all logins and registrations.
-- **CSRF Protection:** Integrated `SameSite=Strict` policies and a unified `fetch` interceptor validating dynamic `X-CSRF-Token`s.
-- **Brute-Force Rate Limiting:** Custom `@brute_force_limit` throttles authentication endpoints, protecting against credential stuffing.
-- **Strict File Upload Validation:** Enforced 5MB limits and robust MIME-type validation for resume PDF uploads, mitigating DoS & XSS vectors.
-- **Server-Side Pagination:** Replaced legacy in-memory filtering with highly scalable SQL `LIMIT/OFFSET` pagination on the job feed.
-- **Client-Side Validations & UX:** Added rigorous JS-side regex form validations and a dynamic 4-tier color-coded password strength indicator.
-- **Interactive Interview Scheduling:** Seamless modal integration allowing recruiters to schedule interviews and send dynamic in-app links to candidates.
+### 🔒 Enterprise Security & Performance
+- **Two-Factor Authentication (2FA):** OTP-based 2FA integration for all logins via Email SMTP.
+- **Robust Connection Pooling:** Built for scale with resilient PostgreSQL transaction pooling handling auto-reconnects.
+- **Brute-Force Rate Limiting:** Custom `@brute_force_limit` throttles authentication endpoints.
+- **Server-Side Pagination:** Highly scalable SQL `LIMIT/OFFSET` pagination on the job feed.
 
 ---
 
 ## 🧠 Core Tech Stack
 
-- **Backend**: Python 3, Flask, REST APIs
-- **Generative AI**: Google Gemini API, Custom LLM Wrappers, Prompt Engineering
-- **Data & Storage**: SQLite (with PostgreSQL-ready schemas)
+- **Backend**: Python 3, Flask, REST APIs, smtplib (Email)
+- **Generative AI**: Groq Cloud API (Llama 3 / Qwen models)
+- **Data & Storage**: Supabase PostgreSQL
 - **Frontend**: Vanilla JavaScript, Custom CSS Variables, HTML5
 - **Security**: Werkzeug password hashing, Secure HttpOnly sessions
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Local Quick Start
 
 ### Prerequisites
 - Python 3.8+
-- Modern web browser
+- Supabase Project (or local PostgreSQL)
+- Groq API Key
 
 ### Installation & Setup
 
@@ -108,24 +93,22 @@ source venv/bin/activate
 **3. Install dependencies**
 ```bash
 pip install -r requirements.txt
-# Alternatively: pip install flask werkzeug requests
 ```
 
-**4. Initialize the database**
-```bash
-python database/seed.py
+**4. Set up Environment Variables**
+Create a `.env` file in the root directory:
+```env
+DATABASE_URL=postgresql://[user]:[password]@[pooler-host]:6543/postgres
+GROQ_API_KEY=your_groq_api_key_here
+SMTP_EMAIL=your_email@gmail.com
+SMTP_PASSWORD=your_app_password_here
 ```
-*This creates `database/job_portal.db` and seeds it with sample jobs and test accounts.*
 
 **5. Start the Server**
 ```bash
 python backend/app.py
 ```
 The server will run at: `http://127.0.0.1:5000/`
-
-### Test Accounts
-- **Candidate:** `candidate@example.com` / `password123`
-- **Recruiter:** `recruiter@example.com` / `password123`
 
 ---
 
@@ -138,48 +121,13 @@ Browser (Frontend)
 Flask Backend (Python)
     ├── Routes (Auth, Jobs, Applications, AI Chat, AI Analysis)
     ├── Models (User, Job, Application)
-    └── Integrations (Google Gemini API Wrapper)
-    ↓ SQL
-SQLite Database
-    ├── Users (candidates, recruiters, admins)
+    └── Integrations (Groq AI & SMTP Services)
+    ↓ SQL (psycopg2)
+Supabase PostgreSQL
+    ├── Users (candidates, recruiters)
     ├── Jobs (postings with owner info)
     └── Applications (candidate applications)
 ```
-
----
-
-## 📁 Project Structure
-
-```text
-ai-job-portal/
-├── frontend/                     # User Interface
-│   ├── index.html               # Landing page & job listings
-│   ├── dashboard.html           # Candidate/recruiter dashboards
-│   ├── style.css                # CSS variables, animations, dark mode
-│   ├── script.js                # Core UI functionality
-│   ├── auth.js                  # Authentication & Nav rendering
-│   └── chatbot.js               # Floating AI chatbot widget logic
-│
-├── backend/                      # Server & API
-│   ├── app.py                   # Flask application entry point
-│   ├── db.py                    # Database connection wrapper
-│   ├── routes/                  # API endpoints (auth, jobs, ai)
-│   └── utils/                   # Authentication & LLM helpers
-│
-└── database/                     # Data Layer
-    ├── schema.sql               # Table definitions
-    └── seed.py                  # Sample data initialization
-```
-
----
-
-## 🔐 Security Features
-
-- ✅ **Password hashing** using `werkzeug.security` with salts.
-- ✅ **Session-based authentication** with signed, HttpOnly cookies preventing XSS token theft.
-- ✅ **Role-Based Access Control (RBAC)** ensuring candidate/recruiter isolation.
-- ✅ **Ownership validation** to ensure recruiters can only modify their own postings.
-- ✅ **Input sanitization** against common injection attacks.
 
 ---
 
