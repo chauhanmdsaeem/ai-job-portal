@@ -338,7 +338,7 @@ function createJobCard(job, index = 1) {
   }
 
   card.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
       <h3 style="font-family: var(--font-display); font-size: 1.5rem; letter-spacing: -0.02em; margin: 0; line-height: 1.1;">
         ${job.title}
       </h3>
@@ -359,7 +359,7 @@ function createJobCard(job, index = 1) {
       ${job.skills.map(skill => `<span style="background: var(--bg-surface); padding: 4px 8px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-main); border: 1px solid var(--line-light);">${skill}</span>`).join('')}
     </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--line-main); padding-top: 16px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-top: 1px solid var(--line-main); padding-top: 16px;">
       <div class="apply-control-slot" style="width: 100%; text-align: right;"></div>
     </div>
   `;

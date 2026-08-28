@@ -1578,3 +1578,205 @@ dialog::backdrop {
   bottom: unset;
   transition-duration: 0.3s;
 }
+/* =========================================================
+   Responsive Design Updates
+   ========================================================= */
+
+@media (max-width: 1024px) {
+  .dashboard-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Container Constraints */
+  .container {
+    margin: 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    min-height: 100vh;
+  }
+
+  /* Header / Nav */
+  .header-inner {
+    height: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 16px 0 !important;
+    gap: 16px;
+  }
+  .masthead-logo {
+    padding: 0 16px;
+    align-items: center;
+    border: none !important;
+  }
+  .main-nav {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 16px;
+  }
+  .main-nav a, .nav-notifications {
+    padding: 8px 12px !important;
+    border: none !important;
+  }
+  .nav-auth {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 16px 16px;
+  }
+  .nav-auth > a, .nav-logout, .nav-user {
+    padding: 8px 16px;
+    border: none !important;
+  }
+
+  /* Hero */
+  .hero {
+    padding: 48px 16px !important;
+  }
+  .hero h1 {
+    font-size: 2.2rem !important;
+  }
+
+  /* Job Listings & Search */
+  .search-bar {
+    flex-direction: column;
+    box-shadow: none;
+    border-radius: var(--radius-btn);
+    background: transparent;
+  }
+  .search-bar input, .search-bar select, .search-bar button {
+    width: 100%;
+    border-right: none;
+    border: 1px solid var(--line-main);
+    border-radius: var(--radius-btn);
+    margin-bottom: 8px;
+  }
+  .listings-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px !important;
+  }
+  .section-header {
+    padding: 24px 16px 16px !important;
+  }
+  .job-card {
+    padding: 16px !important;
+  }
+  .job-card-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .job-title {
+    font-size: 1.25rem !important;
+  }
+  .job-skills {
+    gap: 4px;
+  }
+
+  /* Dashboard */
+  .dashboard-overview {
+    padding: 16px !important;
+  }
+  .dashboard-welcome {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .dashboard-welcome div[style*="display: flex"] {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .dashboard-welcome .ghost-btn, .dashboard-welcome button {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  /* Auth / Modals */
+  .auth-page {
+    padding: 40px 16px !important;
+  }
+  .auth-card {
+    padding: 24px !important;
+    box-shadow: 8px 8px 0 var(--ink-main);
+  }
+  .modal-content {
+    padding: 24px !important;
+    box-shadow: 8px 8px 0 var(--ink-main);
+    width: calc(100vw - 32px);
+  }
+
+  /* Tables (Responsive Scroll) */
+  .table-modern {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .table-modern th, .table-modern td {
+    padding: 12px 16px;
+  }
+
+  /* Profile Grid */
+  .profile-grid {
+    display: flex !important;
+    flex-direction: column;
+  }
+  .profile-grid > div {
+    border-right: none !important;
+    border-bottom: var(--border-thin);
+    padding: 16px !important;
+  }
+
+  /* Chatbot */
+  .chatbot-window {
+    width: calc(100vw - 32px);
+    height: 60vh;
+    right: 16px;
+    bottom: 80px;
+  }
+  .chatbot-toggle {
+    right: 16px;
+    bottom: 16px;
+  }
+  
+  /* Footer */
+  .site-footer > div {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+    padding: 24px 16px !important;
+  }
+  .site-footer > div > div {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 1.8rem !important;
+  }
+  .section-header-title {
+    font-size: 1.8rem !important;
+  }
+  .dashboard-welcome h1 {
+    font-size: 1.8rem !important;
+  }
+  .auth-title {
+    font-size: 2rem !important;
+  }
+  .modal-title {
+    font-size: 1.5rem !important;
+  }
+  .stat-card-value {
+    font-size: 2rem !important;
+  }
+}
+
+.auth-form input, .auth-form select, .auth-form textarea { width: 100%; box-sizing: border-box; }

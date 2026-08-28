@@ -651,7 +651,7 @@ async function loadCandidateStats() {
         div.style.padding = "16px";
         div.style.borderRadius = "8px";
         div.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
             <div>
               <h4 style="margin: 0; font-size: 1.1rem;">${job.title}</h4>
               <p style="margin: 4px 0 0; color: var(--ink-light); font-size: 0.9rem;">${job.company} · ${job.location}</p>
