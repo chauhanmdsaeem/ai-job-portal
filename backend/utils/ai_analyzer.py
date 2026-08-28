@@ -50,12 +50,8 @@ def ai_candidate_match(resume_text, job):
     }}
     """
     
-    try:
-        response = model.generate_content(prompt)
-        return json.loads(response.text)
-    except Exception as e:
-        print(f"Gemini API Error: {e}")
-        return {"score": 0, "summary": f"Failed to calculate match score: {str(e)}"}
+    response = model.generate_content(prompt)
+    return json.loads(response.text)
 
 def ai_recommend_jobs(resume_text, open_jobs):
     if not resume_text or not open_jobs:
@@ -86,12 +82,8 @@ def ai_recommend_jobs(resume_text, open_jobs):
     }}
     """
     
-    try:
-        response = model.generate_content(prompt)
-        return json.loads(response.text)
-    except Exception as e:
-        print(f"Gemini API Error: {e}")
-        return {"recommendations": []}
+    response = model.generate_content(prompt)
+    return json.loads(response.text)
 
 def ai_generate_job_description(title, company, location, skills):
     prompt = f"""
@@ -112,12 +104,8 @@ def ai_generate_job_description(title, company, location, skills):
     }}
     """
     
-    try:
-        response = model.generate_content(prompt)
-        return json.loads(response.text)
-    except Exception as e:
-        print(f"Gemini API Error: {e}")
-        return {"description": f"Failed to generate JD: {str(e)}"}
+    response = model.generate_content(prompt)
+    return json.loads(response.text)
 
 def ai_tailor_resume(resume_text, job_title, job_description, job_skills):
     prompt = f"""
@@ -138,12 +126,8 @@ def ai_tailor_resume(resume_text, job_title, job_description, job_skills):
     }}
     """
     
-    try:
-        response = model.generate_content(prompt)
-        return json.loads(response.text)
-    except Exception as e:
-        print(f"Gemini API Error: {e}")
-        return {"resume": resume_text}
+    response = model.generate_content(prompt)
+    return json.loads(response.text)
 
 def ai_generate_ats_resume(raw_notes):
     prompt = f"""
@@ -161,12 +145,8 @@ def ai_generate_ats_resume(raw_notes):
     }}
     """
     
-    try:
-        response = model.generate_content(prompt)
-        return json.loads(response.text)
-    except Exception as e:
-        print(f"Gemini API Error: {e}")
-        return {"resume": raw_notes}
+    response = model.generate_content(prompt)
+    return json.loads(response.text)
 
 def ai_site_assistant(message, history="", role="guest", context_data=""):
     if role == "candidate":
@@ -202,9 +182,5 @@ Respond strictly in JSON format matching this schema:
 }}
     """
     
-    try:
-        response = model.generate_content(system_prompt)
-        return json.loads(response.text)
-    except Exception as e:
-        print(f"Gemini API Error: {e}")
-        return {"reply": "I'm having trouble connecting to my brain right now. Please try again later!"}
+    response = model.generate_content(system_prompt)
+    return json.loads(response.text)
