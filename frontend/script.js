@@ -270,7 +270,8 @@ if (applyModal) {
           const data = await res.json();
           resumeInput.value = data.resume;
         } else {
-          alert("Failed to tailor resume.");
+          const errText = await res.text();
+          alert("Failed to tailor resume. Server says: " + res.status + " " + errText);
         }
       } catch (err) {
         alert("Error connecting to AI.");
@@ -303,7 +304,8 @@ if (applyModal) {
           const data = await res.json();
           resumeInput.value = data.resume;
         } else {
-          alert("Failed to generate ATS resume.");
+          const errText = await res.text();
+          alert("Failed to generate ATS resume. Server says: " + res.status + " " + errText);
         }
       } catch (err) {
         alert("Error connecting to AI.");
