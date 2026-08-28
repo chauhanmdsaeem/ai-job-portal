@@ -119,7 +119,9 @@ def logout():
 def get_csrf_token():
     if "csrf_token" not in session:
         session["csrf_token"] = secrets.token_hex(32)
-    return jsonify({"csrf_token": session["csrf_token"]})
+    response = jsonify({"csrf_token": session["csrf_token"]})
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    return response
 
 @auth_bp.route("/me", methods=["GET"])
 def me():

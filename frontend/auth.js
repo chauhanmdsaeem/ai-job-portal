@@ -32,10 +32,10 @@ window.fetch = async function() {
 
 async function fetchCurrentUser() {
   try {
-    const response = await originalFetch("/api/me");
+    const response = await originalFetch("/api/me", { cache: "no-store" });
     const data = await response.json();
     // Always fetch CSRF token (guests need it for chatbot)
-    const csrfRes = await originalFetch("/api/csrf-token");
+    const csrfRes = await originalFetch("/api/csrf-token", { cache: "no-store" });
     if (csrfRes.ok) {
         const csrfData = await csrfRes.json();
         csrfToken = csrfData.csrf_token;
