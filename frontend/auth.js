@@ -34,12 +34,11 @@ async function fetchCurrentUser() {
   try {
     const response = await originalFetch("/api/me");
     const data = await response.json();
-    if (data.user) {
-        const csrfRes = await originalFetch("/api/csrf-token");
-        if (csrfRes.ok) {
-            const csrfData = await csrfRes.json();
-            csrfToken = csrfData.csrf_token;
-        }
+    // Always fetch CSRF token (guests need it for chatbot)
+    const csrfRes = await originalFetch("/api/csrf-token");
+    if (csrfRes.ok) {
+        const csrfData = await csrfRes.json();
+        csrfToken = csrfData.csrf_token;
     }
     return data.user || null;
   } catch (err) {
