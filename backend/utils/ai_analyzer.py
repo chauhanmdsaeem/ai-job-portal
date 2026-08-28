@@ -26,26 +26,26 @@ def mock_ai_analyze_resume(job_description, job_skills, resume_text):
         "summary": "Strong candidate with good backend skills."
     }
 
-def ai_analyze_resume(job_description, job_skills, resume_text):
+def ai_candidate_match(resume_text, job):
     if not resume_text:
-        return mock_ai_analyze_resume(job_description, job_skills, resume_text)
+        return {"score": 0, "summary": "Please save your resume in your profile first."}
         
     prompt = f"""
-    You are an expert ATS (Applicant Tracking System). Analyze the following resume against the job description and required skills.
+    Evaluate this candidate's resume against the following job opening.
     
-    Job Description: {job_description}
-    Required Skills: {job_skills}
-    Resume: {resume_text}
+    Job Title: {job['title']}
+    Job Description: {job['description']}
+    Required Skills: {job['skills']}
+    
+    Candidate Resume:
+    {resume_text}
     
     Calculate a match score from 0 to 100 based on how well the resume matches the job.
-    Identify which required skills are matched in the resume and which are missing.
     Provide a brief summary of the candidate's fit.
     
     Respond strictly in JSON format matching this schema:
     {{
         "score": 85,
-        "matched_skills": ["skill1", "skill2"],
-        "missing_skills": ["skill3"],
         "summary": "Brief explanation of the score"
     }}
     """
