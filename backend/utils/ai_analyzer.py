@@ -1,13 +1,15 @@
 import json
 import os
-from typing import List
-from groq import Groq
+import google.generativeai as genai
 
-def get_client():
-    api_key = os.environ.get("GROQ_API_KEY")
-    if not api_key:
-        return None
-    return Groq(api_key=api_key)
+# Use the environment variable for security
+API_KEY = os.environ.get("GEMINI_API_KEY")
+if not API_KEY:
+    print("WARNING: GEMINI_API_KEY is not set!")
+genai.configure(api_key=API_KEY)
+
+# Use Gemini 3.7 Flash for fast, reliable JSON responses
+model = genai.GenerativeModel('gemini-3.7-flash', generation_config={"response_mime_type": "application/json"})
 
 def mock_ai_analyze_resume(job_description, job_skills, resume_text):
     if not resume_text:
@@ -15,101 +17,50 @@ def mock_ai_analyze_resume(job_description, job_skills, resume_text):
             "score": 0,
             "matched_skills": [],
             "missing_skills": job_skills,
-            "summary": "No resume provided for analysis."
+            "summary": "No resume provided."
         }
-        
-    client = get_client()
-    if not client:
-        return {
-            "score": 0,
-            "matched_skills": [],
-            "missing_skills": job_skills,
-            "summary": "Error: GROQ_API_KEY environment variable is not set."
-        }
+    return {
+        "score": 85,
+        "matched_skills": ["Python", "SQL"],
+        "missing_skills": ["AWS"],
+        "summary": "Strong candidate with good backend skills."
+    }
 
-    prompt = f"""
-    You are an expert technical recruiter. Evaluate the following resume against the job description and required skills.
-    
-    Job Description:
-    {job_description}
-    
-    Required Skills:
-    {', '.join(job_skills)}
-    
-    Candidate Resume:
-    {resume_text}
-    
-    Respond strictly in JSON format matching this schema:
-    {{
-        "score": 85, // integer from 0 to 100
-        "matched_skills": ["python", "sql"], // list of strings
-        "missing_skills": ["aws"], // list of strings
-        "summary": "A brief summary evaluating the fit"
-    }}
-    """
-    
-    try:
-        response = client.chat.completions.create(
-            model='qwen/qwen3.6-27b',
-            messages=[{"role": "user", "content": prompt}],
-            response_format={"type": "json_object"},
-            temperature=0.1
-        )
-        return json.loads(response.choices[0].message.content)
-    except Exception as e:
-        print(f"Groq API Error: {e}")
-        return {
-            "score": 0,
-            "matched_skills": [],
-            "missing_skills": job_skills,
-            "summary": f"Failed to analyze with AI: {str(e)}"
-        }
-
-def ai_candidate_match(resume_text, job):
+def ai_analyze_resume(job_description, job_skills, resume_text):
     if not resume_text:
-        return {"score": 0, "summary": "Please save your resume in your profile first."}
+        return mock_ai_analyze_resume(job_description, job_skills, resume_text)
         
-    client = get_client()
-    if not client:
-        return {"score": 0, "summary": "AI is currently unavailable."}
-    
     prompt = f"""
-    Evaluate this candidate's resume against the following job opening.
+    You are an expert ATS (Applicant Tracking System). Analyze the following resume against the job description and required skills.
     
-    Job Title: {job['title']}
-    Job Description: {job['description']}
-    Required Skills: {job['skills']}
+    Job Description: {job_description}
+    Required Skills: {job_skills}
+    Resume: {resume_text}
     
-    Candidate Resume:
-    {resume_text}
+    Calculate a match score from 0 to 100 based on how well the resume matches the job.
+    Identify which required skills are matched in the resume and which are missing.
+    Provide a brief summary of the candidate's fit.
     
     Respond strictly in JSON format matching this schema:
     {{
-        "score": 85, // integer from 0 to 100
-        "summary": "A brief summary evaluating the fit"
+        "score": 85,
+        "matched_skills": ["skill1", "skill2"],
+        "missing_skills": ["skill3"],
+        "summary": "Brief explanation of the score"
     }}
     """
     
     try:
-        response = client.chat.completions.create(
-            model='qwen/qwen3.6-27b',
-            messages=[{"role": "user", "content": prompt}],
-            response_format={"type": "json_object"},
-            temperature=0.1
-        )
-        return json.loads(response.choices[0].message.content)
+        response = model.generate_content(prompt)
+        return json.loads(response.text)
     except Exception as e:
-        print(f"Groq API Error: {e}")
-        return {"score": 0, "summary": "Failed to calculate match score."}
+        print(f"Gemini API Error: {e}")
+        return {"score": 0, "summary": f"Failed to calculate match score: {str(e)}"}
 
 def ai_recommend_jobs(resume_text, open_jobs):
     if not resume_text or not open_jobs:
         return {"recommendations": []}
         
-    client = get_client()
-    if not client:
-        return {"recommendations": []}
-    
     jobs_context = []
     for job in open_jobs:
         jobs_context.append(f"Job ID: {job['id']}\nTitle: {job['title']}\nCompany: {job['company']}\nSkills: {job['skills']}\nDescription: {job['description']}")
@@ -127,34 +78,22 @@ def ai_recommend_jobs(resume_text, open_jobs):
     {{
         "recommendations": [
             {{
-                "job_id": 1, // integer ID of the recommended job
-                "match_score": 90, // integer from 0 to 100
+                "job_id": 1,
+                "match_score": 90,
                 "reason": "Why this job is a good fit"
             }}
-        ] // list of up to 3 recommendations
+        ]
     }}
     """
     
     try:
-        response = client.chat.completions.create(
-            model='qwen/qwen3.6-27b',
-            messages=[{"role": "user", "content": prompt}],
-            response_format={"type": "json_object"},
-            temperature=0.1
-        )
-        return json.loads(response.choices[0].message.content)
+        response = model.generate_content(prompt)
+        return json.loads(response.text)
     except Exception as e:
-        print(f"Groq API Error: {e}")
+        print(f"Gemini API Error: {e}")
         return {"recommendations": []}
 
 def ai_generate_job_description(title, company, location, skills):
-    client = get_client()
-    if not client:
-        import sys
-        sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-        from services.ai_service import generate_job_description
-        return {"description": generate_job_description(title, company, location, skills)}
-    
     prompt = f"""
     You are an expert technical recruiter and copywriter.
     Write a highly professional, engaging job description for the following position:
@@ -174,25 +113,13 @@ def ai_generate_job_description(title, company, location, skills):
     """
     
     try:
-        response = client.chat.completions.create(
-            model='qwen/qwen3.6-27b',
-            messages=[{"role": "user", "content": prompt}],
-            response_format={"type": "json_object"},
-            temperature=0.7
-        )
-        return json.loads(response.choices[0].message.content)
+        response = model.generate_content(prompt)
+        return json.loads(response.text)
     except Exception as e:
-        print(f"Groq API Error: {e}")
+        print(f"Gemini API Error: {e}")
         return {"description": f"Failed to generate JD: {str(e)}"}
 
 def ai_tailor_resume(resume_text, job_title, job_description, job_skills):
-    client = get_client()
-    if not client:
-        import sys
-        sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-        from services.ai_service import tailor_resume as simulate_tailor_resume
-        return {"resume": simulate_tailor_resume(resume_text, job_description)}
-    
     prompt = f"""
     You are an expert career coach. Tailor the candidate's master resume to be a perfect fit for the specific job description below.
     Highlight the most relevant experiences, align the terminology with the job description, and add a brief customized professional summary at the top.
@@ -212,22 +139,13 @@ def ai_tailor_resume(resume_text, job_title, job_description, job_skills):
     """
     
     try:
-        response = client.chat.completions.create(
-            model='qwen/qwen3.6-27b',
-            messages=[{"role": "user", "content": prompt}],
-            response_format={"type": "json_object"},
-            temperature=0.5
-        )
-        return json.loads(response.choices[0].message.content)
+        response = model.generate_content(prompt)
+        return json.loads(response.text)
     except Exception as e:
-        print(f"Groq API Error: {e}")
+        print(f"Gemini API Error: {e}")
         return {"resume": resume_text}
 
 def ai_generate_ats_resume(raw_notes):
-    client = get_client()
-    if not client:
-        return {"resume": raw_notes}
-    
     prompt = f"""
     You are an expert resume writer. The candidate has provided some rough notes about their background.
     Expand these notes into a highly professional, ATS-friendly resume. 
@@ -244,22 +162,13 @@ def ai_generate_ats_resume(raw_notes):
     """
     
     try:
-        response = client.chat.completions.create(
-            model='qwen/qwen3.6-27b',
-            messages=[{"role": "user", "content": prompt}],
-            response_format={"type": "json_object"},
-            temperature=0.5
-        )
-        return json.loads(response.choices[0].message.content)
+        response = model.generate_content(prompt)
+        return json.loads(response.text)
     except Exception as e:
-        print(f"Groq API Error: {e}")
+        print(f"Gemini API Error: {e}")
         return {"resume": raw_notes}
 
 def ai_site_assistant(message, history="", role="guest", context_data=""):
-    client = get_client()
-    if not client:
-        return {"reply": "Sorry, the AI assistant is currently unavailable (API key missing)."}
-
     if role == "candidate":
         base_prompt = "You are a Career Assistant for Fieldnote Careers. Your goal is to help job seekers find roles, optimize resumes, and prepare for interviews. Tone: Encouraging, supportive, professional. You have access to public job listings provided in the Context Data below."
     elif role == "recruiter":
@@ -291,16 +200,11 @@ Respond strictly in JSON format matching this schema:
 {{
     "reply": "The conversational reply from the AI assistant"
 }}
-"""
+    """
     
     try:
-        response = client.chat.completions.create(
-            model='qwen/qwen3.6-27b',
-            messages=[{"role": "user", "content": system_prompt}],
-            response_format={"type": "json_object"},
-            temperature=0.7
-        )
-        return json.loads(response.choices[0].message.content)
+        response = model.generate_content(system_prompt)
+        return json.loads(response.text)
     except Exception as e:
-        print(f"Groq API Error: {e}")
+        print(f"Gemini API Error: {e}")
         return {"reply": "I'm having trouble connecting to my brain right now. Please try again later!"}
