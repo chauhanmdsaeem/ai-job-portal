@@ -8,7 +8,7 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Flask](https://img.shields.io/badge/Flask-3.0.0-lightgrey.svg)](https://flask.palletsprojects.com/)
-[![Google Gemini](https://img.shields.io/badge/AI-Google_Gemini-orange.svg)](https://aistudio.google.com/)
+[![Groq AI](https://img.shields.io/badge/AI-Groq_Cloud-orange.svg)](https://groq.com/)
 [![PostgreSQL](https://img.shields.io/badge/Database-Supabase-green.svg)](https://supabase.com/)
 
 [Live Website](#-live-website) • [Features](#-key-features) • [Tech Stack](#-core-tech-stack) • [Installation](#-quick-start)
@@ -35,7 +35,7 @@ Fieldnote is a high-performance, full-stack job portal designed to demonstrate a
 
 ## ✨ Key Features
 
-### 🤖 Lightning-Fast Generative AI (Powered by Gemini)
+### 🤖 Lightning-Fast Generative AI (Powered by Groq)
 - **Magic AI Job Descriptions:** Recruiters can auto-generate highly detailed, professional Job Descriptions (JDs) with a single click.
 - **AI Resume Analysis:** Recruiters can use the "Magic AI" button on candidate profiles to instantly evaluate their resume against the job requirements and get an AI-driven compatibility summary.
 - **AI Job Matching:** Candidates receive personalized AI match scores and job recommendations based on their uploaded profile and skills.
@@ -57,7 +57,7 @@ Fieldnote is a high-performance, full-stack job portal designed to demonstrate a
 ## 🧠 Core Tech Stack
 
 - **Backend**: Python 3, Flask, REST APIs
-- **Generative AI**: Google Gemini API (Gemini 3.7 Flash)
+- **Generative AI**: Groq Cloud API (Qwen 3.8 27B)
 - **Data & Storage**: Supabase PostgreSQL
 - **Frontend**: Vanilla JavaScript, Custom CSS Variables, HTML5
 - **Security**: Werkzeug password hashing, Secure HttpOnly sessions
@@ -69,7 +69,7 @@ Fieldnote is a high-performance, full-stack job portal designed to demonstrate a
 ### Prerequisites
 - Python 3.8+
 - Supabase Project (or local PostgreSQL)
-- Gemini API Key
+- Groq API Key
 
 ### Installation & Setup
 
@@ -99,7 +99,7 @@ pip install -r requirements.txt
 Create a `.env` file in the root directory:
 ```env
 DATABASE_URL=postgresql://[user]:[password]@[pooler-host]:6543/postgres
-GEMINI_API_KEY=your_gemini_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
 ```
 
 **5. Start the Server**
@@ -119,7 +119,7 @@ Browser (Frontend)
 Flask Backend (Python)
     ├── Routes (Auth, Jobs, Applications, AI Chat, AI Analysis)
     ├── Models (User, Job, Application)
-    └── Integrations (Google Gemini)
+    └── Integrations (Groq AI)
     ↓ SQL (psycopg2)
 Supabase PostgreSQL
     ├── Users (candidates, recruiters)
