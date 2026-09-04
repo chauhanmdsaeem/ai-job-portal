@@ -21,7 +21,8 @@ def chat():
 
     if role == "candidate" or role == "guest":
         # RAG Context: Fetch public job listings (limit to 10 for context window)
-        jobs = get_all_jobs()[:10]
+        jobs_response = get_all_jobs()
+        jobs = jobs_response.get("jobs", [])[:10]
         context_data = "Open Jobs:\n"
         for j in jobs:
             context_data += f"- {j['title']} at {j['company']} ({j['location']}). Salary: {j['salary']}. Skills: {', '.join(j['skills'])}\n"
