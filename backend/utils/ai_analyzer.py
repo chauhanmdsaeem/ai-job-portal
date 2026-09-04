@@ -1,15 +1,14 @@
 import json
 import os
-import google.generativeai as genai
+from groq import Groq
 
 # Use the environment variable for security
-API_KEY = os.environ.get("GEMINI_API_KEY")
+API_KEY = os.environ.get("GROQ_API_KEY")
 if not API_KEY:
-    print("WARNING: GEMINI_API_KEY is not set!")
-genai.configure(api_key=API_KEY)
+    print("WARNING: GROQ_API_KEY is not set!")
 
-# Use Gemini 3.7 Flash for fast, reliable JSON responses
-model = genai.GenerativeModel('gemini-3.7-flash', generation_config={"response_mime_type": "application/json"})
+client = Groq(api_key=API_KEY)
+MODEL_NAME = "qwen/qwen3.8-27b"
 
 def mock_ai_analyze_resume(job_description, job_skills, resume_text):
     if not resume_text:
@@ -50,8 +49,12 @@ def ai_candidate_match(resume_text, job):
     }}
     """
     
-    response = model.generate_content(prompt)
-    return json.loads(response.text)
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"}
+    )
+    return json.loads(response.choices[0].message.content)
 
 def ai_recommend_jobs(resume_text, open_jobs):
     if not resume_text or not open_jobs:
@@ -82,8 +85,12 @@ def ai_recommend_jobs(resume_text, open_jobs):
     }}
     """
     
-    response = model.generate_content(prompt)
-    return json.loads(response.text)
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"}
+    )
+    return json.loads(response.choices[0].message.content)
 
 def ai_generate_job_description(title, company, location, skills):
     prompt = f"""
@@ -104,8 +111,12 @@ def ai_generate_job_description(title, company, location, skills):
     }}
     """
     
-    response = model.generate_content(prompt)
-    return json.loads(response.text)
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"}
+    )
+    return json.loads(response.choices[0].message.content)
 
 def ai_tailor_resume(resume_text, job_title, job_description, job_skills):
     prompt = f"""
@@ -126,8 +137,12 @@ def ai_tailor_resume(resume_text, job_title, job_description, job_skills):
     }}
     """
     
-    response = model.generate_content(prompt)
-    return json.loads(response.text)
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"}
+    )
+    return json.loads(response.choices[0].message.content)
 
 def ai_generate_ats_resume(raw_notes):
     prompt = f"""
@@ -145,8 +160,12 @@ def ai_generate_ats_resume(raw_notes):
     }}
     """
     
-    response = model.generate_content(prompt)
-    return json.loads(response.text)
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"}
+    )
+    return json.loads(response.choices[0].message.content)
 
 def ai_site_assistant(message, history="", role="guest", context_data=""):
     if role == "candidate":
@@ -172,15 +191,14 @@ If a user asks how to contact the developer, owner, or support team, direct them
 
 --- Conversation History ---
 {history}
-
---- User Message ---
-{message}
-
-Respond strictly in JSON format matching this schema:
-{{
-    "reply": "The conversational reply from the AI assistant"
-}}
-    """
+"""
     
-    response = model.generate_content(system_prompt)
-    return json.loads(response.text)
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": f"{message}\n\nRespond strictly in JSON format matching this schema:\n{{\n    \"reply\": \"The conversational reply from the AI assistant\"\n}}"}
+        ],
+        response_format={"type": "json_object"}
+    )
+    return json.loads(response.choices[0].message.content)
