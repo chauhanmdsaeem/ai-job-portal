@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mock Interview - Fieldnote Careers</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    .interview-container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: var(--surface-color);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 6px var(--shadow-color);
+      display: flex;
+      flex-direction: column;
+      height: 70vh;
+    }
+    
+    .interview-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+    }
+
+    .interview-header h2 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .interview-progress {
+      font-size: 0.9rem;
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .setup-screen {
+      padding: 40px;
+      text-align: center;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .setup-screen input {
+      width: 100%;
+      max-width: 400px;
+      padding: 12px;
+      margin: 20px 0;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+    }
+
+    .chat-area {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .message {
+      max-width: 85%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      line-height: 1.5;
+    }
+
+    .message.interviewer {
+      align-self: flex-start;
+      background: var(--background-color);
+      border: 1px solid var(--border-color);
+    }
+
+    .message.candidate {
+      align-self: flex-end;
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .feedback-box {
+      font-size: 0.9em;
+      background: #fdf5e6;
+      border-left: 4px solid #f39c12;
+      padding: 10px;
+      margin-top: 8px;
+      color: var(--text-color);
+      border-radius: 0 4px 4px 0;
+    }
+
+    .input-area {
+      display: none;
+      padding: 20px;
+      border-top: 1px solid var(--border-color);
+      background: var(--surface-color);
+      border-radius: 0 0 var(--border-radius) var(--border-radius);
+    }
+
+    .input-area textarea {
+      width: 100%;
+      height: 80px;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      resize: none;
+      margin-bottom: 10px;
+      font-family: inherit;
+    }
+
+    .action-row {
+      display: flex;
+      justify-content: flex-end;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="logo"><i class="fas fa-compass"></i> Fieldnote Careers</a>
+      <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="interview-container">
+      <div class="interview-header">
+        <h2><i class="fas fa-video"></i> AI Mock Interview</h2>
+        <span class="interview-progress" id="progressIndicator">Setup</span>
+      </div>
+
+      <div class="setup-screen" id="setupScreen">
+        <h3>What role are you interviewing for?</h3>
+        <p>We'll read your profile resume and simulate an interview for this exact role.</p>
+        <input type="text" id="roleInput" placeholder="e.g. Senior Python Developer" />
+        <button class="btn btn-primary" onclick="startInterview()">Start Interview</button>
+      </div>
+
+      <div class="chat-area" id="chatArea">
+        <!-- Messages go here -->
+      </div>
+
+      <div class="input-area" id="inputArea">
+        <textarea id="answerInput" placeholder="Type your answer here..."></textarea>
+        <div class="action-row">
+          <button class="btn btn-primary" onclick="submitAnswer()" id="submitBtn">Submit Answer</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="auth.js"></script>
+  <script>
+    let questionCount = 0;
+    let interviewHistory = "";
+
+    async function startInterview() {
+      const role = document.getElementById("roleInput").value.trim();
+      if (!role) {
+        alert("Please enter a role.");
+        return;
+      }
+
+      document.getElementById("setupScreen").style.display = "none";
+      document.getElementById("chatArea").style.display = "flex";
+      
+      addMessage("interviewer", "Generating interview context and reviewing your resume...");
+
+      try {
+        const res = await fetch("/api/interviews/start", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": getCsrfToken()
+          },
+          body: JSON.stringify({ custom_role: role })
+        });
+        
+        const data = await res.json();
+        
+        if (res.ok) {
+          document.getElementById("chatArea").innerHTML = "";
+          questionCount = 1;
+          updateProgress();
+          
+          addMessage("interviewer", data.question);
+          interviewHistory += `Q1: ${data.question}\n`;
+          
+          document.getElementById("inputArea").style.display = "block";
+        } else {
+          alert("Error: " + data.error);
+          location.reload();
+        }
+      } catch (e) {
+        alert("Failed to start interview.");
+        console.error(e);
+      }
+    }
+
+    async function submitAnswer() {
+      const answer = document.getElementById("answerInput").value.trim();
+      if (!answer) return;
+      
+      addMessage("candidate", answer);
+      document.getElementById("answerInput").value = "";
+      document.getElementById("submitBtn").disabled = true;
+      document.getElementById("submitBtn").innerHTML = '<i class="fas fa-spinner fa-spin"></i> Evaluating...';
+      
+      interviewHistory += `Candidate Answer: ${answer}\n`;
+
+      try {
+        const res = await fetch("/api/interviews/reply", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": getCsrfToken()
+          },
+          body: JSON.stringify({
+            history: interviewHistory,
+            answer: answer,
+            question_num: questionCount
+          })
+        });
+        
+        const data = await res.json();
+        
+        if (res.ok) {
+          questionCount++;
+          
+          // Show feedback for the previous answer
+          if (data.feedback) {
+            addFeedback(data.feedback);
+          }
+          
+          // Show the next question or summary
+          setTimeout(() => {
+            addMessage("interviewer", data.next_question);
+            updateProgress();
+            
+            if (questionCount > 5) {
+              document.getElementById("inputArea").style.display = "none";
+              document.getElementById("progressIndicator").innerText = "Completed";
+            } else {
+              interviewHistory += `Q${questionCount}: ${data.next_question}\n`;
+            }
+          }, 1000);
+          
+        } else {
+          alert("Error: " + data.error);
+        }
+      } catch (e) {
+        alert("Failed to send reply.");
+      } finally {
+        document.getElementById("submitBtn").disabled = false;
+        document.getElementById("submitBtn").innerText = "Submit Answer";
+      }
+    }
+
+    function addMessage(sender, text) {
+      const chatArea = document.getElementById("chatArea");
+      const msgDiv = document.createElement("div");
+      msgDiv.className = `message ${sender}`;
+      msgDiv.innerHTML = marked.parse(text);
+      chatArea.appendChild(msgDiv);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+    
+    function addFeedback(text) {
+      const chatArea = document.getElementById("chatArea");
+      const feedbackDiv = document.createElement("div");
+      feedbackDiv.className = `feedback-box`;
+      feedbackDiv.innerHTML = "<strong><i class='fas fa-lightbulb'></i> Feedback:</strong> " + marked.parse(text);
+      chatArea.appendChild(feedbackDiv);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function updateProgress() {
+      if (questionCount <= 5) {
+        document.getElementById("progressIndicator").innerText = `Question ${questionCount} of 5`;
+      }
+    }
+  </script>
+</body>
+</html>

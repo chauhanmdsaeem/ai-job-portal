@@ -202,3 +202,69 @@ If a user asks how to contact the developer, owner, or support team, direct them
         response_format={"type": "json_object"}
     )
     return json.loads(response.choices[0].message.content)
+
+
+def ai_start_interview(resume_text, job_context):
+    prompt = f"""
+    You are an expert technical interviewer for the following job position:
+    {job_context}
+    
+    The candidate has provided the following resume:
+    {resume_text}
+    
+    Start the mock interview by introducing yourself briefly and asking the FIRST interview question.
+    The question should be a mix of technical or behavioral, tailored to their resume and the job.
+    
+    Respond strictly in JSON format matching this schema:
+    {{
+        "question": "Your question text here"
+    }}
+    """
+    
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"}
+    )
+    import json
+    return json.loads(response.choices[0].message.content)
+
+def ai_continue_interview(history, candidate_answer, question_num):
+    if question_num >= 5:
+        prompt = f"""
+        You are an expert technical interviewer. This is the 5th and final question of the interview.
+        The candidate just answered: {candidate_answer}
+        
+        Provide feedback on their last answer, and then provide a comprehensive summary of their overall interview performance, highlighting strengths and areas for improvement. Conclude the interview.
+        
+        Respond strictly in JSON format matching this schema:
+        {{
+            "feedback": "Feedback on the last answer",
+            "next_question": "Overall Interview Summary and Conclusion"
+        }}
+        """
+    else:
+        prompt = f"""
+        You are an expert technical interviewer. 
+        Here is the interview history so far:
+        {history}
+        
+        The candidate just answered the last question with: {candidate_answer}
+        
+        1. Evaluate their answer and provide brief, constructive feedback.
+        2. Ask the NEXT interview question (Question {question_num + 1} of 5).
+        
+        Respond strictly in JSON format matching this schema:
+        {{
+            "feedback": "Brief feedback on their answer",
+            "next_question": "The next interview question"
+        }}
+        """
+        
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"}
+    )
+    import json
+    return json.loads(response.choices[0].message.content)

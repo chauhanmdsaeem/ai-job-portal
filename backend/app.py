@@ -29,6 +29,7 @@ from routes.notifications import notifications_bp
 from routes.chat import chat_bp
 from routes.feedback import feedback_bp
 from routes.dashboard import dashboard_bp
+from routes.interviews import interviews_bp
 
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -58,6 +59,7 @@ app.register_blueprint(notifications_bp)
 app.register_blueprint(chat_bp)
 app.register_blueprint(feedback_bp)
 app.register_blueprint(dashboard_bp)
+app.register_blueprint(interviews_bp)
 
 # Set up Rate Limiting
 limiter = Limiter(
@@ -118,7 +120,9 @@ def serve_index():
 def serve_about():
     return send_from_directory(FRONTEND_DIR, "about.html")
 
-
+@app.route("/interview")
+def serve_interview():
+    return send_from_directory(FRONTEND_DIR, "interview.html")
 
 @app.route("/companies")
 def serve_companies():
