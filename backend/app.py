@@ -104,8 +104,7 @@ def handle_exception(e):
     
     # Return a generic 500 error to the client
     return jsonify({
-        "error": "An internal server error occurred.",
-        "traceback": traceback.format_exc()
+        "error": "An internal server error occurred. Please try again later."
     }), 500
 
 # ---------------------------------------------------------

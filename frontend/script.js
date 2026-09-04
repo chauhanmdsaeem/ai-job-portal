@@ -271,7 +271,7 @@ if (applyModal) {
           resumeInput.value = data.resume;
         } else {
           const errText = await res.text();
-          alert("Failed to tailor resume. Server says: " + res.status + " " + errText);
+          alert("Failed to tailor resume. The AI service is currently unavailable.");
         }
       } catch (err) {
         alert("Error connecting to AI.");
@@ -305,7 +305,7 @@ if (applyModal) {
           resumeInput.value = data.resume;
         } else {
           const errText = await res.text();
-          alert("Failed to generate ATS resume. Server says: " + res.status + " " + errText);
+          alert("Failed to generate ATS resume. The AI service is currently unavailable.");
         }
       } catch (err) {
         alert("Error connecting to AI.");
